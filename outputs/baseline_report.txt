@@ -1,0 +1,20 @@
+=== Baseline XGBoost Model Report ===
+Overall Accuracy: 0.955556
+Macro-F1 Score: 0.955617
+5-Fold CV Accuracy: 0.972778 +/- 0.008498
+
+Per-class Metrics (Classification Report):
+              precision    recall  f1-score   support
+
+     Bearing   0.953488  0.911111  0.931818        45
+    Flywheel   0.913043  0.933333  0.923077        45
+     Healthy   1.000000  1.000000  1.000000        45
+         LIV   1.000000  0.911111  0.953488        45
+         LOV   0.936170  0.977778  0.956522        45
+         NRV   1.000000  0.955556  0.977273        45
+      Piston   0.936170  0.977778  0.956522        45
+   Riderbelt   0.916667  0.977778  0.946237        45
+
+    accuracy                       0.955556       360
+   macro avg   0.956942  0.955556  0.955617       360
+weighted avg   0.956942  0.955556  0.955617       360

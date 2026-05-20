@@ -1,0 +1,24 @@
+=== Class Folders and File Counts ===
+Class: Bearing | Files: 225
+Class: Flywheel | Files: 225
+Class: Healthy | Files: 225
+Class: LIV | Files: 225
+Class: LOV | Files: 225
+Class: NRV | Files: 225
+Class: Piston | Files: 225
+Class: Riderbelt | Files: 225
+Total File Count: 1800
+
+=== Sample Details (One per Class) ===
+Class: Bearing | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: Flywheel | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: Healthy | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: LIV | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: LOV | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: NRV | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: Piston | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+Class: Riderbelt | File: preprocess_Reading1.wav | SR: 16000 Hz | Samples: 50000 | Duration: 3.1250 s
+
+=== Dataset Verification Metrics ===
+Confirm: All files have sample_rate == 16000 Hz.
+Actual Median Duration: 3.125000 s
