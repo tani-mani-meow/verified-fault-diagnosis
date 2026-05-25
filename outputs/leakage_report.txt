@@ -1,0 +1,22 @@
+=== Leakage Diagnostic Report ===
+
+Adjacent vs Random Cosine Similarity:
+Class        | Mean Adjacent Sim  | Mean Random Sim | Ratio   
+---------------------------------------------------------------
+Bearing      |           0.373184 |        0.202783 |   1.8403
+Flywheel     |           0.277370 |        0.187695 |   1.4778
+Healthy      |           0.903827 |        0.883988 |   1.0224
+LIV          |           0.614807 |        0.497115 |   1.2367
+LOV          |           0.527202 |        0.223043 |   2.3637
+NRV          |           0.591763 |        0.472316 |   1.2529
+Piston       |           0.466638 |        0.207093 |   2.2533
+Riderbelt    |           0.583764 |        0.452444 |   1.2902
+
+Contiguous-Split Results:
+Contiguous-Split Accuracy: 0.952778
+Contiguous-Split Macro-F1: 0.952567
+
+GroupKFold Results:
+GroupKFold 5-Fold Accuracy: 0.968333 +/- 0.009395
+
+VERDICT: LOW LEAKAGE
