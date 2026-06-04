@@ -10,3 +10,4 @@ __pycache__/
 venv/
 *.joblib
 scratch/
+.env
