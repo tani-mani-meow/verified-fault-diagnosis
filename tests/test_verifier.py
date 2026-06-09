@@ -22,17 +22,48 @@ MOCK_THRESHOLDS = {
     },
     "classes": {
         "LIV": {
-            "kurtosis": {"p10": 1.5, "p25": 2.5, "p50": 3.5, "p75": 4.5, "p90": 5.5},
-            "crest_factor": {"p10": 2.5, "p25": 3.5, "p50": 5.5, "p75": 6.5, "p90": 7.5},
-            "band_energy_ratio_2": {"p10": 0.15, "p25": 0.25, "p50": 0.45, "p75": 0.55, "p90": 0.65},
-            "band_energy_ratio_3": {"p10": 0.15, "p25": 0.25, "p50": 0.45, "p75": 0.55, "p90": 0.65},
-            "zero_crossing_rate": {"p10": 0.08, "p25": 0.12, "p50": 0.18, "p75": 0.22, "p90": 0.26},
+            "kurtosis": {"p50": 3.5},
+            "crest_factor": {"p50": 5.5},
+            "band_energy_ratio_2": {"p50": 0.45},
+            "band_energy_ratio_3": {"p50": 0.45},
+            "zero_crossing_rate": {"p50": 0.18},
         }
     },
     "distinctive": {
         "LIV": {
             "top_2": ["kurtosis"],
             "bottom_2": []
+        }
+    }
+}
+
+# Mock calibration aligned with thresholds
+MOCK_CALIBRATION = {
+    "LIV": {
+        "kurtosis": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": True
+        },
+        "crest_factor": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": True
+        },
+        "band_energy_ratio_2": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": True
+        },
+        "band_energy_ratio_3": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": True
+        },
+        "zero_crossing_rate": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": True
         }
     }
 }
@@ -49,10 +80,10 @@ MOCK_LIV_RECORDING = {
 def test_true_claim():
     """
     1. TRUE claim: pick a real LIV recording, assert a claim that its band_energy_ratio_3
-       is 'elevated' -> should PASS.
+       is 'elevated' (high) -> should PASS.
     """
     claim = {"feature": "band_energy_ratio_3", "direction": "elevated"}
-    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS)
+    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS, MOCK_CALIBRATION)
     assert res["passed"] is True, f"Claim failed: {res['reason']}"
     assert res["actual_value"] == MOCK_LIV_RECORDING["band_energy_ratio_3"]
 
@@ -62,12 +93,12 @@ def test_false_claim():
        should FAIL, and if marked action-critical -> escalate=True.
     """
     claim = {"feature": "kurtosis", "direction": "low", "critical": True}
-    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS)
+    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS, MOCK_CALIBRATION)
     assert res["passed"] is False
-    assert "Failed low/lower checks" in res["reason"]
+    assert "direction mismatch" in res["reason"]
     
     # Test explanation level escalation for critical claim failure
-    exp_res = verify_explanation(MOCK_LIV_RECORDING, "LIV", [claim], thresholds=MOCK_THRESHOLDS)
+    exp_res = verify_explanation(MOCK_LIV_RECORDING, "LIV", [claim], thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert exp_res["escalate"] is True
     assert exp_res["faithfulness_score"] == 0.0
 
@@ -77,9 +108,18 @@ def test_ungrounded_claim():
        with the 'not grounded' reason.
     """
     claim = {"feature": "rms", "direction": "elevated"}
-    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS)
+    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS, MOCK_CALIBRATION)
     assert res["passed"] is False
     assert res["reason"] == "feature not grounded for this class"
+
+def test_neutral_claim():
+    """
+    Test that claiming 'elevated' (high) or 'low' for a data-derived neutral feature fails.
+    """
+    claim = {"feature": "zero_crossing_rate", "direction": "elevated"}
+    res = verify_claim(MOCK_LIV_RECORDING, "LIV", claim, MOCK_THRESHOLDS, MOCK_CALIBRATION)
+    assert res["passed"] is False
+    assert res["reason"] == "feature not directionally characteristic for this class"
 
 def test_mixed_explanation():
     """
@@ -94,7 +134,7 @@ def test_mixed_explanation():
         {"feature": "rms", "direction": "elevated", "critical": False},  # Ungrounded -> Fails
     ]
     
-    res = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_non_critical, thresholds=MOCK_THRESHOLDS)
+    res = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_non_critical, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert res["faithfulness_score"] == 0.8
     assert res["escalate"] is False
     
@@ -106,7 +146,7 @@ def test_mixed_explanation():
         {"feature": "kurtosis", "direction": "low", "critical": False},  # Fails
         {"feature": "rms", "direction": "elevated", "critical": False},  # Ungrounded -> Fails
     ]
-    res_esc = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_more_false, thresholds=MOCK_THRESHOLDS)
+    res_esc = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_more_false, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert res_esc["faithfulness_score"] == 0.6
     assert res_esc["escalate"] is True
     
@@ -118,6 +158,6 @@ def test_mixed_explanation():
         {"feature": "zero_crossing_rate", "direction": "context_dependent", "critical": False},
         {"feature": "rms", "direction": "elevated", "critical": True},  # Ungrounded and critical -> Fails
     ]
-    res_crit = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_critical, thresholds=MOCK_THRESHOLDS)
+    res_crit = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_critical, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert res_crit["faithfulness_score"] == 0.8
     assert res_crit["escalate"] is True

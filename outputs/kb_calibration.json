@@ -1,0 +1,352 @@
+{
+    "Bearing": {
+        "kurtosis": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 1.9936726093292239,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "crest_factor": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 6.084237337112427,
+            "global_p40": 6.131139516830444,
+            "global_p60": 7.0839262962341305
+        },
+        "band_energy_ratio_5": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 1.0921892794613086e-06,
+            "global_p40": 9.759830277289439e-07,
+            "global_p60": 1.8694720779421915e-06
+        },
+        "band_energy_ratio_6": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 5.860417218173097e-07,
+            "global_p40": 4.411405214455044e-07,
+            "global_p60": 1.150988782683271e-06
+        },
+        "wpt_energy_35": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": -5.9423606395721436,
+            "global_p40": -6.081409978866577,
+            "global_p60": -5.622995901107788
+        },
+        "spectral_rolloff_85": {
+            "data_direction": "high",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 1595.2,
+            "global_p40": 1525.1200000000001,
+            "global_p60": 1577.472
+        }
+    },
+    "Flywheel": {
+        "rms": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.15193083882331845,
+            "global_p40": 0.14253433197736734,
+            "global_p60": 0.16404296755790704
+        },
+        "band_energy_ratio_1": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.9079957604408264,
+            "global_p40": 0.8924950957298279,
+            "global_p60": 0.9163119316101074
+        },
+        "band_energy_ratio_2": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.0898525491356849,
+            "global_p40": 0.08236900642514226,
+            "global_p60": 0.10487061738967891
+        },
+        "spectral_centroid": {
+            "data_direction": "neutral",
+            "kb_direction": "low",
+            "match": false,
+            "class_p50": 823.9166715078377,
+            "global_p40": 802.8432238072418,
+            "global_p60": 834.7445141719144
+        },
+        "kurtosis": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 1.6647138595581055,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "wpt_energy_5": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 3.5075843334198,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331
+        }
+    },
+    "LIV": {
+        "kurtosis": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 3.6352739334106445,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "crest_factor": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 6.829837083816528,
+            "global_p40": 6.131139516830444,
+            "global_p60": 7.0839262962341305
+        },
+        "band_energy_ratio_2": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.06557922065258025,
+            "global_p40": 0.08236900642514226,
+            "global_p60": 0.10487061738967891
+        },
+        "band_energy_ratio_3": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.00068942463258275,
+            "global_p40": 0.00146949560148635,
+            "global_p60": 0.00204690174432465
+        },
+        "spectral_rolloff_85": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 1385.6,
+            "global_p40": 1525.1200000000001,
+            "global_p60": 1577.472
+        },
+        "zero_crossing_rate": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 0.06133,
+            "global_p40": 0.064946,
+            "global_p60": 0.07113799999999999
+        }
+    },
+    "LOV": {
+        "kurtosis": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 1.9099128246307375,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "crest_factor": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 6.11942195892334,
+            "global_p40": 6.131139516830444,
+            "global_p60": 7.0839262962341305
+        },
+        "band_energy_ratio_3": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.00172487762756645,
+            "global_p40": 0.00146949560148635,
+            "global_p60": 0.00204690174432465
+        },
+        "band_energy_ratio_4": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 4.279734275769442e-05,
+            "global_p40": 2.5257763445551974e-05,
+            "global_p60": 3.5516267780622e-05
+        },
+        "spectral_centroid": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 811.8702279909808,
+            "global_p40": 802.8432238072418,
+            "global_p60": 834.7445141719144
+        },
+        "spectral_rolloff_85": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 1469.92,
+            "global_p40": 1525.1200000000001,
+            "global_p60": 1577.472
+        }
+    },
+    "NRV": {
+        "band_energy_ratio_2": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 0.09714596346020696,
+            "global_p40": 0.08236900642514226,
+            "global_p60": 0.10487061738967891
+        },
+        "band_energy_ratio_3": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 0.0011671172687783,
+            "global_p40": 0.00146949560148635,
+            "global_p60": 0.00204690174432465
+        },
+        "wpt_energy_35": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": -7.734124183654785,
+            "global_p40": -6.081409978866577,
+            "global_p60": -5.622995901107788
+        },
+        "wpt_energy_5": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 4.339473009109497,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331
+        },
+        "kurtosis": {
+            "data_direction": "high",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 3.913299560546875,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "spectral_flatness": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 0.00023300418251889998,
+            "global_p40": 0.00020891222084168002,
+            "global_p60": 0.00035416251921554
+        }
+    },
+    "Piston": {
+        "kurtosis": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 1.6828489303588867,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "crest_factor": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 6.22050666809082,
+            "global_p40": 6.131139516830444,
+            "global_p60": 7.0839262962341305
+        },
+        "band_energy_ratio_3": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.0011855507618747,
+            "global_p40": 0.00146949560148635,
+            "global_p60": 0.00204690174432465
+        },
+        "band_energy_ratio_4": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 3.575866503524594e-05,
+            "global_p40": 2.5257763445551974e-05,
+            "global_p60": 3.5516267780622e-05
+        },
+        "spectral_bandwidth": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 704.7535365493237,
+            "global_p40": 678.3045659579825,
+            "global_p60": 716.0465138238261
+        },
+        "wpt_energy_42": {
+            "data_direction": "low",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": -7.37644100189209,
+            "global_p40": -7.041232442855835,
+            "global_p60": -6.601723289489746
+        }
+    },
+    "Riderbelt": {
+        "rms": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.1295753493905067,
+            "global_p40": 0.14253433197736734,
+            "global_p60": 0.16404296755790704
+        },
+        "spectral_flatness": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 0.0002868019073503,
+            "global_p40": 0.00020891222084168002,
+            "global_p60": 0.00035416251921554
+        },
+        "shannon_entropy": {
+            "data_direction": "low",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 4.712009208789798,
+            "global_p40": 4.8447518192653956,
+            "global_p60": 5.056366913219892
+        },
+        "band_energy_ratio_4": {
+            "data_direction": "neutral",
+            "kb_direction": "high",
+            "match": false,
+            "class_p50": 2.9997920137248002e-05,
+            "global_p40": 2.5257763445551974e-05,
+            "global_p60": 3.5516267780622e-05
+        },
+        "kurtosis": {
+            "data_direction": "high",
+            "kb_direction": "low",
+            "match": false,
+            "class_p50": 3.460775375366211,
+            "global_p40": 1.8981569766998292,
+            "global_p60": 2.835590887069702
+        },
+        "wpt_energy_16": {
+            "data_direction": "neutral",
+            "kb_direction": "unspecified",
+            "match": true,
+            "class_p50": 0.9855749607086182,
+            "global_p40": 0.9133154869079589,
+            "global_p60": 1.302032709121704
+        }
+    }
+}

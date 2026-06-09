@@ -1,3 +1,4 @@
+# src/verifier.py
 import os
 import sys
 import json
@@ -18,9 +19,29 @@ def load_thresholds():
     with open(thresholds_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def verify_claim(recording_features, predicted_class, claim, thresholds):
+def load_calibration():
+    script_dir = Path(__file__).resolve().parent
+    repo_dir = script_dir.parent
+    calibration_path = repo_dir / "outputs" / "kb_calibration.json"
+    
+    if not calibration_path.exists():
+        raise FileNotFoundError(f"Calibration file not found at {calibration_path}. Run calibrate_kb.py first.")
+        
+    with open(calibration_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def normalize_claim_dir(claim_dir):
+    d = claim_dir.lower()
+    if any(w in d for w in ["elevated", "high", "higher", "shifted", "widened", "moderately"]):
+        return "high"
+    elif any(w in d for w in ["low", "lower"]):
+        return "low"
+    else:
+        return "unspecified"
+
+def verify_claim(recording_features, predicted_class, claim, thresholds, calibration):
     """
-    Verifies a single claim against the computed thresholds.
+    Verifies a single claim against the data-derived calibration direction.
     claim format: {"feature": str, "direction": str, "critical": bool}
     """
     feature = claim.get("feature")
@@ -57,77 +78,67 @@ def verify_claim(recording_features, predicted_class, claim, thresholds):
         
     val = recording_features[feature]
     
-    # Fetch thresholds
-    global_th = thresholds["global"].get(feature)
-    class_th = thresholds["classes"].get(predicted_class, {}).get(feature)
-    
-    if not global_th or not class_th:
+    # 2. Get calibration data
+    cal_class = calibration.get(predicted_class, {})
+    if feature not in cal_class:
         return {
             "claim": claim,
             "passed": False,
             "actual_value": val,
             "reference": None,
-            "reason": f"thresholds for feature '{feature}' are missing"
+            "reason": f"calibration data for feature '{feature}' in class '{predicted_class}' is missing"
         }
         
-    global_p50 = global_th["p50"]
-    global_p75 = global_th["p75"]
-    global_p25 = global_th["p25"]
-    class_median = class_th["p50"]
+    cal_data = cal_class[feature]
+    data_direction = cal_data["data_direction"] # "high", "low", or "neutral"
+    
+    global_th = thresholds["global"].get(feature, {})
+    global_p50 = global_th.get("p50", 0.0)
+    
+    # Normalize claim direction
+    claim_dir_norm = normalize_claim_dir(direction)
     
     passed = False
-    reference = ""
     reason = ""
+    reference = f"data_direction: {data_direction}, global_p50: {global_p50:.4f}, val: {val:.4f}"
     
-    # Determine checking logic based on direction
-    is_high_direction = any(d in direction for d in ["elevated", "high", "shifted", "widened", "moderately"])
-    is_low_direction = any(d in direction for d in ["low", "lower"])
-    
-    if is_high_direction:
-        # elevated/high: class median > global p75 and recording val > global p50
-        passed = (class_median > global_p75) and (val > global_p50)
-        reference = f"class_median ({class_median:.4f}) > global_p75 ({global_p75:.4f}) AND val ({val:.4f}) > global_p50 ({global_p50:.4f})"
-        if not passed:
-            reason = f"Failed high/elevated checks: class median must exceed global p75 and recording value must exceed global p50."
-            
-    elif is_low_direction:
-        # low/lower: class median < global p25 and recording val < global p50
-        passed = (class_median < global_p25) and (val < global_p50)
-        reference = f"class_median ({class_median:.4f}) < global_p25 ({global_p25:.4f}) AND val ({val:.4f}) < global_p50 ({global_p50:.4f})"
-        if not passed:
-            reason = f"Failed low/lower checks: class median must be below global p25 and recording value must be below global p50."
-            
-    elif direction == "distinctive":
-        # distinctive: class median is in top-2 or bottom-2
-        distinctive_info = thresholds["distinctive"].get(predicted_class, {})
-        top_2 = distinctive_info.get("top_2", [])
-        bottom_2 = distinctive_info.get("bottom_2", [])
-        
-        if feature in top_2:
-            passed = (val > global_p50)
-            reference = f"feature is distinctively high for class. val ({val:.4f}) > global_p50 ({global_p50:.4f})"
-            if not passed:
-                reason = f"Failed distinctive check: feature is in top-2 but recording value did not exceed global p50."
-        elif feature in bottom_2:
-            passed = (val < global_p50)
-            reference = f"feature is distinctively low for class. val ({val:.4f}) < global_p50 ({global_p50:.4f})"
-            if not passed:
-                reason = f"Failed distinctive check: feature is in bottom-2 but recording value was not below global p50."
-        else:
+    if data_direction == "neutral":
+        if claim_dir_norm in ["high", "low"]:
             passed = False
-            reference = f"feature '{feature}' is not in top-2 or bottom-2 medians for class {predicted_class}"
-            reason = f"Feature is not distinctive (top-2 or bottom-2) for this class."
+            reason = "feature not directionally characteristic for this class"
+        else:
+            # unspecified or soft claims (like context_dependent) pass if grounded
+            passed = True
+            reason = ""
             
-    elif direction == "context_dependent":
-        # context-dependent: passes if grounded
-        passed = True
-        reference = "Grounded context-dependent feature"
-        
-    else:
-        # Fallback if direction unknown
-        passed = False
-        reason = f"Unknown direction '{direction}' in claim"
-        
+    elif data_direction in ["high", "low"]:
+        if claim_dir_norm == data_direction:
+            if data_direction == "high":
+                passed = (val > global_p50)
+                if not passed:
+                    reason = f"recording value {val:.4f} is not above global p50 {global_p50:.4f}"
+            else: # "low"
+                passed = (val < global_p50)
+                if not passed:
+                    reason = f"recording value {val:.4f} is not below global p50 {global_p50:.4f}"
+        elif claim_dir_norm == "unspecified":
+            # If claim is "distinctive" or "context_dependent"
+            if "distinctive" in direction:
+                if data_direction == "high":
+                    passed = (val > global_p50)
+                    if not passed:
+                        reason = f"recording value {val:.4f} is not above global p50 {global_p50:.4f} for distinctive feature"
+                else: # "low"
+                    passed = (val < global_p50)
+                    if not passed:
+                        reason = f"recording value {val:.4f} is not below global p50 {global_p50:.4f} for distinctive feature"
+            else: # context_dependent etc.
+                passed = True
+        else:
+            # Mismatch: claim asserts high but data is low, or vice versa
+            passed = False
+            reason = f"direction mismatch: claim asserts '{claim_dir_norm}' but data shows '{data_direction}'"
+            
     return {
         "claim": claim,
         "passed": passed,
@@ -136,19 +147,21 @@ def verify_claim(recording_features, predicted_class, claim, thresholds):
         "reason": reason
     }
 
-def verify_explanation(recording_features, predicted_class, claims, action_critical_idx=None, thresholds=None):
+def verify_explanation(recording_features, predicted_class, claims, action_critical_idx=None, thresholds=None, calibration=None):
     """
     Verifies all claims in an explanation.
     """
     if thresholds is None:
         thresholds = load_thresholds()
+    if calibration is None:
+        calibration = load_calibration()
         
     per_claim = []
     passed_count = 0
     escalate = False
     
     for idx, claim in enumerate(claims):
-        res = verify_claim(recording_features, predicted_class, claim, thresholds)
+        res = verify_claim(recording_features, predicted_class, claim, thresholds, calibration)
         is_critical = claim.get("critical", False) or (action_critical_idx is not None and idx in action_critical_idx)
         res["critical"] = is_critical
         per_claim.append(res)
