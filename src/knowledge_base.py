@@ -15,24 +15,21 @@ KNOWLEDGE_BASE = {
         ),
         "acoustic_signature": {
             "time_domain": (
-                "Periodic impulsive bursts synchronized to the compression cycle "
-                "(observed as regularly spaced transient spikes in the waveform), "
-                "raising impulsiveness metrics relative to Healthy."
+                "Decreased skewness vs the global distribution, indicating altered "
+                "waveform symmetry due to suction backflow."
             ),
             "frequency_domain": (
-                "Broadband impulse energy with elevated mid-band content; energy "
-                "concentrated in the lower-to-mid bands with a sharper roll-off at "
-                "high frequency compared to Healthy."
+                "Lower spectral centroid and spectral roll-off (85%) compared to the "
+                "global baseline, reflecting a shift in energy away from high frequencies."
             ),
         },
-        # Features the LLM is ALLOWED to cite; verifier checks each against features.csv
         "grounding_features": {
-            "kurtosis": "higher_than_healthy",          # impulsive transients
-            "crest_factor": "higher_than_healthy",
-            "band_energy_ratio_2": "elevated",           # ~0.75-1.5 kHz band
-            "band_energy_ratio_3": "elevated",           # ~1.5-2.25 kHz band (top SHAP driver)
-            "spectral_rolloff_85": "shifted",
-            "zero_crossing_rate": "context_dependent",
+            "spectral_rolloff_85": "low",
+            "skewness": "low",
+            "spectral_centroid": "low",
+            "wpt_energy_15": "low",
+            "wpt_energy_18": "low",
+            "wpt_energy_50": "low"
         },
         "distinguishing_from": {
             "LOV": "LIV leaks on the SUCTION side; LOV leaks on the DISCHARGE side. "
@@ -40,7 +37,7 @@ KNOWLEDGE_BASE = {
                    "roll-off, since the two are the closest confusable pair.",
             "Healthy": "Healthy shows uniform, non-impulsive noise (low kurtosis/crest factor).",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": [
             "Verma, Sevakula, Dixit, Salour (2016), IEEE Trans. Reliability 65(1):291-309, DOI 10.1109/TR.2015.2459684",
         ],
@@ -56,22 +53,20 @@ KNOWLEDGE_BASE = {
         ),
         "acoustic_signature": {
             "time_domain": (
-                "Cyclic impulsive events tied to the discharge phase; impulsiveness "
-                "elevated vs Healthy but phased differently from LIV within the cycle."
+                "Elevated WPT high-band energy relative to global baseline due to "
+                "discharge-related high frequency transients."
             ),
             "frequency_domain": (
-                "Elevated mid-band energy; the mid-band ratio and high-frequency "
-                "roll-off differ subtly from LIV — this subtlety is the reason LIV/LOV "
-                "is the main confusable pair in the baseline."
+                "Concentrated high-band energy (WPT bands 34, 31, 42, 33, 39, 5 are high)."
             ),
         },
         "grounding_features": {
-            "kurtosis": "higher_than_healthy",
-            "crest_factor": "higher_than_healthy",
-            "band_energy_ratio_3": "elevated",
-            "band_energy_ratio_4": "elevated",           # ~2.25-3.0 kHz band
-            "spectral_centroid": "shifted_vs_healthy",
-            "spectral_rolloff_85": "shifted",
+            "wpt_energy_34": "high",
+            "wpt_energy_31": "high",
+            "wpt_energy_42": "high",
+            "wpt_energy_33": "high",
+            "wpt_energy_39": "high",
+            "wpt_energy_5": "high"
         },
         "distinguishing_from": {
             "LIV": "Discharge-side vs suction-side leak. Key discriminators are the "
@@ -80,7 +75,7 @@ KNOWLEDGE_BASE = {
             "NRV": "NRV involves the non-return valve (system-level backflow), giving "
                    "a different low-band and cyclic pattern.",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": [
             "Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309.",
         ],
@@ -96,22 +91,19 @@ KNOWLEDGE_BASE = {
         ),
         "acoustic_signature": {
             "time_domain": (
-                "Irregular/altered impulsive content associated with backflow through "
-                "the check valve; differs from the clean per-cycle periodicity of LIV."
+                "Altered check-valve backflow transients showing lower energy in specific WPT bands."
             ),
             "frequency_domain": (
-                "Altered low-to-mid band energy distribution; NRV was cleanly "
-                "separated in the baseline (recall ~0.96, precision 1.00), indicating "
-                "a distinctive spectral fingerprint."
+                "Lower energy concentrated across WPT bands (WPT 35, 36, 38, 34, 30, 37 are low)."
             ),
         },
         "grounding_features": {
-            "band_energy_ratio_2": "distinctive",
-            "band_energy_ratio_3": "distinctive",
-            "wpt_energy_35": "distinctive",              # strong SHAP driver
-            "wpt_energy_5": "distinctive",
-            "kurtosis": "context_dependent",
-            "spectral_flatness": "context_dependent",
+            "wpt_energy_35": "low",
+            "wpt_energy_36": "low",
+            "wpt_energy_38": "low",
+            "wpt_energy_34": "low",
+            "wpt_energy_30": "low",
+            "wpt_energy_37": "low"
         },
         "distinguishing_from": {
             "LIV": "NRV is a system check-valve fault, not a cylinder reed-valve leak; "
@@ -119,7 +111,7 @@ KNOWLEDGE_BASE = {
             "LOV": "Both affect discharge-side behavior, but NRV's fingerprint is more "
                    "separable (fewer confusions in the baseline confusion matrix).",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": [
             "Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309.",
         ],
@@ -133,19 +125,19 @@ KNOWLEDGE_BASE = {
             "exciting high-frequency structural resonances. Highly impulsive."
         ),
         "acoustic_signature": {
-            "time_domain": "Sharp, repetitive impacts → high kurtosis and crest factor.",
+            "time_domain": "Impacts shifting low-frequency and band-energy content downward.",
             "frequency_domain": (
-                "Energy pushed toward higher-frequency bands (resonance excitation); "
-                "elevated high-band content vs the low-frequency-dominated Flywheel fault."
+                "Altered energy distribution with low values in WPT bands 4, 5, 8, 25, "
+                "band_energy_ratio_4, and dominant_frequency compared to the global baseline."
             ),
         },
         "grounding_features": {
-            "kurtosis": "high",
-            "crest_factor": "high",
-            "band_energy_ratio_5": "elevated",   # ~3.0-3.75 kHz
-            "band_energy_ratio_6": "elevated",   # ~3.75-4.5 kHz
-            "wpt_energy_35": "distinctive",
-            "spectral_rolloff_85": "shifted_up",
+            "wpt_energy_4": "low",
+            "wpt_energy_5": "low",
+            "wpt_energy_8": "low",
+            "band_energy_ratio_4": "low",
+            "dominant_frequency": "low",
+            "wpt_energy_25": "low"
         },
         "distinguishing_from": {
             "Flywheel": "MAIN confusable pair. Bearing = higher-frequency impulsive "
@@ -153,7 +145,7 @@ KNOWLEDGE_BASE = {
                         "rotational-harmonic energy. Discriminate via high-band ratios "
                         "and kurtosis.",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": ["Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309."],
     },
 
@@ -165,22 +157,22 @@ KNOWLEDGE_BASE = {
             "frequency energy rather than sharp high-frequency impacts."
         ),
         "acoustic_signature": {
-            "time_domain": "Elevated overall energy (RMS); less impulsive than Bearing.",
-            "frequency_domain": "Low-frequency-dominated; energy concentrated in the lowest bands.",
+            "time_domain": "Low energy in WPT band 4 and 5; elevated energy in WPT bands 16, 17, 49, 48.",
+            "frequency_domain": "Low-frequency dominated energy distribution.",
         },
         "grounding_features": {
-            "rms": "elevated",
-            "band_energy_ratio_1": "elevated",   # ~0-0.75 kHz
-            "band_energy_ratio_2": "elevated",
-            "spectral_centroid": "lower_than_bearing",
-            "kurtosis": "lower_than_bearing",
-            "wpt_energy_5": "distinctive",
+            "wpt_energy_4": "low",
+            "wpt_energy_16": "high",
+            "wpt_energy_5": "low",
+            "wpt_energy_17": "high",
+            "wpt_energy_49": "high",
+            "wpt_energy_48": "high"
         },
         "distinguishing_from": {
             "Bearing": "MAIN confusable pair. Flywheel = low-frequency rotational "
                        "energy, lower kurtosis; Bearing = high-frequency impulsive.",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": ["Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309."],
     },
 
@@ -192,23 +184,23 @@ KNOWLEDGE_BASE = {
             "producing periodic mid-frequency impacts and altered broadband content."
         ),
         "acoustic_signature": {
-            "time_domain": "Periodic mid-strength impacts (piston slap) → moderately elevated kurtosis/crest factor.",
-            "frequency_domain": "Mid-band energy emphasis; broadband component from blow-by.",
+            "time_domain": "Low zero_crossing_rate indicating lower transient oscillations.",
+            "frequency_domain": "Low energy in WPT bands 25, 9, 8, 24, 56 compared to the global distribution.",
         },
         "grounding_features": {
-            "kurtosis": "moderately_elevated",
-            "crest_factor": "moderately_elevated",
-            "band_energy_ratio_3": "elevated",
-            "band_energy_ratio_4": "elevated",
-            "spectral_bandwidth": "widened",
-            "wpt_energy_42": "distinctive",
+            "zero_crossing_rate": "low",
+            "wpt_energy_25": "low",
+            "wpt_energy_9": "low",
+            "wpt_energy_8": "low",
+            "wpt_energy_24": "low",
+            "wpt_energy_56": "low"
         },
         "distinguishing_from": {
             "Riderbelt": "Piston = periodic impact (higher kurtosis); Riderbelt = "
                          "friction-driven broadband noise (higher spectral flatness, "
                          "lower impulsiveness).",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": ["Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309."],
     },
 
@@ -220,22 +212,22 @@ KNOWLEDGE_BASE = {
             "more continuous broadband noise rather than discrete impacts."
         ),
         "acoustic_signature": {
-            "time_domain": "Sustained elevated noise (higher RMS), low impulsiveness (lower kurtosis than impact faults).",
-            "frequency_domain": "Broadband, flatter spectrum → elevated spectral flatness.",
+            "time_domain": "Lower energy in WPT band 3 and band_energy_ratio_1; elevated band_energy_ratio_2 and spectral_centroid.",
+            "frequency_domain": "Broadband noise with elevated spectral flatness and centroid.",
         },
         "grounding_features": {
-            "rms": "elevated",
-            "spectral_flatness": "elevated",
-            "shannon_entropy": "elevated",
-            "band_energy_ratio_4": "elevated",
-            "kurtosis": "lower_than_impact_faults",
-            "wpt_energy_16": "distinctive",
+            "band_energy_ratio_2": "high",
+            "band_energy_ratio_1": "low",
+            "spectral_centroid": "high",
+            "wpt_energy_3": "low",
+            "wpt_energy_20": "high",
+            "wpt_energy_52": "high"
         },
         "distinguishing_from": {
             "Piston": "Riderbelt = broadband friction noise (high flatness/entropy, "
                       "low kurtosis); Piston = periodic impacts (higher kurtosis).",
         },
-        "threshold_source": "per_class_training_percentiles",
+        "threshold_source": "data_selected_percentiles_p75_p25",
         "references": ["Verma et al. (2016), IEEE Trans. Reliability 65(1):291-309."],
     },
 }

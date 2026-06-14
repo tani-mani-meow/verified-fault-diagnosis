@@ -1,352 +1,352 @@
 {
     "Bearing": {
-        "kurtosis": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 1.9936726093292239,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
-        },
-        "crest_factor": {
-            "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 6.084237337112427,
-            "global_p40": 6.131139516830444,
-            "global_p60": 7.0839262962341305
-        },
-        "band_energy_ratio_5": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 1.0921892794613086e-06,
-            "global_p40": 9.759830277289439e-07,
-            "global_p60": 1.8694720779421915e-06
-        },
-        "band_energy_ratio_6": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 5.860417218173097e-07,
-            "global_p40": 4.411405214455044e-07,
-            "global_p60": 1.150988782683271e-06
-        },
-        "wpt_energy_35": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
-            "match": true,
-            "class_p50": -5.9423606395721436,
-            "global_p40": -6.081409978866577,
-            "global_p60": -5.622995901107788
-        },
-        "spectral_rolloff_85": {
-            "data_direction": "high",
-            "kb_direction": "unspecified",
-            "match": true,
-            "class_p50": 1595.2,
-            "global_p40": 1525.1200000000001,
-            "global_p60": 1577.472
-        }
-    },
-    "Flywheel": {
-        "rms": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.15193083882331845,
-            "global_p40": 0.14253433197736734,
-            "global_p60": 0.16404296755790704
-        },
-        "band_energy_ratio_1": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.9079957604408264,
-            "global_p40": 0.8924950957298279,
-            "global_p60": 0.9163119316101074
-        },
-        "band_energy_ratio_2": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.0898525491356849,
-            "global_p40": 0.08236900642514226,
-            "global_p60": 0.10487061738967891
-        },
-        "spectral_centroid": {
-            "data_direction": "neutral",
-            "kb_direction": "low",
-            "match": false,
-            "class_p50": 823.9166715078377,
-            "global_p40": 802.8432238072418,
-            "global_p60": 834.7445141719144
-        },
-        "kurtosis": {
+        "wpt_energy_4": {
             "data_direction": "low",
             "kb_direction": "low",
             "match": true,
-            "class_p50": 1.6647138595581055,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
+            "class_p50": 3.883906602859497,
+            "global_p40": 4.527024364471435,
+            "global_p60": 4.90805287361145
         },
         "wpt_energy_5": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 3.4126999378204346,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331
+        },
+        "wpt_energy_8": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 2.838333249092102,
+            "global_p40": 3.159933090209961,
+            "global_p60": 3.5135995626449583
+        },
+        "band_energy_ratio_4": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 1.956480809894856e-05,
+            "global_p40": 2.5257763445551974e-05,
+            "global_p60": 3.5516267780622e-05
+        },
+        "dominant_frequency": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 0.0,
+            "global_p40": 0.0,
+            "global_p60": 59.52000000000001
+        },
+        "wpt_energy_25": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -1.579039990901947,
+            "global_p40": -1.2913970470428469,
+            "global_p60": -0.9446765005588533
+        }
+    },
+    "Flywheel": {
+        "wpt_energy_4": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 3.9258328676223755,
+            "global_p40": 4.527024364471435,
+            "global_p60": 4.90805287361145
+        },
+        "wpt_energy_16": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 1.8102111816406252,
+            "global_p40": 0.9133154869079589,
+            "global_p60": 1.302032709121704
+        },
+        "wpt_energy_5": {
+            "data_direction": "low",
+            "kb_direction": "low",
             "match": true,
             "class_p50": 3.5075843334198,
             "global_p40": 3.9676254272460936,
             "global_p60": 4.346215009689331
-        }
-    },
-    "LIV": {
-        "kurtosis": {
+        },
+        "wpt_energy_17": {
             "data_direction": "high",
             "kb_direction": "high",
             "match": true,
-            "class_p50": 3.6352739334106445,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
+            "class_p50": 1.557108998298645,
+            "global_p40": 0.710911649465561,
+            "global_p60": 1.1018238186836242
         },
-        "crest_factor": {
-            "data_direction": "neutral",
+        "wpt_energy_49": {
+            "data_direction": "high",
             "kb_direction": "high",
-            "match": false,
-            "class_p50": 6.829837083816528,
-            "global_p40": 6.131139516830444,
-            "global_p60": 7.0839262962341305
+            "match": true,
+            "class_p50": -2.964814782142639,
+            "global_p40": -3.791094160079956,
+            "global_p60": -3.4002476930618286
         },
-        "band_energy_ratio_2": {
-            "data_direction": "low",
+        "wpt_energy_48": {
+            "data_direction": "high",
             "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.06557922065258025,
-            "global_p40": 0.08236900642514226,
-            "global_p60": 0.10487061738967891
-        },
-        "band_energy_ratio_3": {
-            "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.00068942463258275,
-            "global_p40": 0.00146949560148635,
-            "global_p60": 0.00204690174432465
-        },
+            "match": true,
+            "class_p50": -3.1514620780944824,
+            "global_p40": -3.9294484853744507,
+            "global_p60": -3.52873957157135
+        }
+    },
+    "LIV": {
         "spectral_rolloff_85": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
             "match": true,
             "class_p50": 1385.6,
             "global_p40": 1525.1200000000001,
             "global_p60": 1577.472
         },
-        "zero_crossing_rate": {
+        "skewness": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 0.06133,
-            "global_p40": 0.064946,
-            "global_p60": 0.07113799999999999
-        }
-    },
-    "LOV": {
-        "kurtosis": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 1.9099128246307375,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
-        },
-        "crest_factor": {
-            "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 6.11942195892334,
-            "global_p40": 6.131139516830444,
-            "global_p60": 7.0839262962341305
-        },
-        "band_energy_ratio_3": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.00172487762756645,
-            "global_p40": 0.00146949560148635,
-            "global_p60": 0.00204690174432465
-        },
-        "band_energy_ratio_4": {
-            "data_direction": "high",
-            "kb_direction": "high",
-            "match": true,
-            "class_p50": 4.279734275769442e-05,
-            "global_p40": 2.5257763445551974e-05,
-            "global_p60": 3.5516267780622e-05
+            "class_p50": -0.1847472339868545,
+            "global_p40": -0.0838906921446323,
+            "global_p60": -0.031791889481246435
         },
         "spectral_centroid": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
+            "data_direction": "low",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 811.8702279909808,
+            "class_p50": 754.0716377783071,
             "global_p40": 802.8432238072418,
             "global_p60": 834.7445141719144
         },
-        "spectral_rolloff_85": {
+        "wpt_energy_15": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 1469.92,
-            "global_p40": 1525.1200000000001,
-            "global_p60": 1577.472
+            "class_p50": 1.1654860973358154,
+            "global_p40": 1.721006727218628,
+            "global_p60": 2.106809210777283
+        },
+        "wpt_energy_18": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 0.45591291785240173,
+            "global_p40": 1.044858556985855,
+            "global_p60": 1.4512281179428101
+        },
+        "wpt_energy_50": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -4.051778078079224,
+            "global_p40": -3.4761553287506106,
+            "global_p60": -3.067581367492676
+        }
+    },
+    "LOV": {
+        "wpt_energy_34": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -5.0491344928741455,
+            "global_p40": -6.4621179580688475,
+            "global_p60": -5.985291910171509
+        },
+        "wpt_energy_31": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -4.561598300933838,
+            "global_p40": -5.706578731536865,
+            "global_p60": -5.265900611877441
+        },
+        "wpt_energy_42": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -5.995335578918457,
+            "global_p40": -7.041232442855835,
+            "global_p60": -6.601723289489746
+        },
+        "wpt_energy_33": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -6.104263782501221,
+            "global_p40": -7.031368684768677,
+            "global_p60": -6.613202905654907
+        },
+        "wpt_energy_39": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -7.407092094421387,
+            "global_p40": -8.382997608184814,
+            "global_p60": -7.939784955978394
+        },
+        "wpt_energy_5": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 4.776005506515503,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331
         }
     },
     "NRV": {
-        "band_energy_ratio_2": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
-            "match": true,
-            "class_p50": 0.09714596346020696,
-            "global_p40": 0.08236900642514226,
-            "global_p60": 0.10487061738967891
-        },
-        "band_energy_ratio_3": {
-            "data_direction": "low",
-            "kb_direction": "unspecified",
-            "match": true,
-            "class_p50": 0.0011671172687783,
-            "global_p40": 0.00146949560148635,
-            "global_p60": 0.00204690174432465
-        },
         "wpt_energy_35": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
             "match": true,
             "class_p50": -7.734124183654785,
             "global_p40": -6.081409978866577,
             "global_p60": -5.622995901107788
         },
-        "wpt_energy_5": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
+        "wpt_energy_36": {
+            "data_direction": "low",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 4.339473009109497,
-            "global_p40": 3.9676254272460936,
-            "global_p60": 4.346215009689331
+            "class_p50": -7.362801551818848,
+            "global_p40": -6.425815391540527,
+            "global_p60": -5.9985956192016605
         },
-        "kurtosis": {
-            "data_direction": "high",
-            "kb_direction": "unspecified",
+        "wpt_energy_38": {
+            "data_direction": "low",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 3.913299560546875,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
+            "class_p50": -8.629294395446777,
+            "global_p40": -7.733454322814941,
+            "global_p60": -7.31585111618042
         },
-        "spectral_flatness": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
+        "wpt_energy_34": {
+            "data_direction": "low",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 0.00023300418251889998,
-            "global_p40": 0.00020891222084168002,
-            "global_p60": 0.00035416251921554
+            "class_p50": -7.418376684188843,
+            "global_p40": -6.4621179580688475,
+            "global_p60": -5.985291910171509
+        },
+        "wpt_energy_30": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -5.370527744293213,
+            "global_p40": -4.627991533279419,
+            "global_p60": -4.241431403160095
+        },
+        "wpt_energy_37": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -7.533252000808716,
+            "global_p40": -6.733155918121338,
+            "global_p60": -6.293763113021851
         }
     },
     "Piston": {
-        "kurtosis": {
+        "zero_crossing_rate": {
             "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 1.6828489303588867,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 0.05741,
+            "global_p40": 0.064946,
+            "global_p60": 0.07113799999999999
         },
-        "crest_factor": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 6.22050666809082,
-            "global_p40": 6.131139516830444,
-            "global_p60": 7.0839262962341305
-        },
-        "band_energy_ratio_3": {
+        "wpt_energy_25": {
             "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.0011855507618747,
-            "global_p40": 0.00146949560148635,
-            "global_p60": 0.00204690174432465
-        },
-        "band_energy_ratio_4": {
-            "data_direction": "high",
-            "kb_direction": "high",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": 3.575866503524594e-05,
-            "global_p40": 2.5257763445551974e-05,
-            "global_p60": 3.5516267780622e-05
+            "class_p50": -1.628739833831787,
+            "global_p40": -1.2913970470428469,
+            "global_p60": -0.9446765005588533
         },
-        "spectral_bandwidth": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
-            "match": true,
-            "class_p50": 704.7535365493237,
-            "global_p40": 678.3045659579825,
-            "global_p60": 716.0465138238261
-        },
-        "wpt_energy_42": {
+        "wpt_energy_9": {
             "data_direction": "low",
-            "kb_direction": "unspecified",
+            "kb_direction": "low",
             "match": true,
-            "class_p50": -7.37644100189209,
-            "global_p40": -7.041232442855835,
-            "global_p60": -6.601723289489746
+            "class_p50": 2.875735878944397,
+            "global_p40": 3.206949734687805,
+            "global_p60": 3.560069537162781
+        },
+        "wpt_energy_8": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 2.820921301841736,
+            "global_p40": 3.159933090209961,
+            "global_p60": 3.5135995626449583
+        },
+        "wpt_energy_24": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -1.3098260760307312,
+            "global_p40": -1.004654061794281,
+            "global_p60": -0.6653947502374649
+        },
+        "wpt_energy_56": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": -6.401221752166748,
+            "global_p40": -6.093366384506226,
+            "global_p60": -5.754337882995605
         }
     },
     "Riderbelt": {
-        "rms": {
-            "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.1295753493905067,
-            "global_p40": 0.14253433197736734,
-            "global_p60": 0.16404296755790704
-        },
-        "spectral_flatness": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 0.0002868019073503,
-            "global_p40": 0.00020891222084168002,
-            "global_p60": 0.00035416251921554
-        },
-        "shannon_entropy": {
-            "data_direction": "low",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 4.712009208789798,
-            "global_p40": 4.8447518192653956,
-            "global_p60": 5.056366913219892
-        },
-        "band_energy_ratio_4": {
-            "data_direction": "neutral",
-            "kb_direction": "high",
-            "match": false,
-            "class_p50": 2.9997920137248002e-05,
-            "global_p40": 2.5257763445551974e-05,
-            "global_p60": 3.5516267780622e-05
-        },
-        "kurtosis": {
+        "band_energy_ratio_2": {
             "data_direction": "high",
-            "kb_direction": "low",
-            "match": false,
-            "class_p50": 3.460775375366211,
-            "global_p40": 1.8981569766998292,
-            "global_p60": 2.835590887069702
-        },
-        "wpt_energy_16": {
-            "data_direction": "neutral",
-            "kb_direction": "unspecified",
+            "kb_direction": "high",
             "match": true,
-            "class_p50": 0.9855749607086182,
-            "global_p40": 0.9133154869079589,
-            "global_p60": 1.302032709121704
+            "class_p50": 0.1694465577602386,
+            "global_p40": 0.08236900642514226,
+            "global_p60": 0.10487061738967891
+        },
+        "band_energy_ratio_1": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 0.8274152278900146,
+            "global_p40": 0.8924950957298279,
+            "global_p60": 0.9163119316101074
+        },
+        "spectral_centroid": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 881.8512137429649,
+            "global_p40": 802.8432238072418,
+            "global_p60": 834.7445141719144
+        },
+        "wpt_energy_3": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 4.746469020843506,
+            "global_p40": 5.113624048233032,
+            "global_p60": 5.419884157180786
+        },
+        "wpt_energy_20": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": 1.1585822701454163,
+            "global_p40": 0.25778612233698367,
+            "global_p60": 0.6698943257331847
+        },
+        "wpt_energy_52": {
+            "data_direction": "high",
+            "kb_direction": "high",
+            "match": true,
+            "class_p50": -3.5180110931396484,
+            "global_p40": -4.40576400756836,
+            "global_p60": -3.9991849184036257
         }
     }
 }

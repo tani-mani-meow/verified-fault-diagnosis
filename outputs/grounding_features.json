@@ -1,0 +1,436 @@
+{
+    "LIV": [
+        {
+            "feature": "spectral_rolloff_85",
+            "sep": -1.3496332518337428,
+            "class_p50": 1385.6,
+            "global_p50": 1562.24,
+            "global_p40": 1525.1200000000001,
+            "global_p60": 1577.472,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "skewness",
+            "sep": -1.014265697821524,
+            "class_p50": -0.1847472339868545,
+            "global_p50": -0.052642162889242144,
+            "global_p40": -0.0838906921446323,
+            "global_p60": -0.031791889481246435,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "spectral_centroid",
+            "sep": -0.8053344974992678,
+            "class_p50": 754.0716377783071,
+            "global_p50": 818.2996618918368,
+            "global_p40": 802.8432238072418,
+            "global_p60": 834.7445141719144,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_15",
+            "sep": -0.7729099900264057,
+            "class_p50": 1.1654860973358154,
+            "global_p50": 1.9109625816345215,
+            "global_p40": 1.721006727218628,
+            "global_p60": 2.106809210777283,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_18",
+            "sep": -0.7647555097320305,
+            "class_p50": 0.45591291785240173,
+            "global_p50": 1.2328463196754456,
+            "global_p40": 1.044858556985855,
+            "global_p60": 1.4512281179428101,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_50",
+            "sep": -0.7562731832496011,
+            "class_p50": -4.051778078079224,
+            "global_p50": -3.27929425239563,
+            "global_p40": -3.4761553287506106,
+            "global_p60": -3.067581367492676,
+            "direction": "low",
+            "tier": "strong"
+        }
+    ],
+    "LOV": [
+        {
+            "feature": "wpt_energy_34",
+            "sep": 1.0068420594199845,
+            "class_p50": -5.0491344928741455,
+            "global_p50": -6.249355792999268,
+            "global_p40": -6.4621179580688475,
+            "global_p60": -5.985291910171509,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_31",
+            "sep": 0.8608795577432267,
+            "class_p50": -4.561598300933838,
+            "global_p50": -5.510025262832642,
+            "global_p40": -5.706578731536865,
+            "global_p60": -5.265900611877441,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_42",
+            "sep": 0.7601190169439118,
+            "class_p50": -5.995335578918457,
+            "global_p50": -6.830533742904663,
+            "global_p40": -7.041232442855835,
+            "global_p60": -6.601723289489746,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_33",
+            "sep": 0.6950042715881687,
+            "class_p50": -6.104263782501221,
+            "global_p50": -6.830831289291382,
+            "global_p40": -7.031368684768677,
+            "global_p60": -6.613202905654907,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_39",
+            "sep": 0.6800002969388509,
+            "class_p50": -7.407092094421387,
+            "global_p50": -8.160553932189941,
+            "global_p40": -8.382997608184814,
+            "global_p60": -7.939784955978394,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_5",
+            "sep": 0.631665150847039,
+            "class_p50": 4.776005506515503,
+            "global_p50": 4.17815089225769,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331,
+            "direction": "high",
+            "tier": "strong"
+        }
+    ],
+    "NRV": [
+        {
+            "feature": "wpt_energy_35",
+            "sep": -1.6501071394393798,
+            "class_p50": -7.734124183654785,
+            "global_p50": -5.843043327331543,
+            "global_p40": -6.081409978866577,
+            "global_p60": -5.622995901107788,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_36",
+            "sep": -1.0728627477942838,
+            "class_p50": -7.362801551818848,
+            "global_p50": -6.216931104660034,
+            "global_p40": -6.425815391540527,
+            "global_p60": -5.9985956192016605,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_38",
+            "sep": -1.0552754615499327,
+            "class_p50": -8.629294395446777,
+            "global_p50": -7.527578353881836,
+            "global_p40": -7.733454322814941,
+            "global_p60": -7.31585111618042,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_34",
+            "sep": -0.9806686495795353,
+            "class_p50": -7.418376684188843,
+            "global_p50": -6.249355792999268,
+            "global_p40": -6.4621179580688475,
+            "global_p60": -5.985291910171509,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_30",
+            "sep": -0.9659047854359943,
+            "class_p50": -5.370527744293213,
+            "global_p50": -4.437077045440674,
+            "global_p40": -4.627991533279419,
+            "global_p60": -4.241431403160095,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_37",
+            "sep": -0.9231462434893678,
+            "class_p50": -7.533252000808716,
+            "global_p50": -6.519192457199097,
+            "global_p40": -6.733155918121338,
+            "global_p60": -6.293763113021851,
+            "direction": "low",
+            "tier": "strong"
+        }
+    ],
+    "Bearing": [
+        {
+            "feature": "wpt_energy_4",
+            "sep": -0.9200326327438474,
+            "class_p50": 3.883906602859497,
+            "global_p50": 4.760303258895874,
+            "global_p40": 4.527024364471435,
+            "global_p60": 4.90805287361145,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_5",
+            "sep": -0.8087395849588878,
+            "class_p50": 3.4126999378204346,
+            "global_p50": 4.17815089225769,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_8",
+            "sep": -0.5799964095625363,
+            "class_p50": 2.838333249092102,
+            "global_p50": 3.3511464595794678,
+            "global_p40": 3.159933090209961,
+            "global_p60": 3.5135995626449583,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "band_energy_ratio_4",
+            "sep": -0.3652558613156324,
+            "class_p50": 1.956480809894856e-05,
+            "global_p50": 2.8932255190738942e-05,
+            "global_p40": 2.5257763445551974e-05,
+            "global_p60": 3.5516267780622e-05,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "dominant_frequency",
+            "sep": 0.0,
+            "class_p50": 0.0,
+            "global_p50": 0.0,
+            "global_p40": 0.0,
+            "global_p60": 59.52000000000001,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_25",
+            "sep": -0.5547631680939615,
+            "class_p50": -1.579039990901947,
+            "global_p50": -1.0981705188751223,
+            "global_p40": -1.2913970470428469,
+            "global_p60": -0.9446765005588533,
+            "direction": "low",
+            "tier": "moderate"
+        }
+    ],
+    "Flywheel": [
+        {
+            "feature": "wpt_energy_4",
+            "sep": -0.8760188503027314,
+            "class_p50": 3.9258328676223755,
+            "global_p50": 4.760303258895874,
+            "global_p40": 4.527024364471435,
+            "global_p60": 4.90805287361145,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_16",
+            "sep": 0.739555526987211,
+            "class_p50": 1.8102111816406252,
+            "global_p50": 1.0915162563323975,
+            "global_p40": 0.9133154869079589,
+            "global_p60": 1.302032709121704,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_5",
+            "sep": -0.7084891818843748,
+            "class_p50": 3.5075843334198,
+            "global_p50": 4.17815089225769,
+            "global_p40": 3.9676254272460936,
+            "global_p60": 4.346215009689331,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_17",
+            "sep": 0.6906100326421712,
+            "class_p50": 1.557108998298645,
+            "global_p50": 0.8821893334388733,
+            "global_p40": 0.710911649465561,
+            "global_p60": 1.1018238186836242,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_49",
+            "sep": 0.6750780761566517,
+            "class_p50": -2.964814782142639,
+            "global_p50": -3.6244444847106934,
+            "global_p40": -3.791094160079956,
+            "global_p60": -3.4002476930618286,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_48",
+            "sep": 0.5979477537566305,
+            "class_p50": -3.1514620780944824,
+            "global_p50": -3.7504695653915405,
+            "global_p40": -3.9294484853744507,
+            "global_p60": -3.52873957157135,
+            "direction": "high",
+            "tier": "strong"
+        }
+    ],
+    "Piston": [
+        {
+            "feature": "zero_crossing_rate",
+            "sep": -0.6989664082687339,
+            "class_p50": 0.05741,
+            "global_p50": 0.06823,
+            "global_p40": 0.064946,
+            "global_p60": 0.07113799999999999,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_25",
+            "sep": -0.6121002292330647,
+            "class_p50": -1.628739833831787,
+            "global_p50": -1.0981705188751223,
+            "global_p40": -1.2913970470428469,
+            "global_p60": -0.9446765005588533,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_9",
+            "sep": -0.6028563523206326,
+            "class_p50": 2.875735878944397,
+            "global_p50": 3.407937169075012,
+            "global_p40": 3.206949734687805,
+            "global_p60": 3.560069537162781,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_8",
+            "sep": -0.5996894804159704,
+            "class_p50": 2.820921301841736,
+            "global_p50": 3.3511464595794678,
+            "global_p40": 3.159933090209961,
+            "global_p60": 3.5135995626449583,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_24",
+            "sep": -0.5785779758668866,
+            "class_p50": -1.3098260760307312,
+            "global_p50": -0.8191061615943909,
+            "global_p40": -1.004654061794281,
+            "global_p60": -0.6653947502374649,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_56",
+            "sep": -0.5730974214561214,
+            "class_p50": -6.401221752166748,
+            "global_p50": -5.915480852127075,
+            "global_p40": -6.093366384506226,
+            "global_p60": -5.754337882995605,
+            "direction": "low",
+            "tier": "strong"
+        }
+    ],
+    "Riderbelt": [
+        {
+            "feature": "band_energy_ratio_2",
+            "sep": 1.365745431357898,
+            "class_p50": 0.1694465577602386,
+            "global_p50": 0.0926178768277168,
+            "global_p40": 0.08236900642514226,
+            "global_p60": 0.10487061738967891,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "band_energy_ratio_1",
+            "sep": -1.3201299764102425,
+            "class_p50": 0.8274152278900146,
+            "global_p50": 0.9060185253620148,
+            "global_p40": 0.8924950957298279,
+            "global_p60": 0.9163119316101074,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "spectral_centroid",
+            "sep": 0.7968524297876669,
+            "class_p50": 881.8512137429649,
+            "global_p50": 818.2996618918368,
+            "global_p40": 802.8432238072418,
+            "global_p60": 834.7445141719144,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_3",
+            "sep": -0.7108614080594886,
+            "class_p50": 4.746469020843506,
+            "global_p50": 5.290740251541138,
+            "global_p40": 5.113624048233032,
+            "global_p60": 5.419884157180786,
+            "direction": "low",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_20",
+            "sep": 0.6803870285334336,
+            "class_p50": 1.1585822701454163,
+            "global_p50": 0.4575995802879333,
+            "global_p40": 0.25778612233698367,
+            "global_p60": 0.6698943257331847,
+            "direction": "high",
+            "tier": "strong"
+        },
+        {
+            "feature": "wpt_energy_52",
+            "sep": 0.6762053467734989,
+            "class_p50": -3.5180110931396484,
+            "global_p50": -4.205338478088379,
+            "global_p40": -4.40576400756836,
+            "global_p60": -3.9991849184036257,
+            "direction": "high",
+            "tier": "strong"
+        }
+    ]
+}
