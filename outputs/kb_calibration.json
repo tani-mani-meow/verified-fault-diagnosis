@@ -32,14 +32,6 @@
             "global_p40": 2.5257763445551974e-05,
             "global_p60": 3.5516267780622e-05
         },
-        "dominant_frequency": {
-            "data_direction": "low",
-            "kb_direction": "low",
-            "match": true,
-            "class_p50": 0.0,
-            "global_p40": 0.0,
-            "global_p60": 59.52000000000001
-        },
         "wpt_energy_25": {
             "data_direction": "low",
             "kb_direction": "low",
@@ -47,6 +39,14 @@
             "class_p50": -1.579039990901947,
             "global_p40": -1.2913970470428469,
             "global_p60": -0.9446765005588533
+        },
+        "wpt_energy_9": {
+            "data_direction": "low",
+            "kb_direction": "low",
+            "match": true,
+            "class_p50": 2.928057074546814,
+            "global_p40": 3.206949734687805,
+            "global_p60": 3.560069537162781
         }
     },
     "Flywheel": {

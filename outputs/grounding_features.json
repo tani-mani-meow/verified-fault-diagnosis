@@ -227,22 +227,22 @@
             "tier": "strong"
         },
         {
-            "feature": "dominant_frequency",
-            "sep": 0.0,
-            "class_p50": 0.0,
-            "global_p50": 0.0,
-            "global_p40": 0.0,
-            "global_p60": 59.52000000000001,
-            "direction": "low",
-            "tier": "strong"
-        },
-        {
             "feature": "wpt_energy_25",
             "sep": -0.5547631680939615,
             "class_p50": -1.579039990901947,
             "global_p50": -1.0981705188751223,
             "global_p40": -1.2913970470428469,
             "global_p60": -0.9446765005588533,
+            "direction": "low",
+            "tier": "moderate"
+        },
+        {
+            "feature": "wpt_energy_9",
+            "sep": -0.5435889929307556,
+            "class_p50": 2.928057074546814,
+            "global_p50": 3.407937169075012,
+            "global_p40": 3.206949734687805,
+            "global_p60": 3.560069537162781,
             "direction": "low",
             "tier": "moderate"
         }

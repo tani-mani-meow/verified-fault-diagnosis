@@ -1,0 +1,698 @@
+{
+    "rms": {
+        "label": "overall loudness (RMS amplitude)",
+        "description": "overall loudness (RMS amplitude)"
+    },
+    "kurtosis": {
+        "label": "impulsiveness / spikiness of the waveform",
+        "description": "impulsiveness / spikiness of the waveform"
+    },
+    "skewness": {
+        "label": "asymmetry of the amplitude distribution",
+        "description": "asymmetry of the amplitude distribution"
+    },
+    "crest_factor": {
+        "label": "peak-to-RMS ratio (sharp transients)",
+        "description": "peak-to-RMS ratio (sharp transients)"
+    },
+    "zero_crossing_rate": {
+        "label": "rate of sign changes (proxy for high-frequency content)",
+        "description": "rate of sign changes (proxy for high-frequency content)"
+    },
+    "peak_to_peak": {
+        "label": "max-to-min amplitude span",
+        "description": "max-to-min amplitude span"
+    },
+    "shannon_entropy": {
+        "label": "signal randomness / complexity",
+        "description": "signal randomness / complexity"
+    },
+    "spectral_centroid": {
+        "label": "brightness - center of spectral mass (Hz)",
+        "description": "brightness - center of spectral mass (Hz)"
+    },
+    "spectral_bandwidth": {
+        "label": "spread of the spectrum (Hz)",
+        "description": "spread of the spectrum (Hz)"
+    },
+    "spectral_rolloff_85": {
+        "label": "frequency below which 85% of energy lies (Hz)",
+        "description": "frequency below which 85% of energy lies (Hz)"
+    },
+    "dominant_frequency": {
+        "label": "strongest single frequency (Hz)",
+        "description": "strongest single frequency (Hz)"
+    },
+    "spectral_flatness": {
+        "label": "tonal vs noise-like balance",
+        "description": "tonal vs noise-like balance"
+    },
+    "band_energy_ratio_1": {
+        "label": "frequency band 0-1000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 0-1000 Hz frequency band",
+        "band_hz": [
+            0.0,
+            1000.0
+        ],
+        "center_hz": 500.0
+    },
+    "band_energy_ratio_2": {
+        "label": "frequency band 1000-2000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 1000-2000 Hz frequency band",
+        "band_hz": [
+            1000.0,
+            2000.0
+        ],
+        "center_hz": 1500.0
+    },
+    "band_energy_ratio_3": {
+        "label": "frequency band 2000-3000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 2000-3000 Hz frequency band",
+        "band_hz": [
+            2000.0,
+            3000.0
+        ],
+        "center_hz": 2500.0
+    },
+    "band_energy_ratio_4": {
+        "label": "frequency band 3000-4000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 3000-4000 Hz frequency band",
+        "band_hz": [
+            3000.0,
+            4000.0
+        ],
+        "center_hz": 3500.0
+    },
+    "band_energy_ratio_5": {
+        "label": "frequency band 4000-5000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 4000-5000 Hz frequency band",
+        "band_hz": [
+            4000.0,
+            5000.0
+        ],
+        "center_hz": 4500.0
+    },
+    "band_energy_ratio_6": {
+        "label": "frequency band 5000-6000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 5000-6000 Hz frequency band",
+        "band_hz": [
+            5000.0,
+            6000.0
+        ],
+        "center_hz": 5500.0
+    },
+    "band_energy_ratio_7": {
+        "label": "frequency band 6000-7000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 6000-7000 Hz frequency band",
+        "band_hz": [
+            6000.0,
+            7000.0
+        ],
+        "center_hz": 6500.0
+    },
+    "band_energy_ratio_8": {
+        "label": "frequency band 7000-8000 Hz energy ratio",
+        "description": "ratio of energy concentrated in the 7000-8000 Hz frequency band",
+        "band_hz": [
+            7000.0,
+            8000.0
+        ],
+        "center_hz": 7500.0
+    },
+    "wpt_energy_1": {
+        "label": "energy near 0-125 Hz",
+        "description": "log-energy in the 0-125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            0.0,
+            125.0
+        ],
+        "center_hz": 62.5
+    },
+    "wpt_energy_2": {
+        "label": "energy near 125-250 Hz",
+        "description": "log-energy in the 125-250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            125.0,
+            250.0
+        ],
+        "center_hz": 187.5
+    },
+    "wpt_energy_3": {
+        "label": "energy near 250-375 Hz",
+        "description": "log-energy in the 250-375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            250.0,
+            375.0
+        ],
+        "center_hz": 312.5
+    },
+    "wpt_energy_4": {
+        "label": "energy near 375-500 Hz",
+        "description": "log-energy in the 375-500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            375.0,
+            500.0
+        ],
+        "center_hz": 437.5
+    },
+    "wpt_energy_5": {
+        "label": "energy near 500-625 Hz",
+        "description": "log-energy in the 500-625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            500.0,
+            625.0
+        ],
+        "center_hz": 562.5
+    },
+    "wpt_energy_6": {
+        "label": "energy near 625-750 Hz",
+        "description": "log-energy in the 625-750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            625.0,
+            750.0
+        ],
+        "center_hz": 687.5
+    },
+    "wpt_energy_7": {
+        "label": "energy near 750-875 Hz",
+        "description": "log-energy in the 750-875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            750.0,
+            875.0
+        ],
+        "center_hz": 812.5
+    },
+    "wpt_energy_8": {
+        "label": "energy near 875-1000 Hz",
+        "description": "log-energy in the 875-1000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            875.0,
+            1000.0
+        ],
+        "center_hz": 937.5
+    },
+    "wpt_energy_9": {
+        "label": "energy near 1000-1125 Hz",
+        "description": "log-energy in the 1000-1125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1000.0,
+            1125.0
+        ],
+        "center_hz": 1062.5
+    },
+    "wpt_energy_10": {
+        "label": "energy near 1125-1250 Hz",
+        "description": "log-energy in the 1125-1250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1125.0,
+            1250.0
+        ],
+        "center_hz": 1187.5
+    },
+    "wpt_energy_11": {
+        "label": "energy near 1250-1375 Hz",
+        "description": "log-energy in the 1250-1375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1250.0,
+            1375.0
+        ],
+        "center_hz": 1312.5
+    },
+    "wpt_energy_12": {
+        "label": "energy near 1375-1500 Hz",
+        "description": "log-energy in the 1375-1500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1375.0,
+            1500.0
+        ],
+        "center_hz": 1437.5
+    },
+    "wpt_energy_13": {
+        "label": "energy near 1500-1625 Hz",
+        "description": "log-energy in the 1500-1625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1500.0,
+            1625.0
+        ],
+        "center_hz": 1562.5
+    },
+    "wpt_energy_14": {
+        "label": "energy near 1625-1750 Hz",
+        "description": "log-energy in the 1625-1750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1625.0,
+            1750.0
+        ],
+        "center_hz": 1687.5
+    },
+    "wpt_energy_15": {
+        "label": "energy near 1750-1875 Hz",
+        "description": "log-energy in the 1750-1875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1750.0,
+            1875.0
+        ],
+        "center_hz": 1812.5
+    },
+    "wpt_energy_16": {
+        "label": "energy near 1875-2000 Hz",
+        "description": "log-energy in the 1875-2000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            1875.0,
+            2000.0
+        ],
+        "center_hz": 1937.5
+    },
+    "wpt_energy_17": {
+        "label": "energy near 2000-2125 Hz",
+        "description": "log-energy in the 2000-2125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2000.0,
+            2125.0
+        ],
+        "center_hz": 2062.5
+    },
+    "wpt_energy_18": {
+        "label": "energy near 2125-2250 Hz",
+        "description": "log-energy in the 2125-2250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2125.0,
+            2250.0
+        ],
+        "center_hz": 2187.5
+    },
+    "wpt_energy_19": {
+        "label": "energy near 2250-2375 Hz",
+        "description": "log-energy in the 2250-2375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2250.0,
+            2375.0
+        ],
+        "center_hz": 2312.5
+    },
+    "wpt_energy_20": {
+        "label": "energy near 2375-2500 Hz",
+        "description": "log-energy in the 2375-2500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2375.0,
+            2500.0
+        ],
+        "center_hz": 2437.5
+    },
+    "wpt_energy_21": {
+        "label": "energy near 2500-2625 Hz",
+        "description": "log-energy in the 2500-2625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2500.0,
+            2625.0
+        ],
+        "center_hz": 2562.5
+    },
+    "wpt_energy_22": {
+        "label": "energy near 2625-2750 Hz",
+        "description": "log-energy in the 2625-2750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2625.0,
+            2750.0
+        ],
+        "center_hz": 2687.5
+    },
+    "wpt_energy_23": {
+        "label": "energy near 2750-2875 Hz",
+        "description": "log-energy in the 2750-2875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2750.0,
+            2875.0
+        ],
+        "center_hz": 2812.5
+    },
+    "wpt_energy_24": {
+        "label": "energy near 2875-3000 Hz",
+        "description": "log-energy in the 2875-3000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            2875.0,
+            3000.0
+        ],
+        "center_hz": 2937.5
+    },
+    "wpt_energy_25": {
+        "label": "energy near 3000-3125 Hz",
+        "description": "log-energy in the 3000-3125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3000.0,
+            3125.0
+        ],
+        "center_hz": 3062.5
+    },
+    "wpt_energy_26": {
+        "label": "energy near 3125-3250 Hz",
+        "description": "log-energy in the 3125-3250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3125.0,
+            3250.0
+        ],
+        "center_hz": 3187.5
+    },
+    "wpt_energy_27": {
+        "label": "energy near 3250-3375 Hz",
+        "description": "log-energy in the 3250-3375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3250.0,
+            3375.0
+        ],
+        "center_hz": 3312.5
+    },
+    "wpt_energy_28": {
+        "label": "energy near 3375-3500 Hz",
+        "description": "log-energy in the 3375-3500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3375.0,
+            3500.0
+        ],
+        "center_hz": 3437.5
+    },
+    "wpt_energy_29": {
+        "label": "energy near 3500-3625 Hz",
+        "description": "log-energy in the 3500-3625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3500.0,
+            3625.0
+        ],
+        "center_hz": 3562.5
+    },
+    "wpt_energy_30": {
+        "label": "energy near 3625-3750 Hz",
+        "description": "log-energy in the 3625-3750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3625.0,
+            3750.0
+        ],
+        "center_hz": 3687.5
+    },
+    "wpt_energy_31": {
+        "label": "energy near 3750-3875 Hz",
+        "description": "log-energy in the 3750-3875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3750.0,
+            3875.0
+        ],
+        "center_hz": 3812.5
+    },
+    "wpt_energy_32": {
+        "label": "energy near 3875-4000 Hz",
+        "description": "log-energy in the 3875-4000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            3875.0,
+            4000.0
+        ],
+        "center_hz": 3937.5
+    },
+    "wpt_energy_33": {
+        "label": "energy near 4000-4125 Hz",
+        "description": "log-energy in the 4000-4125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4000.0,
+            4125.0
+        ],
+        "center_hz": 4062.5
+    },
+    "wpt_energy_34": {
+        "label": "energy near 4125-4250 Hz",
+        "description": "log-energy in the 4125-4250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4125.0,
+            4250.0
+        ],
+        "center_hz": 4187.5
+    },
+    "wpt_energy_35": {
+        "label": "energy near 4250-4375 Hz",
+        "description": "log-energy in the 4250-4375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4250.0,
+            4375.0
+        ],
+        "center_hz": 4312.5
+    },
+    "wpt_energy_36": {
+        "label": "energy near 4375-4500 Hz",
+        "description": "log-energy in the 4375-4500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4375.0,
+            4500.0
+        ],
+        "center_hz": 4437.5
+    },
+    "wpt_energy_37": {
+        "label": "energy near 4500-4625 Hz",
+        "description": "log-energy in the 4500-4625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4500.0,
+            4625.0
+        ],
+        "center_hz": 4562.5
+    },
+    "wpt_energy_38": {
+        "label": "energy near 4625-4750 Hz",
+        "description": "log-energy in the 4625-4750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4625.0,
+            4750.0
+        ],
+        "center_hz": 4687.5
+    },
+    "wpt_energy_39": {
+        "label": "energy near 4750-4875 Hz",
+        "description": "log-energy in the 4750-4875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4750.0,
+            4875.0
+        ],
+        "center_hz": 4812.5
+    },
+    "wpt_energy_40": {
+        "label": "energy near 4875-5000 Hz",
+        "description": "log-energy in the 4875-5000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            4875.0,
+            5000.0
+        ],
+        "center_hz": 4937.5
+    },
+    "wpt_energy_41": {
+        "label": "energy near 5000-5125 Hz",
+        "description": "log-energy in the 5000-5125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5000.0,
+            5125.0
+        ],
+        "center_hz": 5062.5
+    },
+    "wpt_energy_42": {
+        "label": "energy near 5125-5250 Hz",
+        "description": "log-energy in the 5125-5250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5125.0,
+            5250.0
+        ],
+        "center_hz": 5187.5
+    },
+    "wpt_energy_43": {
+        "label": "energy near 5250-5375 Hz",
+        "description": "log-energy in the 5250-5375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5250.0,
+            5375.0
+        ],
+        "center_hz": 5312.5
+    },
+    "wpt_energy_44": {
+        "label": "energy near 5375-5500 Hz",
+        "description": "log-energy in the 5375-5500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5375.0,
+            5500.0
+        ],
+        "center_hz": 5437.5
+    },
+    "wpt_energy_45": {
+        "label": "energy near 5500-5625 Hz",
+        "description": "log-energy in the 5500-5625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5500.0,
+            5625.0
+        ],
+        "center_hz": 5562.5
+    },
+    "wpt_energy_46": {
+        "label": "energy near 5625-5750 Hz",
+        "description": "log-energy in the 5625-5750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5625.0,
+            5750.0
+        ],
+        "center_hz": 5687.5
+    },
+    "wpt_energy_47": {
+        "label": "energy near 5750-5875 Hz",
+        "description": "log-energy in the 5750-5875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5750.0,
+            5875.0
+        ],
+        "center_hz": 5812.5
+    },
+    "wpt_energy_48": {
+        "label": "energy near 5875-6000 Hz",
+        "description": "log-energy in the 5875-6000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            5875.0,
+            6000.0
+        ],
+        "center_hz": 5937.5
+    },
+    "wpt_energy_49": {
+        "label": "energy near 6000-6125 Hz",
+        "description": "log-energy in the 6000-6125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6000.0,
+            6125.0
+        ],
+        "center_hz": 6062.5
+    },
+    "wpt_energy_50": {
+        "label": "energy near 6125-6250 Hz",
+        "description": "log-energy in the 6125-6250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6125.0,
+            6250.0
+        ],
+        "center_hz": 6187.5
+    },
+    "wpt_energy_51": {
+        "label": "energy near 6250-6375 Hz",
+        "description": "log-energy in the 6250-6375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6250.0,
+            6375.0
+        ],
+        "center_hz": 6312.5
+    },
+    "wpt_energy_52": {
+        "label": "energy near 6375-6500 Hz",
+        "description": "log-energy in the 6375-6500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6375.0,
+            6500.0
+        ],
+        "center_hz": 6437.5
+    },
+    "wpt_energy_53": {
+        "label": "energy near 6500-6625 Hz",
+        "description": "log-energy in the 6500-6625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6500.0,
+            6625.0
+        ],
+        "center_hz": 6562.5
+    },
+    "wpt_energy_54": {
+        "label": "energy near 6625-6750 Hz",
+        "description": "log-energy in the 6625-6750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6625.0,
+            6750.0
+        ],
+        "center_hz": 6687.5
+    },
+    "wpt_energy_55": {
+        "label": "energy near 6750-6875 Hz",
+        "description": "log-energy in the 6750-6875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6750.0,
+            6875.0
+        ],
+        "center_hz": 6812.5
+    },
+    "wpt_energy_56": {
+        "label": "energy near 6875-7000 Hz",
+        "description": "log-energy in the 6875-7000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            6875.0,
+            7000.0
+        ],
+        "center_hz": 6937.5
+    },
+    "wpt_energy_57": {
+        "label": "energy near 7000-7125 Hz",
+        "description": "log-energy in the 7000-7125 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7000.0,
+            7125.0
+        ],
+        "center_hz": 7062.5
+    },
+    "wpt_energy_58": {
+        "label": "energy near 7125-7250 Hz",
+        "description": "log-energy in the 7125-7250 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7125.0,
+            7250.0
+        ],
+        "center_hz": 7187.5
+    },
+    "wpt_energy_59": {
+        "label": "energy near 7250-7375 Hz",
+        "description": "log-energy in the 7250-7375 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7250.0,
+            7375.0
+        ],
+        "center_hz": 7312.5
+    },
+    "wpt_energy_60": {
+        "label": "energy near 7375-7500 Hz",
+        "description": "log-energy in the 7375-7500 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7375.0,
+            7500.0
+        ],
+        "center_hz": 7437.5
+    },
+    "wpt_energy_61": {
+        "label": "energy near 7500-7625 Hz",
+        "description": "log-energy in the 7500-7625 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7500.0,
+            7625.0
+        ],
+        "center_hz": 7562.5
+    },
+    "wpt_energy_62": {
+        "label": "energy near 7625-7750 Hz",
+        "description": "log-energy in the 7625-7750 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7625.0,
+            7750.0
+        ],
+        "center_hz": 7687.5
+    },
+    "wpt_energy_63": {
+        "label": "energy near 7750-7875 Hz",
+        "description": "log-energy in the 7750-7875 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7750.0,
+            7875.0
+        ],
+        "center_hz": 7812.5
+    },
+    "wpt_energy_64": {
+        "label": "energy near 7875-8000 Hz",
+        "description": "log-energy in the 7875-8000 Hz frequency band computed via 6-level WPT with db4 wavelet",
+        "band_hz": [
+            7875.0,
+            8000.0
+        ],
+        "center_hz": 7937.5
+    }
+}

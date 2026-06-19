@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from pathlib import Path
 import pytest
 
@@ -162,3 +163,23 @@ def test_mixed_explanation():
     res_crit = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_critical, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert res_crit["faithfulness_score"] == 0.8
     assert res_crit["escalate"] is True
+
+def test_glossary_completeness():
+    """
+    Test that every feature in any class's grounding_features in KNOWLEDGE_BASE
+    has a corresponding entry in outputs/feature_glossary.json.
+    """
+    script_dir = Path(__file__).resolve().parent
+    repo_dir = script_dir.parent
+    glossary_path = repo_dir / "outputs" / "feature_glossary.json"
+    
+    assert glossary_path.exists(), "feature_glossary.json does not exist"
+    
+    with open(glossary_path, "r", encoding="utf-8") as f:
+        glossary = json.load(f)
+        
+    for c, data in KNOWLEDGE_BASE.items():
+        grounding_feats = data.get("grounding_features", {})
+        for feature in grounding_feats:
+            assert feature in glossary, f"Feature '{feature}' from class '{c}' is missing from feature_glossary.json"
+

@@ -4,6 +4,8 @@ import sys
 import json
 from pathlib import Path
 
+MIN_ABS_SEP = 0.15
+
 def interpolate_p40(p25, p50):
     return p25 + 0.6 * (p50 - p25)
 
@@ -49,6 +51,10 @@ def main():
             # Separation score
             sep = (class_p50 - p50) / spread
             
+            # Check effect size floor
+            if abs(sep) < MIN_ABS_SEP:
+                continue
+                
             # Strong rule
             strong_dir = None
             if class_p50 >= p75:
@@ -101,13 +107,13 @@ def main():
         grounding_results[c] = selected
         
         # Print class summary
-        print(f"\nClass {c} Grounding Selection (Strong count = {strong_count}):")
+        print(f"\nClass {c} Grounding Selection (Strong count = {strong_count}, Total selected = {len(selected)}):")
         for idx, item in enumerate(selected):
             print(f"  {idx+1}. {item['feature']:25s} | dir={item['direction']:4s} | sep={item['sep']:8.4f} | tier={item['tier']}")
             
-        # Warning check
-        if strong_count < 4:
-            print(f"  WARNING: Class {c} has only {strong_count} strong features (grounding weakness)!")
+        # Warning check (if total selected qualifying features < 5)
+        if len(selected) < 5:
+            print(f"  WARNING: {c} has only {len(selected)} grounding features after sep floor")
             
     # Save to outputs/grounding_features.json
     grounding_path.parent.mkdir(parents=True, exist_ok=True)
