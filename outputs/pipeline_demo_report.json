@@ -1,0 +1,831 @@
+{
+    "Bearing": {
+        "predicted": "Bearing",
+        "confidence": 0.9994832277297974,
+        "true_label": "Bearing",
+        "claims": [
+            {
+                "feature": "band_energy_ratio_4",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_25",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_4",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_5",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_8",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_9",
+                "direction": "low",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "band_energy_ratio_4",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 2.3672275347053077e-05,
+                "reference": "data_direction: low, global_p50: 0.0000, val: 0.0000",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_25",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -1.2461044788360596,
+                "reference": "data_direction: low, global_p50: -1.0982, val: -1.2461",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_4",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.9711337089538574,
+                "reference": "data_direction: low, global_p50: 4.7603, val: 3.9711",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_5",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.582824945449829,
+                "reference": "data_direction: low, global_p50: 4.1782, val: 3.5828",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_8",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.250612735748291,
+                "reference": "data_direction: low, global_p50: 3.3511, val: 3.2506",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_9",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.054849147796631,
+                "reference": "data_direction: low, global_p50: 3.4079, val: 3.0548",
+                "reason": "",
+                "critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The analysis points to a bearing fault, typically caused by localized defects creating repetitive impacts that excite high-frequency structural resonances and produce impulsive vibrations. We observe lower-than-normal energy levels across several key frequency bands, specifically near 375-500 Hz, 500-625 Hz, 875-1000 Hz, 1000-1125 Hz, and 3000-3125 Hz. Furthermore, the energy ratio in the 3000-4000 Hz band is also low. This pattern of reduced energy in these bands, while seemingly counter-intuitive for high-frequency excitation, suggests an altered overall vibration profile characteristic of a bearing defect, helping the system isolate the fault."
+    },
+    "Flywheel": {
+        "predicted": "Flywheel",
+        "confidence": 0.9835778474807739,
+        "true_label": "Flywheel",
+        "claims": [
+            {
+                "feature": "wpt_energy_16",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_17",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_4",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_48",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_49",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_5",
+                "direction": "low",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "wpt_energy_16",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 1.749382257461548,
+                "reference": "data_direction: high, global_p50: 1.0915, val: 1.7494",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_17",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 1.507556676864624,
+                "reference": "data_direction: high, global_p50: 0.8822, val: 1.5076",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_4",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.7319934368133545,
+                "reference": "data_direction: low, global_p50: 4.7603, val: 3.7320",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_48",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -3.166595935821533,
+                "reference": "data_direction: high, global_p50: -3.7505, val: -3.1666",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_49",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -3.0160343647003174,
+                "reference": "data_direction: high, global_p50: -3.6244, val: -3.0160",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_5",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 3.424876928329468,
+                "reference": "data_direction: low, global_p50: 4.1782, val: 3.4249",
+                "reason": "",
+                "critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The sensor data suggests a potential flywheel issue. We are observing elevated vibration energy in higher frequency bands, specifically near 1875-2000 Hz, 2000-2125 Hz, 5875-6000 Hz, and 6000-6125 Hz. Concurrently, vibration energy in the lower frequency ranges of 375-500 Hz and 500-625 Hz is notably reduced. This pattern indicates flywheel imbalance or mechanical looseness, which leads to increased vibration at the shaft's rotational frequency and its harmonics. While often characterized by dominant lower-frequency energy, these specific shifts are key indicators for this diagnosis, distinguishing it from sharp high-frequency impacts."
+    },
+    "LIV": {
+        "predicted": "LIV",
+        "confidence": 0.9989394545555115,
+        "true_label": "LIV",
+        "claims": [
+            {
+                "feature": "skewness",
+                "direction": "low",
+                "action_critical": false
+            },
+            {
+                "feature": "spectral_centroid",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "spectral_rolloff_85",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_15",
+                "direction": "low",
+                "action_critical": false
+            },
+            {
+                "feature": "wpt_energy_18",
+                "direction": "low",
+                "action_critical": false
+            },
+            {
+                "feature": "wpt_energy_50",
+                "direction": "low",
+                "action_critical": false
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "skewness",
+                    "direction": "low",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": -0.0686977952718734,
+                "reference": "data_direction: low, global_p50: -0.0526, val: -0.0687",
+                "reason": "",
+                "critical": false
+            },
+            {
+                "claim": {
+                    "feature": "spectral_centroid",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 755.4369537242516,
+                "reference": "data_direction: low, global_p50: 818.2997, val: 755.4370",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "spectral_rolloff_85",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 1379.52,
+                "reference": "data_direction: low, global_p50: 1562.2400, val: 1379.5200",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_15",
+                    "direction": "low",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": 1.7748711109161377,
+                "reference": "data_direction: low, global_p50: 1.9110, val: 1.7749",
+                "reason": "",
+                "critical": false
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_18",
+                    "direction": "low",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": 1.0797876119613647,
+                "reference": "data_direction: low, global_p50: 1.2328, val: 1.0798",
+                "reason": "",
+                "critical": false
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_50",
+                    "direction": "low",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": -3.561696052551269,
+                "reference": "data_direction: low, global_p50: -3.2793, val: -3.5617",
+                "reason": "",
+                "critical": false
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The data indicates a potential issue with the inlet/suction reed valve failing to seal properly. This allows pressurized gas to leak back into the suction line during the compression stroke, creating repeated impulsive events and reducing volumetric efficiency. We observe a lower-than-normal 'brightness' (center of spectral mass) and a lower frequency below which 85% of the total energy lies. This suggests a shift in the overall acoustic energy towards lower frequencies, which aligns with the pressure pulsations and reduced high-frequency content expected from a leaking reed valve."
+    },
+    "LOV": {
+        "predicted": "LOV",
+        "confidence": 0.9643062353134155,
+        "true_label": "LOV",
+        "claims": [
+            {
+                "feature": "wpt_energy_31",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_33",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_34",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_39",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_42",
+                "direction": "high",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "wpt_energy_31",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -4.556619167327881,
+                "reference": "data_direction: high, global_p50: -5.5100, val: -4.5566",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_33",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -6.315171241760254,
+                "reference": "data_direction: high, global_p50: -6.8308, val: -6.3152",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_34",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -5.048676013946533,
+                "reference": "data_direction: high, global_p50: -6.2494, val: -5.0487",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_39",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -7.7311625480651855,
+                "reference": "data_direction: high, global_p50: -8.1606, val: -7.7312",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_42",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -6.026575088500977,
+                "reference": "data_direction: high, global_p50: -6.8305, val: -6.0266",
+                "reason": "",
+                "critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The data suggests a potential issue with the discharge/outlet reed valve. We observe elevated energy across several higher frequency bands, specifically near 3750-3875 Hz, 4000-4125 Hz, 4125-4250 Hz, 4750-4875 Hz, and 5125-5250 Hz. This increase in energy indicates a cyclic impulsive signature. This signature is characteristic of a failing discharge reed valve that isn't sealing properly. When the valve fails to seal, compressed gas leaks back into the cylinder during the suction stroke, causing re-expansion losses and generating these distinct impulsive vibrations."
+    },
+    "NRV": {
+        "predicted": "NRV",
+        "confidence": 0.994231104850769,
+        "true_label": "NRV",
+        "claims": [
+            {
+                "feature": "wpt_energy_30",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_34",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_35",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_36",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_37",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_38",
+                "direction": "low",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "wpt_energy_30",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -6.299219608306885,
+                "reference": "data_direction: low, global_p50: -4.4371, val: -6.2992",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_34",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -8.239981651306152,
+                "reference": "data_direction: low, global_p50: -6.2494, val: -8.2400",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_35",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -8.23813533782959,
+                "reference": "data_direction: low, global_p50: -5.8430, val: -8.2381",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_36",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -8.369471549987793,
+                "reference": "data_direction: low, global_p50: -6.2169, val: -8.3695",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_37",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -8.509649276733398,
+                "reference": "data_direction: low, global_p50: -6.5192, val: -8.5096",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_38",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -9.79067039489746,
+                "reference": "data_direction: low, global_p50: -7.5276, val: -9.7907",
+                "reason": "",
+                "critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "We've detected an issue with the Non-Return Valve (NRV), indicating it's likely degrading or sticking. This valve's primary role is to prevent compressed air from flowing back into the compressor from the tank. When it malfunctions, it disrupts the pressure dynamics, leading to backflow and unique acoustic transients. Our analysis shows significantly low energy levels across several high-frequency bands, specifically near 3625-3750 Hz, 4125-4250 Hz, 4250-4375 Hz, 4375-4500 Hz, 4500-4625 Hz, and 4625-4750 Hz. This reduction in high-frequency energy is a key indicator supporting the presence of altered pressure conditions and backflow characteristics consistent with an NRV fault."
+    },
+    "Piston": {
+        "predicted": "Piston",
+        "confidence": 0.9915249943733215,
+        "true_label": "Piston",
+        "claims": [
+            {
+                "feature": "wpt_energy_24",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_25",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_56",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_8",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_9",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "zero_crossing_rate",
+                "direction": "low",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "wpt_energy_24",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -2.159322500228882,
+                "reference": "data_direction: low, global_p50: -0.8191, val: -2.1593",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_25",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -2.4621872901916504,
+                "reference": "data_direction: low, global_p50: -1.0982, val: -2.4622",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_56",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": -7.140579700469971,
+                "reference": "data_direction: low, global_p50: -5.9155, val: -7.1406",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_8",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 1.9952789545059204,
+                "reference": "data_direction: low, global_p50: 3.3511, val: 1.9953",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_9",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 2.0525944232940674,
+                "reference": "data_direction: low, global_p50: 3.4079, val: 2.0526",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "zero_crossing_rate",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 0.06332,
+                "reference": "data_direction: low, global_p50: 0.0682, val: 0.0633",
+                "reason": "",
+                "critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The diagnosis of a Piston fault is supported by a general reduction in acoustic energy across several frequency bands. Specifically, we observe low energy near 875-1000 Hz, 1000-1125 Hz, 2875-3000 Hz, 3000-3125 Hz, and 6875-7000 Hz. Additionally, the rate of sign changes, a proxy for high-frequency content, is also low. This overall decrease in broadband content and high-frequency energy is consistent with the physics of worn piston rings or excessive piston-cylinder clearance. These conditions can lead to piston slap, causing lateral impacts and gas blow-by, which alters the normal sound signature and can dampen energy across these ranges rather than necessarily generating higher broadband noise."
+    },
+    "Riderbelt": {
+        "predicted": "Riderbelt",
+        "confidence": 0.9984161853790283,
+        "true_label": "Riderbelt",
+        "claims": [
+            {
+                "feature": "band_energy_ratio_1",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "band_energy_ratio_2",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "spectral_centroid",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_20",
+                "direction": "high",
+                "action_critical": false
+            },
+            {
+                "feature": "wpt_energy_3",
+                "direction": "low",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_52",
+                "direction": "high",
+                "action_critical": false
+            }
+        ],
+        "per_claim": [
+            {
+                "claim": {
+                    "feature": "band_energy_ratio_1",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 0.8049824833869934,
+                "reference": "data_direction: low, global_p50: 0.9060, val: 0.8050",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "band_energy_ratio_2",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 0.1923199146986007,
+                "reference": "data_direction: high, global_p50: 0.0926, val: 0.1923",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "spectral_centroid",
+                    "direction": "high",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 881.9554932987467,
+                "reference": "data_direction: high, global_p50: 818.2997, val: 881.9555",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_20",
+                    "direction": "high",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": 0.5387793183326721,
+                "reference": "data_direction: high, global_p50: 0.4576, val: 0.5388",
+                "reason": "",
+                "critical": false
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_3",
+                    "direction": "low",
+                    "action_critical": true,
+                    "critical": true
+                },
+                "passed": true,
+                "actual_value": 4.540731430053711,
+                "reference": "data_direction: low, global_p50: 5.2907, val: 4.5407",
+                "reason": "",
+                "critical": true
+            },
+            {
+                "claim": {
+                    "feature": "wpt_energy_52",
+                    "direction": "high",
+                    "action_critical": false,
+                    "critical": false
+                },
+                "passed": true,
+                "actual_value": -4.108870029449463,
+                "reference": "data_direction: high, global_p50: -4.2053, val: -4.1089",
+                "reason": "",
+                "critical": false
+            }
+        ],
+        "faithfulness": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed verification",
+        "explanation": "The acoustic signature suggests a rider belt fault. This typically occurs when wear or damage to the rider ring/belt, which supports the piston and prevents metal-to-metal contact, increases friction. This increased friction generates a more continuous broadband noise rather than distinct impacts. Our data shows a shift of acoustic energy towards higher frequencies, with less energy in the 0-1000 Hz band and more energy in the 1000-2000 Hz band. Additionally, the overall brightness of the sound, or spectral centroid, is higher, confirming this prevalence of broadband, higher-frequency noise."
+    }
+}

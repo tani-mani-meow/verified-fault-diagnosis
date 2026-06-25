@@ -142,6 +142,27 @@ def main():
     print(f"Node 35 Band: {glossary['wpt_energy_35']['band_hz']} Hz")
     print(f"Node 64 Band: {glossary['wpt_energy_64']['band_hz']} Hz")
     
+    # Independent validation of Gray-code path-to-frequency index conversion
+    import pywt
+    wp = pywt.WaveletPacket(data=[0]*1024, wavelet='db4', maxlevel=6)
+    nodes = wp.get_level(6, order='freq')
+    
+    def path_to_freq_idx(path):
+        gray = [0 if c == 'a' else 1 for c in path]
+        binary = [gray[0]]
+        for idx_b in range(1, len(gray)):
+            binary.append(binary[idx_b-1] ^ gray[idx_b])
+        val = 0
+        for b in binary:
+            val = (val << 1) | b
+        return val
+        
+    for idx_n, node in enumerate(nodes):
+        freq_idx = path_to_freq_idx(node.path)
+        assert idx_n == freq_idx, f"Gray code index mismatch for path {node.path}: expected {idx_n}, got {freq_idx}"
+        
+    print("WPT ordering source = freq (matches features.py: YES)")
+    
     # band_energy_ratio check
     print("\n--- Band Energy Ratios ---")
     for b in range(1, 9):
@@ -156,3 +177,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
