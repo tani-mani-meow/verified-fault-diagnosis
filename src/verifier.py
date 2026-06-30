@@ -182,3 +182,114 @@ def verify_explanation(recording_features, predicted_class, claims, action_criti
         "faithfulness_score": faithfulness_score,
         "escalate": escalate
     }
+
+def check_sample_faithfulness(recording_features, predicted_class, claims, thresholds=None, calibration=None):
+    """
+    Computes both sample_true (against actual p75/p25 direction) and class_consistent (against class calibration).
+    """
+    if thresholds is None:
+        thresholds = load_thresholds()
+    if calibration is None:
+        calibration = load_calibration()
+        
+    per_claim = []
+    sample_true_count = 0
+    class_consistent_count = 0
+    
+    class_grounding = KNOWLEDGE_BASE.get(predicted_class, {}).get("grounding_features", {})
+    
+    for c in claims:
+        feature = c.get("feature")
+        direction = c.get("direction", "")
+        action_critical = c.get("critical", False) or c.get("action_critical", False)
+        
+        # Grounding check
+        if feature not in class_grounding:
+            per_claim.append({
+                "feature": feature,
+                "claimed_dir": direction,
+                "sample_dir": "neutral",
+                "class_dir": "neutral",
+                "sample_true": False,
+                "class_consistent": False,
+                "atypical": False,
+                "action_critical": action_critical,
+                "reason": "feature not grounded for this class"
+            })
+            continue
+            
+        if feature not in recording_features:
+            per_claim.append({
+                "feature": feature,
+                "claimed_dir": direction,
+                "sample_dir": "neutral",
+                "class_dir": "neutral",
+                "sample_true": False,
+                "class_consistent": False,
+                "atypical": False,
+                "action_critical": action_critical,
+                "reason": f"feature '{feature}' not found in recording features"
+            })
+            continue
+            
+        value = recording_features[feature]
+        global_feat = thresholds["global"].get(feature, {})
+        global_p25 = global_feat.get("p25", 0.0)
+        global_p75 = global_feat.get("p75", 0.0)
+        
+        # Determine sample actual direction
+        if value >= global_p75:
+            sample_dir = "high"
+        elif value <= global_p25:
+            sample_dir = "low"
+        else:
+            sample_dir = "neutral"
+            
+        claim_dir_norm = normalize_claim_dir(direction)
+        
+        # sample_true check
+        if claim_dir_norm == "high":
+            sample_true = (sample_dir == "high")
+        elif claim_dir_norm == "low":
+            sample_true = (sample_dir == "low")
+        else:
+            sample_true = (sample_dir == "neutral")
+            
+        # class_consistent check
+        cal_class = calibration.get(predicted_class, {})
+        class_dir = cal_class.get(feature, {}).get("data_direction", "neutral")
+        if claim_dir_norm == "high":
+            class_consistent = (class_dir == "high")
+        elif claim_dir_norm == "low":
+            class_consistent = (class_dir == "low")
+        else:
+            class_consistent = (class_dir == "neutral")
+            
+        atypical = sample_true and not class_consistent
+        
+        if sample_true:
+            sample_true_count += 1
+        if class_consistent:
+            class_consistent_count += 1
+            
+        per_claim.append({
+            "feature": feature,
+            "claimed_dir": direction,
+            "sample_dir": sample_dir,
+            "class_dir": class_dir,
+            "sample_true": sample_true,
+            "class_consistent": class_consistent,
+            "atypical": atypical,
+            "action_critical": action_critical
+        })
+        
+    num_claims = len(claims)
+    faithfulness = sample_true_count / num_claims if num_claims > 0 else 1.0
+    class_consistency_score = class_consistent_count / num_claims if num_claims > 0 else 1.0
+    
+    return {
+        "per_claim": per_claim,
+        "faithfulness": faithfulness,
+        "class_consistency": class_consistency_score
+    }
+

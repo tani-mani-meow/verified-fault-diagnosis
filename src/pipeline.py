@@ -9,18 +9,14 @@ import joblib
 
 sys.path.append(str(Path(__file__).resolve().parent))
 from knowledge_base import KNOWLEDGE_BASE
-from verifier import load_thresholds, load_calibration, verify_explanation, verify_claim
+from verifier import load_thresholds, load_calibration, verify_explanation, verify_claim, check_sample_faithfulness
 import llm_client
 
 MOCK_FIXTURES = {
     "correct": {
         "claims": [
             {"feature": "spectral_rolloff_85", "direction": "low", "action_critical": False},
-            {"feature": "skewness", "direction": "low", "action_critical": False},
-            {"feature": "spectral_centroid", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_15", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_18", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_50", "direction": "low", "action_critical": False}
+            {"feature": "spectral_centroid", "direction": "low", "action_critical": False}
         ],
         "explanation": "suction valve leakage (LIV) is confirmed as high frequency roll-off under 85% is low and spectral centroid is low, showing reduced high-frequency noise."
     },
@@ -28,23 +24,32 @@ MOCK_FIXTURES = {
         "claims": [
             {"feature": "spectral_rolloff_85", "direction": "low", "action_critical": False},
             {"feature": "skewness", "direction": "low", "action_critical": False},
-            {"feature": "spectral_centroid", "direction": "high", "action_critical": False}, # Flipped direction!
-            {"feature": "wpt_energy_15", "direction": "high", "action_critical": False}, # Flipped direction!
-            {"feature": "wpt_energy_18", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_50", "direction": "low", "action_critical": False}
+            {"feature": "spectral_centroid", "direction": "low", "action_critical": False}
         ],
-        "explanation": "suction valve leakage shows some low features, but spectral centroid and wpt_energy_15 are incorrectly claimed as high."
+        "explanation": "suction valve leakage shows some low features, but skewness is claimed as low when it is actually neutral."
     },
     "critical": {
         "claims": [
             {"feature": "spectral_rolloff_85", "direction": "low", "action_critical": False},
-            {"feature": "skewness", "direction": "low", "action_critical": False},
-            {"feature": "spectral_centroid", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_15", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_18", "direction": "low", "action_critical": False},
-            {"feature": "wpt_energy_50", "direction": "high", "action_critical": True} # Flipped and critical!
+            {"feature": "skewness", "direction": "low", "action_critical": True}
         ],
         "explanation": "suction valve leakage explanation with a false action-critical claim."
+    },
+    "atypical_non_critical": {
+        "claims": [
+            {"feature": "spectral_rolloff_85", "direction": "low", "action_critical": False},
+            {"feature": "spectral_centroid", "direction": "low", "action_critical": False},
+            {"feature": "skewness", "direction": "high", "action_critical": False}
+        ],
+        "explanation": "suction valve leakage explanation with atypical features."
+    },
+    "atypical_critical": {
+        "claims": [
+            {"feature": "spectral_rolloff_85", "direction": "low", "action_critical": False},
+            {"feature": "spectral_centroid", "direction": "low", "action_critical": False},
+            {"feature": "skewness", "direction": "high", "action_critical": True}
+        ],
+        "explanation": "suction valve leakage explanation with atypical action-critical features."
     }
 }
 
@@ -159,7 +164,7 @@ def run_pipeline(sample_row, true_label=None, mock=False):
             "3. In the 'explanation' string:\n"
             "   - Write a plain-English explanation for a technician (maximum 120 words).\n"
             "   - Reference frequency bands or human descriptions (e.g. 'energy near 1750-1875 Hz' or 'frequency below which 85% of energy lies'), NEVER use raw canonical names (like 'wpt_energy_15' or 'spectral_rolloff_85') in the explanation prose.\n"
-            "   - Incorporate the physics mechanism (from the knowledge base) and how the measured features support this.\n"
+            "   - Use ONLY the provided Physics Mechanism description for causal wording; do NOT introduce new physical mechanisms or adjectives (e.g., do not call the signal 'impulsive' unless the mechanism text says so).\n"
             "4. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
             "{\n"
             "  'claims': [\n"
@@ -171,7 +176,7 @@ def run_pipeline(sample_row, true_label=None, mock=False):
         
         prompt = (
             f"Predicted fault class: {predicted_class}\n"
-            f"Physics Mechanism: {kb_entry.get('mechanism')}\n\n"
+            f"Physics Mechanism VERBATIM: {kb_entry.get('mechanism')}\n\n"
             f"Grounding Context features (percentiles and actual values):\n{context_str}\n\n"
             "Generate the JSON response matching the schema above."
         )
@@ -203,9 +208,11 @@ def run_pipeline(sample_row, true_label=None, mock=False):
             "claims": [],
             "per_claim": [],
             "faithfulness": 0.0,
+            "class_consistency": 0.0,
             "gate_decision": "ESCALATE",
             "reason": "unparseable_llm_output",
-            "explanation": parsed_json["explanation"]
+            "explanation": parsed_json["explanation"],
+            "mechanism_warnings": []
         }
         
     claims_list = parsed_json.get("claims", [])
@@ -215,38 +222,75 @@ def run_pipeline(sample_row, true_label=None, mock=False):
         vc["critical"] = vc.get("action_critical", False)
         verifier_claims.append(vc)
         
-    res = verify_explanation(sample_row, predicted_class, verifier_claims, thresholds=thresholds, calibration=calibration)
+    res = check_sample_faithfulness(sample_row, predicted_class, verifier_claims, thresholds=thresholds, calibration=calibration)
     
-    # 6. Trust Gate
-    faithfulness = res["faithfulness_score"]
-    escalate_gate = res["escalate"]
+    # Post-generation banned-contradiction check (Step D)
+    explanation_text = parsed_json.get("explanation", "")
+    explanation_lower = explanation_text.lower()
+    mechanism_lower = kb_entry.get("mechanism", "").lower()
+    mechanism_warnings = []
     
-    # Double check if any action-critical claim failed
-    action_critical_failed = False
-    for r in res["per_claim"]:
-        if r["critical"] and not r["passed"]:
-            action_critical_failed = True
+    kurtosis_data_dir = calibration.get(predicted_class, {}).get("kurtosis", {}).get("data_direction", "neutral")
+    if kurtosis_data_dir != "high":
+        banned_terms = ["impulsive", "impact", "spike"]
+        for term in banned_terms:
+            if term in explanation_lower and term not in mechanism_lower:
+                mechanism_warnings.append(
+                    f"Contradiction: explanation contains '{term}' but class kurtosis is not high in data and term not in mechanism description."
+                )
+                
+    # 6. Trust Gate redesign (Step C)
+    faithfulness = res["faithfulness"]
+    class_consistency = res["class_consistency"]
+    per_claim = res["per_claim"]
+    
+    gate_decision = "RELEASE"
+    reason = "passed_verification"
+    atypical_features = []
+    
+    # 1. If any ACTION-CRITICAL claim is NOT sample_true -> ESCALATE, reason="false_action_critical"
+    false_action_critical = False
+    for pc in per_claim:
+        if pc["action_critical"] and not pc["sample_true"]:
+            false_action_critical = True
+            break
             
-    if escalate_gate or action_critical_failed or faithfulness < 0.8:
+    if false_action_critical:
         gate_decision = "ESCALATE"
-        if action_critical_failed:
-            reason = "action-critical claim failed"
-        elif faithfulness < 0.8:
-            reason = "low faithfulness score"
-        else:
-            reason = "verification failed"
+        reason = "false_action_critical"
+    # 2. Else if faithfulness < 0.80 -> ESCALATE, reason="low_faithfulness"
+    elif faithfulness < 0.80:
+        gate_decision = "ESCALATE"
+        reason = "low_faithfulness"
     else:
-        gate_decision = "RELEASE"
-        reason = "passed verification"
-        
-    return {
+        # 3. Else if any claim is sample_true but NOT class_consistent:
+        # mark it 'atypical'; if any ATYPICAL claim is action-critical -> ESCALATE, reason="atypical_action_critical"
+        atypical_action_critical = False
+        for pc in per_claim:
+            if pc["atypical"]:
+                atypical_features.append(pc["feature"])
+                if pc["action_critical"]:
+                    atypical_action_critical = True
+                    
+        if atypical_action_critical:
+            gate_decision = "ESCALATE"
+            reason = "atypical_action_critical"
+            
+    report = {
         "predicted": predicted_class,
         "confidence": confidence,
         "true_label": true_label,
         "claims": claims_list,
-        "per_claim": res["per_claim"],
+        "per_claim": per_claim,
         "faithfulness": faithfulness,
+        "class_consistency": class_consistency,
         "gate_decision": gate_decision,
         "reason": reason,
-        "explanation": parsed_json.get("explanation", "")
+        "explanation": explanation_text,
+        "mechanism_warnings": mechanism_warnings
     }
+    
+    if atypical_features and gate_decision == "RELEASE":
+        report["atypical_features"] = atypical_features
+        
+    return report
