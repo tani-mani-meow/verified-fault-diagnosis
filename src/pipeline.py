@@ -112,30 +112,31 @@ def run_pipeline(sample_row, true_label=None, mock=False):
         glossary = json.load(f)
         
     grounding_feats = kb_entry.get("grounding_features", {})
-    context_list = []
+    context_lines = []
+    context_lines.append("feature | human label + freq band | this sample's value | global p25 | p50 | p75 | sample_dir")
+    context_lines.append("---|---|---|---|---|---|---")
     
     for feat in sorted(grounding_feats.keys()):
-        expected_dir = grounding_feats[feat]
         actual_val = sample_row[feat]
         gloss = glossary.get(feat, {})
         label = gloss.get("label", feat)
         
-        # global and class percentiles
+        # global percentiles
         global_p50 = thresholds["global"].get(feat, {}).get("p50", 0.0)
-        class_p50 = thresholds["classes"].get(predicted_class, {}).get(feat, {}).get("p50", 0.0)
         global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
         global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
         
-        context_list.append({
-            "feature": feat,
-            "label": label,
-            "expected_direction": expected_dir,
-            "actual_value": actual_val,
-            "class_p50": class_p50,
-            "global_p50": global_p50,
-            "global_p25": global_p25,
-            "global_p75": global_p75
-        })
+        # Determine sample actual direction
+        if actual_val >= global_p75:
+            sample_dir = "high"
+        elif actual_val <= global_p25:
+            sample_dir = "low"
+        else:
+            sample_dir = "normal"
+            
+        context_lines.append(f"{feat} | {label} | {actual_val:.4f} | {global_p25:.4f} | {global_p50:.4f} | {global_p75:.4f} | {sample_dir}")
+        
+    context_str = "\n".join(context_lines)
         
     # 4. LLM Generation or Mock Fixture
     parsed_json = None
@@ -151,12 +152,11 @@ def run_pipeline(sample_row, true_label=None, mock=False):
             raise ValueError("GEMINI_API_KEY is not set. Run in mock mode or update .env file.")
             
         # Build prompt
-        context_str = json.dumps(context_list, indent=2)
         system_prompt = (
             "You are an expert diagnostic assistant for air compressor maintenance.\n"
-            "Your task is to generate a technician-facing explanation and a structured list of claims based ONLY on the provided grounding context.\n\n"
+            "Your task is to generate a technician-facing explanation and a structured list of claims based ONLY on the provided grounding context table.\n\n"
             "Strict Rules:\n"
-            "1. ONLY make claims about features present in the grounding context. Any other feature will fail verification.\n"
+            "1. ONLY make claims about features present in the grounding context table. Any other feature will fail verification.\n"
             "2. For each claim, specify:\n"
             "   - 'feature': exact canonical feature name (e.g. 'spectral_rolloff_85').\n"
             "   - 'direction': 'high' or 'low'.\n"
@@ -164,8 +164,10 @@ def run_pipeline(sample_row, true_label=None, mock=False):
             "3. In the 'explanation' string:\n"
             "   - Write a plain-English explanation for a technician (maximum 120 words).\n"
             "   - Reference frequency bands or human descriptions (e.g. 'energy near 1750-1875 Hz' or 'frequency below which 85% of energy lies'), NEVER use raw canonical names (like 'wpt_energy_15' or 'spectral_rolloff_85') in the explanation prose.\n"
+            "   - Explain the diagnosis using ONLY features whose sample_dir is 'high' or 'low'. For 'normal' features, do NOT assert any direction (say 'within normal range' or omit). Do NOT mention any feature not in this table.\n"
             "   - Use ONLY the provided Physics Mechanism description for causal wording; do NOT introduce new physical mechanisms or adjectives (e.g., do not call the signal 'impulsive' unless the mechanism text says so).\n"
-            "4. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
+            "4. Output the structured claims list containing ONLY the high/low features you used.\n"
+            "5. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
             "{\n"
             "  'claims': [\n"
             "    {'feature': 'canonical_name', 'direction': 'high|low', 'action_critical': true/false}\n"
@@ -177,7 +179,7 @@ def run_pipeline(sample_row, true_label=None, mock=False):
         prompt = (
             f"Predicted fault class: {predicted_class}\n"
             f"Physics Mechanism VERBATIM: {kb_entry.get('mechanism')}\n\n"
-            f"Grounding Context features (percentiles and actual values):\n{context_str}\n\n"
+            f"Grounding Context Table:\n{context_str}\n\n"
             "Generate the JSON response matching the schema above."
         )
         

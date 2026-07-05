@@ -20,12 +20,21 @@ def generate(prompt: str, system: str | None = None, max_retries: int = 5) -> st
     """
     Generates content using the Google GenAI SDK with exponential backoff on transient errors.
     """
-    contents = prompt if system is None else f"{system}\n\n{prompt}"
     delay = 2.0
+    
+    from google.genai import types
+    config = types.GenerateContentConfig(
+        temperature=0.0,
+        system_instruction=system
+    )
     
     for attempt in range(max_retries):
         try:
-            resp = _client.models.generate_content(model=_MODEL, contents=contents)
+            resp = _client.models.generate_content(
+                model=_MODEL,
+                contents=prompt,
+                config=config
+            )
             return resp.text
         except Exception as e:
             msg = str(e).lower()
