@@ -2,47 +2,57 @@
 import os
 import time
 import random
-from google import genai
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Check for API key presence
-api_key = os.environ.get("GEMINI_API_KEY")
-if not api_key or api_key == "your_key_here":
-    # Set a dummy key if missing to prevent startup crash; smoke test checks this
-    api_key = "dummy_key"
+# Read config from environment
+API_KEY = os.environ.get("NVIDIA_API_KEY")
+MODEL = os.environ.get("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
+BASE_URL = os.environ.get("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
 
-_client = genai.Client(api_key=api_key)
-_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+# If NVIDIA_API_KEY is missing, set a dummy key to prevent crash at start (smoke test will catch it)
+if not API_KEY or API_KEY == "your_nvidia_key_here":
+    API_KEY = "dummy_key"
 
 def generate(prompt: str, system: str | None = None, max_retries: int = 5) -> str:
     """
-    Generates content using the Google GenAI SDK with exponential backoff on transient errors.
+    Generates content using the NVIDIA NIM API with exponential backoff on transient errors.
     """
+    url = f"{BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    
+    data = {
+        "model": MODEL,
+        "messages": messages,
+        "temperature": 0.0
+    }
+    
     delay = 2.0
-    
-    from google.genai import types
-    config = types.GenerateContentConfig(
-        temperature=0.0,
-        system_instruction=system
-    )
-    
     for attempt in range(max_retries):
         try:
-            resp = _client.models.generate_content(
-                model=_MODEL,
-                contents=prompt,
-                config=config
-            )
-            return resp.text
-        except Exception as e:
-            msg = str(e).lower()
-            # transient errors: rate limit (429), quota exhaustion, service unavailable (503)
-            transient = ("429" in msg or "rate" in msg or "quota" in msg
-                         or "resource_exhausted" in msg or "503" in msg
-                         or "unavailable" in msg)
-            if attempt == max_retries - 1 or not transient:
+            r = requests.post(url, json=data, headers=headers)
+            if r.status_code == 200:
+                res_json = r.json()
+                return res_json["choices"][0]["message"]["content"]
+            elif r.status_code in [429, 503, 504]:
+                # transient rate limit or service unavailable
+                time.sleep(delay + random.uniform(0, 1))
+                delay *= 2
+            else:
+                r.raise_for_status()
+        except Exception:
+            if attempt == max_retries - 1:
                 raise
             time.sleep(delay + random.uniform(0, 1))
             delay *= 2
@@ -51,6 +61,6 @@ def generate(prompt: str, system: str | None = None, max_retries: int = 5) -> st
 
 def politeness_delay(seconds: float = 1.0):
     """
-    A helper to sleep between successive requests to respect free-tier per-minute limits.
+    A helper to sleep between successive requests to respect rate limits.
     """
     time.sleep(seconds)

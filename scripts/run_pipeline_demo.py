@@ -112,12 +112,12 @@ def run_mock_demo(samples):
     print("\nALL MOCK GATE DEMO ASSERTIONS PASSED SUCCESSFULLY!")
 
 def run_real_demo(samples):
-    print("=== RUNNING REAL PIPELINE DEMO WITH GEMINI ===")
+    print("=== RUNNING REAL PIPELINE DEMO WITH NVIDIA NIM ===")
     
     # Verify API key
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key or api_key in ["dummy_key", "your_key_here"]:
-        print("WARNING: GEMINI_API_KEY is missing or set to placeholder in .env. Skipping real demo.")
+    api_key = os.environ.get("NVIDIA_API_KEY")
+    if not api_key or api_key in ["dummy_key", "your_nvidia_key_here"]:
+        print("WARNING: NVIDIA_API_KEY is missing or set to placeholder in .env. Skipping real demo.")
         return
         
     results = {}

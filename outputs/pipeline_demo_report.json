@@ -41,7 +41,67 @@
         "class_consistency": 1.0,
         "gate_decision": "RELEASE",
         "reason": "passed_verification",
-        "explanation": "The predicted fault is an Inlet Valve (LIV) issue. This typically occurs when the inlet/suction reed valve fails to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This produces a repeated impulsive event once per compression cycle and reduces volumetric efficiency. Our analysis shows that the brightness, or center of spectral mass, is low. Additionally, the frequency below which 85% of the energy lies is low. These indicate a shift in the overall energy distribution towards lower frequencies.",
+        "explanation": "The inlet/suction reed valve failure is indicated by the low spectral centroid and low frequency below which 85% of energy lies, suggesting a shift in the brightness and energy distribution of the signal. This is consistent with the repeated impulsive event once per compression cycle, reducing volumetric efficiency.",
+        "mechanism_warnings": []
+    },
+    "LOV": {
+        "predicted": "LOV",
+        "confidence": 0.9643062353134155,
+        "true_label": "LOV",
+        "claims": [
+            {
+                "feature": "wpt_energy_31",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_34",
+                "direction": "high",
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_42",
+                "direction": "high",
+                "action_critical": true
+            }
+        ],
+        "per_claim": [
+            {
+                "feature": "wpt_energy_31",
+                "claimed_dir": "high",
+                "sample_dir": "high",
+                "class_dir": "high",
+                "sample_true": true,
+                "class_consistent": true,
+                "atypical": false,
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_34",
+                "claimed_dir": "high",
+                "sample_dir": "high",
+                "class_dir": "high",
+                "sample_true": true,
+                "class_consistent": true,
+                "atypical": false,
+                "action_critical": true
+            },
+            {
+                "feature": "wpt_energy_42",
+                "claimed_dir": "high",
+                "sample_dir": "high",
+                "class_dir": "high",
+                "sample_true": true,
+                "class_consistent": true,
+                "atypical": false,
+                "action_critical": true
+            }
+        ],
+        "faithfulness": 1.0,
+        "class_consistency": 1.0,
+        "gate_decision": "RELEASE",
+        "reason": "passed_verification",
+        "explanation": "The LOV fault is indicated by high energy near 3750-3875 Hz, 4125-4250 Hz, and 5125-5250 Hz, suggesting a cyclic impulsive signature on the discharge side due to the discharge/outlet reed valve failing to seal and allowing compressed gas to leak back into the cylinder during the suction stroke.",
         "mechanism_warnings": []
     }
 }

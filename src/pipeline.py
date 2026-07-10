@@ -147,9 +147,9 @@ def run_pipeline(sample_row, true_label=None, mock=False):
         parsed_json = MOCK_FIXTURES.get(fixture_key, MOCK_FIXTURES["correct"])
     else:
         # Check if real API key is available
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key or api_key in ["dummy_key", "your_key_here"]:
-            raise ValueError("GEMINI_API_KEY is not set. Run in mock mode or update .env file.")
+        api_key = os.environ.get("NVIDIA_API_KEY")
+        if not api_key or api_key in ["dummy_key", "your_nvidia_key_here"]:
+            raise ValueError("NVIDIA_API_KEY is not set. Run in mock mode or update .env file.")
             
         # Build prompt
         system_prompt = (

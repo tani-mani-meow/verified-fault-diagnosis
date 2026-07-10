@@ -1,4 +1,4 @@
-# scripts/test_gemini.py
+# scripts/test_llm.py
 import os
 import sys
 from pathlib import Path
@@ -16,15 +16,15 @@ def main():
     env_path = repo_dir / ".env"
     load_dotenv(dotenv_path=env_path, override=True)
     
-    api_key = os.environ.get("GEMINI_API_KEY")
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    api_key = os.environ.get("NVIDIA_API_KEY")
+    model_name = os.environ.get("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
     
-    print("--- Gemini API Smoke Test ---")
+    print("--- Nvidia NIM API Smoke Test ---")
     print(f"Target Model: {model_name}")
     
-    if not api_key or api_key == "your_key_here" or api_key == "dummy_key":
-        print("\n[NOTICE]: GEMINI_API_KEY is not set or uses the placeholder 'your_key_here' in .env.")
-        print("Please paste your real API key from https://aistudio.google.com/apikey into compressor-pdm/.env to enable LLM generation.")
+    if not api_key or api_key == "your_nvidia_key_here" or api_key == "dummy_key":
+        print("\n[NOTICE]: NVIDIA_API_KEY is not set or uses the placeholder 'your_nvidia_key_here' in .env.")
+        print("Please paste your real API key in compressor-pdm/.env to enable LLM generation.")
         sys.exit(0)
         
     try:
