@@ -73,3 +73,19 @@ def test_pipeline_atypical_critical(base_liv_sample):
     report = run_pipeline(sample, true_label="LIV", mock="atypical_critical")
     assert report["gate_decision"] == "ESCALATE"
     assert report["reason"] == "atypical_action_critical"
+
+def test_pipeline_impulsive_unsupported():
+    features_csv = repo_dir / "outputs" / "features.csv"
+    df = pd.read_csv(features_csv)
+    lov_sample = df[df['class'] == 'LOV'].iloc[0].to_dict()
+    report = run_pipeline(lov_sample, true_label="LOV", mock="impulsive_unsupported")
+    assert len(report["mechanism_warnings"]) > 0
+    assert any("impulsive" in w for w in report["mechanism_warnings"])
+
+def test_pipeline_impulsive_supported():
+    features_csv = repo_dir / "outputs" / "features.csv"
+    df = pd.read_csv(features_csv)
+    rb_sample = df[df['class'] == 'Riderbelt'].iloc[0].to_dict()
+    report = run_pipeline(rb_sample, true_label="Riderbelt", mock="impulsive_supported")
+    assert len(report["mechanism_warnings"]) == 0
+

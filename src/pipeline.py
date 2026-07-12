@@ -50,6 +50,14 @@ MOCK_FIXTURES = {
             {"feature": "skewness", "direction": "high", "action_critical": True}
         ],
         "explanation": "suction valve leakage explanation with atypical action-critical features."
+    },
+    "impulsive_unsupported": {
+        "claims": [],
+        "explanation": "The analysis shows a repeated impulsive event on the discharge side."
+    },
+    "impulsive_supported": {
+        "claims": [],
+        "explanation": "The analysis shows a repeated impulsive event once per rotation."
     }
 }
 
@@ -229,16 +237,25 @@ def run_pipeline(sample_row, true_label=None, mock=False):
     # Post-generation banned-contradiction check (Step D)
     explanation_text = parsed_json.get("explanation", "")
     explanation_lower = explanation_text.lower()
-    mechanism_lower = kb_entry.get("mechanism", "").lower()
     mechanism_warnings = []
     
-    kurtosis_data_dir = calibration.get(predicted_class, {}).get("kurtosis", {}).get("data_direction", "neutral")
-    if kurtosis_data_dir != "high":
-        banned_terms = ["impulsive", "impact", "spike"]
+    # Calculate impulsiveness support using global p60 threshold
+    kurt_global = thresholds["global"].get("kurtosis", {})
+    cf_global = thresholds["global"].get("crest_factor", {})
+    k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
+    cf_p60 = cf_global.get("p50", 0.0) + 0.4 * (cf_global.get("p75", 0.0) - cf_global.get("p50", 0.0))
+    
+    class_k_p50 = thresholds["classes"].get(predicted_class, {}).get("kurtosis", {}).get("p50", 0.0)
+    class_cf_p50 = thresholds["classes"].get(predicted_class, {}).get("crest_factor", {}).get("p50", 0.0)
+    
+    impulsiveness_supported = (class_k_p50 >= k_p60) or (class_cf_p50 >= cf_p60)
+    
+    if not impulsiveness_supported:
+        banned_terms = ["impulsive", "impact", "spike", "knock", "slam", "hammer", "transient", "burst"]
         for term in banned_terms:
-            if term in explanation_lower and term not in mechanism_lower:
+            if term in explanation_lower:
                 mechanism_warnings.append(
-                    f"Contradiction: explanation contains '{term}' but class kurtosis is not high in data and term not in mechanism description."
+                    f"Contradiction: explanation contains '{term}' but class is not impulsiveness_supported."
                 )
                 
     # 6. Trust Gate redesign (Step C)

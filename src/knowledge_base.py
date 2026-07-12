@@ -10,8 +10,8 @@ KNOWLEDGE_BASE = {
         "mechanism": (
             "The inlet/suction reed valve fails to seal during the compression "
             "stroke, so pressurized gas leaks back into the suction line. This "
-            "produces a repeated impulsive event once per compression cycle and "
-            "reduces volumetric efficiency."
+            "causes backflow that shifts the energy distribution toward lower "
+            "frequencies and reduces volumetric efficiency."
         ),
         "acoustic_signature": {
             "time_domain": (
@@ -56,8 +56,8 @@ KNOWLEDGE_BASE = {
         "mechanism": (
             "The discharge/outlet reed valve fails to seal, so compressed gas leaks "
             "back from the discharge line into the cylinder during the suction "
-            "stroke. Causes re-expansion losses and a cyclic impulsive signature on "
-            "the discharge side."
+            "stroke. Causes re-expansion losses and elevated high-frequency band "
+            "energy on the discharge side."
         ),
         "acoustic_signature": {
             "time_domain": (
@@ -144,9 +144,9 @@ KNOWLEDGE_BASE = {
     "Bearing": {
         "name": "Bearing fault (rolling-element defect)",
         "mechanism": (
-            "A localized defect on a bearing raceway or rolling element produces a "
-            "repetitive mechanical impact each time an element passes the defect, "
-            "exciting high-frequency structural resonances. Highly impulsive."
+            "A localized defect on a bearing raceway or rolling element alters "
+            "the mechanical rotation profile, exciting high-frequency structural "
+            "resonances and shifting the energy distribution."
         ),
         "acoustic_signature": {
             "time_domain": "Impacts shifting low-frequency and band-energy content downward.",
@@ -220,8 +220,8 @@ KNOWLEDGE_BASE = {
         "name": "Piston / piston-ring fault",
         "mechanism": (
             "Worn piston rings or excessive piston-cylinder clearance cause piston "
-            "slap (lateral impact once or twice per revolution) and gas blow-by, "
-            "producing periodic mid-frequency impacts and altered broadband content."
+            "slap (lateral contact once or twice per revolution) and gas blow-by, "
+            "altering mid-frequency band energy and broadband content."
         ),
         "acoustic_signature": {
             "time_domain": "Low zero_crossing_rate indicating lower transient oscillations.",

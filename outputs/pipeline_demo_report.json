@@ -41,7 +41,7 @@
         "class_consistency": 1.0,
         "gate_decision": "RELEASE",
         "reason": "passed_verification",
-        "explanation": "The inlet/suction reed valve failure is indicated by the low spectral centroid and low frequency below which 85% of energy lies, suggesting a shift in the brightness and energy distribution of the signal. This is consistent with the repeated impulsive event once per compression cycle, reducing volumetric efficiency.",
+        "explanation": "The air compressor's inlet/suction reed valve is likely failing to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This results in a backflow that shifts the energy distribution toward lower frequencies, reducing volumetric efficiency. The brightness of the signal, or the center of its spectral mass, is lower than expected, and the frequency below which 85% of the energy lies is also lower than normal. These indicators suggest a problem with the reed valve's sealing.",
         "mechanism_warnings": []
     },
     "LOV": {
@@ -101,7 +101,7 @@
         "class_consistency": 1.0,
         "gate_decision": "RELEASE",
         "reason": "passed_verification",
-        "explanation": "The LOV fault is indicated by high energy near 3750-3875 Hz, 4125-4250 Hz, and 5125-5250 Hz, suggesting a cyclic impulsive signature on the discharge side due to the discharge/outlet reed valve failing to seal and allowing compressed gas to leak back into the cylinder during the suction stroke.",
+        "explanation": "The LOV fault is indicated by elevated high-frequency band energy on the discharge side. Specifically, energy near 3750-3875 Hz, 4125-4250 Hz, and 5125-5250 Hz is higher than expected. This suggests that the discharge/outlet reed valve is failing to seal, causing compressed gas to leak back into the cylinder during the suction stroke and resulting in re-expansion losses.",
         "mechanism_warnings": []
     }
 }
