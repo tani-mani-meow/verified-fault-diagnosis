@@ -1,0 +1,83 @@
+{
+  "faithfulness": {
+    "mean": 1.0,
+    "median": 1.0,
+    "std": 0.0,
+    "min": 1.0,
+    "histogram_bins_0_to_1": [
+      0,
+      0,
+      0,
+      0,
+      100
+    ]
+  },
+  "gate_outcomes": {
+    "release_pct": 94.0,
+    "escalate_pct": 6.0,
+    "escalate_reason_pcts": {
+      "atypical_action_critical": 6.0
+    }
+  },
+  "safety_cross_tab": {
+    "correct_released": 90,
+    "correct_escalated": 6,
+    "misclassified_released": 4,
+    "misclassified_escalated": 0,
+    "safety_catch_rate_pct": 0.0,
+    "release_precision_pct": 95.74468085106383
+  },
+  "per_class": {
+    "Bearing": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 1.0,
+      "escalate_rate": 0.0,
+      "mean_class_consistency": 1.0
+    },
+    "Flywheel": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 0.9333333333333333,
+      "escalate_rate": 0.06666666666666667,
+      "mean_class_consistency": 0.9555555555555555
+    },
+    "LIV": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 0.8571428571428571,
+      "escalate_rate": 0.14285714285714285,
+      "mean_class_consistency": 0.9738095238095239
+    },
+    "LOV": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 0.9285714285714286,
+      "escalate_rate": 0.07142857142857142,
+      "mean_class_consistency": 0.9285714285714286
+    },
+    "NRV": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 1.0,
+      "escalate_rate": 0.0,
+      "mean_class_consistency": 1.0
+    },
+    "Piston": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 0.8571428571428571,
+      "escalate_rate": 0.14285714285714285,
+      "mean_class_consistency": 0.8571428571428571
+    },
+    "Riderbelt": {
+      "mean_faithfulness": 1.0,
+      "release_rate": 1.0,
+      "escalate_rate": 0.0,
+      "mean_class_consistency": 0.9523809523809523
+    }
+  },
+  "mechanism_warnings_rate_pct": 6.0,
+  "cost_latency": {
+    "mean_latency_s": 34.97880853652954,
+    "median_latency_s": 24.38898491859436,
+    "p95_latency_s": 93.50423837900154,
+    "mean_prompt_tokens": 762.67,
+    "mean_completion_tokens": 210.42,
+    "total_tokens": 97309
+  }
+}
