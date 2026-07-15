@@ -1,0 +1,32 @@
+{
+  "faithfulness": {
+    "mean": 0.33766666666666667,
+    "median": 0.25,
+    "std": 0.37665176812703416,
+    "min": 0.0,
+    "histogram_bins_0_to_1": [
+      44,
+      23,
+      3,
+      10,
+      20
+    ]
+  },
+  "gate_outcomes": {
+    "release_pct": 17.0,
+    "escalate_pct": 83.0,
+    "escalate_reason_pcts": {
+      "false_action_critical": 79.0,
+      "low_faithfulness": 4.0
+    }
+  },
+  "mechanism_warnings_rate_pct": 1.0,
+  "cost_latency": {
+    "mean_latency_s": 41.44032333374023,
+    "median_latency_s": 23.17347753047943,
+    "p95_latency_s": 79.65964785814283,
+    "mean_prompt_tokens": 557.11,
+    "mean_completion_tokens": 216.4,
+    "total_tokens": 77351
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "correct_group": {
+    "n": 96,
+    "mean_atypical": 0.10416666666666667,
+    "mean_claims": 3.90625,
+    "mean_faithfulness": 1.0,
+    "distribution": {
+      "0": 90,
+      "1": 4,
+      "2": 1,
+      "4": 1
+    }
+  },
+  "misclassified_group": {
+    "n": 4,
+    "mean_atypical": 1.0,
+    "mean_claims": 3.0,
+    "mean_faithfulness": 1.0,
+    "distribution": {
+      "0": 3,
+      "4": 1
+    }
+  },
+  "thresholds_evaluation": {
+    "k=1": {
+      "correct_count": 6,
+      "correct_pct": 6.25,
+      "misclassified_count": 1,
+      "misclassified_pct": 25.0
+    },
+    "k=2": {
+      "correct_count": 2,
+      "correct_pct": 2.083333333333333,
+      "misclassified_count": 1,
+      "misclassified_pct": 25.0
+    },
+    "k=3": {
+      "correct_count": 1,
+      "correct_pct": 1.0416666666666665,
+      "misclassified_count": 1,
+      "misclassified_pct": 25.0
+    },
+    "k=4": {
+      "correct_count": 1,
+      "correct_pct": 1.0416666666666665,
+      "misclassified_count": 1,
+      "misclassified_pct": 25.0
+    },
+    "k=5": {
+      "correct_count": 0,
+      "correct_pct": 0.0,
+      "misclassified_count": 0,
+      "misclassified_pct": 0.0
+    },
+    "k=6": {
+      "correct_count": 0,
+      "correct_pct": 0.0,
+      "misclassified_count": 0,
+      "misclassified_pct": 0.0
+    }
+  }
+}
