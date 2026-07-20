@@ -129,6 +129,18 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
             label = gloss.get("label", feat)
             context_lines.append(f"{feat} | {label}")
         context_str = "\n".join(context_lines)
+    elif grounding_mode == "values_only":
+        context_lines = []
+        context_lines.append("feature | human label + freq band | this sample's value | global p25 | global p75")
+        context_lines.append("---|---|---|---|---")
+        for feat in sorted(grounding_feats.keys()):
+            actual_val = sample_row[feat]
+            gloss = glossary.get(feat, {})
+            label = gloss.get("label", feat)
+            global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
+            global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
+            context_lines.append(f"{feat} | {label} | {actual_val:.4f} | {global_p25:.4f} | {global_p75:.4f}")
+        context_str = "\n".join(context_lines)
     else:
         context_lines = []
         context_lines.append("feature | human label + freq band | this sample's value | global p25 | p50 | p75 | sample_dir")
@@ -198,6 +210,37 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                 f"Predicted fault class: {predicted_class}\n"
                 f"Physics Mechanism VERBATIM: {kb_entry.get('mechanism')}\n\n"
                 f"Grounding Features list:\n{context_str}\n\n"
+                "Generate the JSON response matching the schema above."
+            )
+        elif grounding_mode == "values_only":
+            system_prompt = (
+                "You are an expert diagnostic assistant for air compressor maintenance.\n"
+                "Your task is to generate a technician-facing explanation and a structured list of claims based ONLY on the provided grounding features table.\n\n"
+                "Strict Rules:\n"
+                "1. ONLY make claims about features present in the grounding table. Any other feature will fail verification.\n"
+                "2. For each claim, specify:\n"
+                "   - 'feature': exact canonical feature name (e.g. 'spectral_rolloff_85').\n"
+                "   - 'direction': 'high' or 'low'.\n"
+                "   - 'action_critical': true if this feature is critical for the diagnosis/action, false otherwise.\n"
+                "3. Reason about each feature's direction: compare each feature's value to the provided p25 and p75 thresholds. State whether it is high (above p75), low (below p25), or within normal range (between p25 and p75).\n"
+                "4. In the 'explanation' string:\n"
+                "   - Write a plain-English explanation for a technician (maximum 120 words).\n"
+                "   - Reference frequency bands or human descriptions (e.g. 'energy near 1750-1875 Hz' or 'frequency below which 85% of energy lies'), NEVER use raw canonical names (like 'wpt_energy_15' or 'spectral_rolloff_85') in the explanation prose.\n"
+                "   - Explain the diagnosis using ONLY features you determine to be 'high' or 'low'. For 'normal' features, do NOT assert any direction (say 'within normal range' or omit). Do NOT mention any feature not in this table.\n"
+                "   - Use ONLY the provided Physics Mechanism description for causal wording; do NOT introduce new physical mechanisms or adjectives (e.g., do not call the signal 'impulsive' unless the mechanism text says so).\n"
+                "5. Output the structured claims list containing ONLY the high/low features you used.\n"
+                "6. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
+                "{\n"
+                "  'claims': [\n"
+                "    {'feature': 'canonical_name', 'direction': 'high|low', 'action_critical': true/false}\n"
+                "  ],\n"
+                "  'explanation': 'Technician explanation...'\n"
+                "}"
+            )
+            prompt = (
+                f"Predicted fault class: {predicted_class}\n"
+                f"Physics Mechanism VERBATIM: {kb_entry.get('mechanism')}\n\n"
+                f"Grounding Context Table:\n{context_str}\n\n"
                 "Generate the JSON response matching the schema above."
             )
         else:
