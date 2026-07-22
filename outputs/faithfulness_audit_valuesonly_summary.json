@@ -1,0 +1,25 @@
+{
+  "faithfulness": {
+    "mean": 0.6300000000000001,
+    "median": 0.6666666666666666,
+    "std": 0.4127730535232732,
+    "min": 0.0,
+    "histogram_bins_0_to_1": [
+      23,
+      8,
+      10,
+      10,
+      49
+    ]
+  },
+  "gate_outcomes": {
+    "release_pct": 48.0,
+    "escalate_pct": 52.0,
+    "escalate_reason_pcts": {
+      "false_action_critical": 47.0,
+      "low_faithfulness": 4.0,
+      "atypical_action_critical": 1.0
+    }
+  },
+  "mechanism_warnings_rate_pct": 3.0
+}
