@@ -1,0 +1,302 @@
+[
+  {
+    "status": "FAIL",
+    "name": "Threshold kurtosis p25/p50/p75",
+    "evidence": "recomputed=(1.2854,2.3317,3.6792) stored=(1.2729,2.3150,3.6164)"
+  },
+  {
+    "status": "FAIL",
+    "name": "Threshold crest_factor p25/p50/p75",
+    "evidence": "recomputed=(5.5877,6.5457,7.9573) stored=(5.5702,6.5051,7.9522)"
+  },
+  {
+    "status": "FAIL",
+    "name": "Threshold spectral_centroid p25/p50/p75",
+    "evidence": "recomputed=(780.6618,819.8126,859.7498) stored=(779.6586,818.2997,859.4118)"
+  },
+  {
+    "status": "FAIL",
+    "name": "Threshold wpt_energy_4 p25/p50/p75",
+    "evidence": "recomputed=(4.1761,4.7527,5.1231) stored=(4.1771,4.7603,5.1297)"
+  },
+  {
+    "status": "PASS",
+    "name": "Threshold band_energy_ratio_4 p25/p50/p75",
+    "evidence": "recomputed=(0.0000,0.0000,0.0000) stored=(0.0000,0.0000,0.0000)"
+  },
+  {
+    "status": "PASS",
+    "name": "Case 179 (Bearing) sample directions",
+    "evidence": ""
+  },
+  {
+    "status": "PASS",
+    "name": "Case 411 (Flywheel) sample directions",
+    "evidence": ""
+  },
+  {
+    "status": "PASS",
+    "name": "Case 679 (LIV) sample directions",
+    "evidence": ""
+  },
+  {
+    "status": "FAIL",
+    "name": "Case 993 (LOV)",
+    "evidence": "No per_claim data in audit JSON"
+  },
+  {
+    "status": "PASS",
+    "name": "Case 1241 (NRV) sample directions",
+    "evidence": ""
+  },
+  {
+    "status": "PASS",
+    "name": "Case 179 original faithfulness",
+    "evidence": "faithfulness=1.0000, n_claims=2, all_true=True"
+  },
+  {
+    "status": "PASS",
+    "name": "Case 179 verifier would catch flipped claim",
+    "evidence": "flipped claimed_dir=high, sample_dir=low, sample_true would be=False"
+  },
+  {
+    "status": "PASS",
+    "name": "6 escalations exist",
+    "evidence": "found 6 escalations"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 965 (LOV) reason=atypical_action_critical",
+    "evidence": "n_atypical=1, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 1498 (Piston) reason=atypical_action_critical",
+    "evidence": "n_atypical=1, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 1478 (Piston) reason=atypical_action_critical",
+    "evidence": "n_atypical=2, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 263 (Flywheel) reason=atypical_action_critical",
+    "evidence": "n_atypical=4, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 701 (LIV) reason=atypical_action_critical",
+    "evidence": "n_atypical=1, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 720 (LIV) reason=atypical_action_critical",
+    "evidence": "n_atypical=1, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "PASS",
+    "name": "4 misclassifications exist",
+    "evidence": "found 4"
+  },
+  {
+    "status": "PASS",
+    "name": "Misclass 107: true=Bearing, pred=Flywheel",
+    "evidence": "features.csv class at index 107 = Bearing, audit says true=Bearing"
+  },
+  {
+    "status": "PASS",
+    "name": "Misclass 1743: true=Riderbelt, pred=Flywheel",
+    "evidence": "features.csv class at index 1743 = Riderbelt, audit says true=Riderbelt"
+  },
+  {
+    "status": "PASS",
+    "name": "Misclass 1273: true=NRV, pred=Riderbelt",
+    "evidence": "features.csv class at index 1273 = NRV, audit says true=NRV"
+  },
+  {
+    "status": "PASS",
+    "name": "Misclass 1306: true=NRV, pred=Riderbelt",
+    "evidence": "features.csv class at index 1306 = NRV, audit says true=NRV"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only mean faithfulness ~0.34",
+    "evidence": "computed mean=0.3377, expected=0.3377"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only has cases with faithfulness < 1.0",
+    "evidence": "83/100 cases have faithfulness < 1.0"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only case 1671: false claim on band_energy_ratio_1",
+    "evidence": "LLM said high, actual sample is low (val=0.8246, p25=0.8722, p75=0.9318)"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only case 1033: false claim on wpt_energy_33",
+    "evidence": "LLM said high, actual sample is neutral (val=-6.6429, p25=-7.3322, p75=-6.2868)"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only case 179: false claim on band_energy_ratio_4",
+    "evidence": "LLM said high, actual sample is low (val=0.0000, p25=0.0000, p75=0.0000)"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only mean faithfulness ~0.63",
+    "evidence": "computed mean=0.6300, expected=0.6300"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only has cases with faithfulness < 1.0",
+    "evidence": "51/100 cases have faithfulness < 1.0"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only has SOME perfect cases (not all bad)",
+    "evidence": "49/100 cases have faithfulness = 1.0"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 1671: false claim on wpt_energy_3",
+    "evidence": "LLM said high, actual is neutral"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 179: false claim on wpt_energy_25",
+    "evidence": "LLM said low, actual is neutral"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 965: false claim on wpt_energy_31",
+    "evidence": "LLM said high, actual is neutral"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 1033: all claims true",
+    "evidence": "faithfulness=1.0000, n_claims=1"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 939: all claims true",
+    "evidence": "faithfulness=1.0000, n_claims=1"
+  },
+  {
+    "status": "PASS",
+    "name": "Values-only case 679: all claims true",
+    "evidence": "faithfulness=1.0000, n_claims=3"
+  },
+  {
+    "status": "PASS",
+    "name": "Gradient: class-only < values-only < sample-grounded",
+    "evidence": "class-only=0.3377 < values-only=0.6300 < sample-grounded=1.0000"
+  },
+  {
+    "status": "PASS",
+    "name": "Sample-grounded and class-only use same indices",
+    "evidence": "sg=100, co=100, match=True"
+  },
+  {
+    "status": "PASS",
+    "name": "Sample-grounded and values-only use same indices",
+    "evidence": "sg=100, vo=100, match=True"
+  },
+  {
+    "status": "FAIL",
+    "name": "LIV kurtosis p50 match",
+    "evidence": "recomputed=3.6045, stored=3.6353"
+  },
+  {
+    "status": "FAIL",
+    "name": "LIV crest_factor p50 match",
+    "evidence": "recomputed=6.9170, stored=6.8298"
+  },
+  {
+    "status": "FAIL",
+    "name": "LOV kurtosis p50 match",
+    "evidence": "recomputed=1.9414, stored=1.9099"
+  },
+  {
+    "status": "FAIL",
+    "name": "LOV crest_factor p50 match",
+    "evidence": "recomputed=6.1871, stored=6.1194"
+  },
+  {
+    "status": "FAIL",
+    "name": "NRV kurtosis p50 match",
+    "evidence": "recomputed=4.0125, stored=3.9133"
+  },
+  {
+    "status": "PASS",
+    "name": "NRV crest_factor p50 match",
+    "evidence": "recomputed=7.5509, stored=7.5422"
+  },
+  {
+    "status": "FAIL",
+    "name": "Bearing kurtosis p50 match",
+    "evidence": "recomputed=1.9352, stored=1.9937"
+  },
+  {
+    "status": "PASS",
+    "name": "Bearing crest_factor p50 match",
+    "evidence": "recomputed=6.0941, stored=6.0842"
+  },
+  {
+    "status": "FAIL",
+    "name": "Flywheel kurtosis p50 match",
+    "evidence": "recomputed=1.6949, stored=1.6647"
+  },
+  {
+    "status": "FAIL",
+    "name": "Flywheel crest_factor p50 match",
+    "evidence": "recomputed=6.6499, stored=6.5819"
+  },
+  {
+    "status": "PASS",
+    "name": "Piston kurtosis p50 match",
+    "evidence": "recomputed=1.6848, stored=1.6828"
+  },
+  {
+    "status": "FAIL",
+    "name": "Piston crest_factor p50 match",
+    "evidence": "recomputed=6.3460, stored=6.2205"
+  },
+  {
+    "status": "FAIL",
+    "name": "Riderbelt kurtosis p50 match",
+    "evidence": "recomputed=3.5282, stored=3.4608"
+  },
+  {
+    "status": "FAIL",
+    "name": "Riderbelt crest_factor p50 match",
+    "evidence": "recomputed=7.6760, stored=7.7175"
+  },
+  {
+    "status": "PASS",
+    "name": "Sample-grounded explanations are not all identical",
+    "evidence": "92 unique explanations out of 100"
+  },
+  {
+    "status": "PASS",
+    "name": "Class-only explanations are not all identical",
+    "evidence": "57 unique out of 100"
+  },
+  {
+    "status": "PASS",
+    "name": "Same case has different explanation across conditions",
+    "evidence": "sg_len=307, co_len=430, identical=False"
+  },
+  {
+    "status": "PASS",
+    "name": "ALL sample-grounded cases have faithfulness exactly 1.0",
+    "evidence": "min=1.0000, max=1.0000, std=0.000000"
+  },
+  {
+    "status": "PASS",
+    "name": "Sample-grounded faithfulness std is exactly 0",
+    "evidence": "std=0.00000000"
+  }
+]
