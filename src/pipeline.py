@@ -350,6 +350,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     reason = "passed_verification"
     atypical_features = []
     
+    # 0. If no verifiable claims -> ESCALATE, reason="no_verifiable_claims"
+    if len(per_claim) == 0:
+        gate_decision = "ESCALATE"
+        reason = "no_verifiable_claims"
     # 1. If any ACTION-CRITICAL claim is NOT sample_true -> ESCALATE, reason="false_action_critical"
     false_action_critical = False
     for pc in per_claim:

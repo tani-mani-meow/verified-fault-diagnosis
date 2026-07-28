@@ -183,3 +183,26 @@ def test_glossary_completeness():
         for feature in grounding_feats:
             assert feature in glossary, f"Feature '{feature}' from class '{c}' is missing from feature_glossary.json"
 
+
+def test_zero_claims_escalates():
+    """If the LLM produces 0 verifiable claims, faithfulness must be 0.0 and gate must ESCALATE."""
+    from verifier import verify_explanation, check_sample_faithfulness
+
+    recording = {"spectral_rolloff_85": 1000.0, "spectral_centroid": 600.0}
+
+    # Test verify_explanation
+    result = verify_explanation(
+        recording, "LIV", [],
+        thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION
+    )
+    assert result["faithfulness_score"] == 0.0, f"Expected 0.0 for 0 claims, got {result['faithfulness_score']}"
+    assert result["escalate"] is True, f"Expected escalate=True for 0 claims"
+
+    # Test check_sample_faithfulness
+    result2 = check_sample_faithfulness(
+        recording, "LIV", [],
+        thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION
+    )
+    assert result2["faithfulness"] == 0.0, f"Expected 0.0 for 0 claims, got {result2['faithfulness']}"
+    assert result2["class_consistency"] == 0.0, f"Expected 0.0 class_consistency for 0 claims, got {result2['class_consistency']}"
+

@@ -172,9 +172,9 @@ def verify_explanation(recording_features, predicted_class, claims, action_criti
             if is_critical:
                 escalate = True
                 
-    faithfulness_score = passed_count / len(claims) if claims else 1.0
+    faithfulness_score = passed_count / len(claims) if claims else 0.0
     
-    if faithfulness_score < 0.8:
+    if faithfulness_score < 0.8 or len(claims) == 0:
         escalate = True
         
     return {
@@ -284,8 +284,8 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         })
         
     num_claims = len(claims)
-    faithfulness = sample_true_count / num_claims if num_claims > 0 else 1.0
-    class_consistency_score = class_consistent_count / num_claims if num_claims > 0 else 1.0
+    faithfulness = sample_true_count / num_claims if num_claims > 0 else 0.0
+    class_consistency_score = class_consistent_count / num_claims if num_claims > 0 else 0.0
     
     return {
         "per_claim": per_claim,
