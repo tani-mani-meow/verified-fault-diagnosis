@@ -7,24 +7,41 @@ import { Check, X, Shield, AlertTriangle, Play } from 'lucide-react'
 
 function FloatingCard({ card, index, activeCard, onClick }) {
   const isSelected = activeCard === card.id
+  const [hovered, setHovered] = useState(false)
+  const pos = [(index - 1) * 1.8, 0, 0]
   
   return (
     <Float speed={2} rotationIntensity={0.3} floatIntensity={0.8}>
-      <Text
-        font="https://fonts.gstatic.com/s/outfit/v11/0oWk0yFbf1dQZ5cTaFSf124.woff"
-        fontSize={0.24}
-        position={[(index - 1) * 1.8, 0, 0]}
-        color="#ffffff"
-        backgroundColor={card.color + "22"}
-        padding={[0.2, 0.3]}
-        borderRadius={0.1}
-        strokeWidth="3%"
-        strokeColor={card.color}
-        onClick={onClick}
-        className="cursor-pointer"
-      >
-        {card.title}
-      </Text>
+      <group position={pos}>
+        {/* Glass Card Mesh for reliable raycast click detection */}
+        <mesh 
+          onClick={onClick}
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+          className="cursor-pointer"
+        >
+          <planeGeometry args={[1.6, 0.8]} />
+          <meshStandardMaterial 
+            color={card.color} 
+            transparent 
+            opacity={hovered ? 0.35 : 0.15} 
+            roughness={0.1}
+            metalness={0.8}
+          />
+        </mesh>
+        
+        {/* Text floated slightly forward */}
+        <Text
+          font="https://fonts.gstatic.com/s/outfit/v11/0oWk0yFbf1dQZ5cTaFSf124.woff"
+          fontSize={0.16}
+          position={[0, 0, 0.05]}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {card.title}
+        </Text>
+      </group>
     </Float>
   )
 }
@@ -67,7 +84,7 @@ export default function VerificationDemo() {
       
       {/* 3D Scene */}
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 4.5], fof: 50 }}>
+        <Canvas camera={{ position: [0, 0, 4.5], fov: 50 }}>
           <ambientLight intensity={0.4} />
           <pointLight position={[10, 10, 10]} intensity={1.5} color="#58a6ff" />
           
