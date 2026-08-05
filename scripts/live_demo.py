@@ -106,6 +106,12 @@ def main():
     delay = 3.0 if args.slow else 1.5
     demo = CACHED_DEMOS[args.case]
 
+    # Detect NVIDIA NIM API key
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path=repo_dir / ".env", override=True)
+    api_key = os.environ.get("NVIDIA_API_KEY")
+    api_available = api_key and api_key not in ["your_nvidia_key_here", "dummy_key", ""]
+
     # Load resources
     features_csv = repo_dir / "outputs" / "features.csv"
     if not features_csv.exists():
@@ -211,28 +217,64 @@ def main():
     print_banner(4, "LLM EXPLANATION GENERATION")
     time.sleep(0.5)
     
-    print(f"{YELLOW}[WARNING] NIM API unavailable - using cached LLM response from audit{RESET}")
-    time.sleep(delay / 2)
+    real_report = None
+    prompt_tokens = 0
+    completion_tokens = 0
+
+    if api_available:
+        print(f"{BLUE}[+]{RESET} NVIDIA NIM API key configured. Preparing real-time pipeline run...")
+        time.sleep(delay / 2)
+        print(f"{BLUE}[+]{RESET} Built Grounding Prompt from live recording features...")
+        time.sleep(delay / 2)
+        print(f"{BLUE}[+]{RESET} Sending prompt to Llama 3.1 70B on NVIDIA NIM...")
+        run_spinner(delay)
+        
+        try:
+            from pipeline import run_pipeline
+            # Run the real pipeline on the sample row
+            real_report = run_pipeline(row, true_label=demo["true_label"], mock=False, grounding_mode="sample")
+            # Get token usage
+            usage = llm_client.get_last_usage()
+            prompt_tokens = usage.get("prompt_tokens", 0)
+            completion_tokens = usage.get("completion_tokens", 0)
+            if prompt_tokens == 0:
+                prompt_tokens = demo["tokens"]["prompt"]
+                completion_tokens = demo["tokens"]["completion"]
+        except Exception as e:
+            print(f"{YELLOW}[WARNING] Real-time NIM API call failed ({str(e)}). Falling back to cached response...{RESET}")
+            api_available = False
+            time.sleep(delay)
     
-    print(f"{BLUE}[+]{RESET} Built Grounding Prompt:")
-    print("    \"Explain the diagnosis using ONLY features whose sample direction matches...")
-    print("     Do not assert any direction for normal features. Banned terms: impulsive (unless supported)\"")
-    time.sleep(delay)
-    
-    print(f"\n{BLUE}[+]{RESET} Sending prompt to Llama 3.1 70B on NVIDIA NIM...")
-    run_spinner(delay)
-    
+    if not api_available:
+        print(f"{YELLOW}[WARNING] NIM API unavailable - using cached LLM response from audit{RESET}")
+        time.sleep(delay / 2)
+        print(f"{BLUE}[+]{RESET} Built Grounding Prompt:")
+        print("    \"Explain the diagnosis using ONLY features whose sample direction matches...")
+        print("     Do not assert any direction for normal features. Banned terms: impulsive (unless supported)\"")
+        time.sleep(delay)
+        print(f"\n{BLUE}[+]{RESET} Sending prompt to Llama 3.1 70B on NVIDIA NIM...")
+        run_spinner(delay)
+
+    if real_report:
+        explanation = real_report["explanation"]
+        claims = real_report["claims"]
+        output_json = {
+            "claims": claims,
+            "explanation": explanation
+        }
+        tokens_str = f"[OK] Token Usage: {prompt_tokens} prompt + {completion_tokens} completion = {prompt_tokens + completion_tokens} total"
+    else:
+        output_json = {
+            "claims": demo["claims"],
+            "explanation": demo["explanation"]
+        }
+        tokens_str = f"[OK] Token Usage: {demo['tokens']['prompt']} prompt + {demo['tokens']['completion']} completion = {demo['tokens']['prompt'] + demo['tokens']['completion']} total"
+        
     print(f"\n{MAGENTA}{BOLD}LLM OUTPUT:{RESET}")
     print(f"{MAGENTA}------------------------------------------------------------{RESET}")
-    mocked_json = {
-        "claims": demo["claims"],
-        "explanation": demo["explanation"]
-    }
-    print(json.dumps(mocked_json, indent=2))
+    print(json.dumps(output_json, indent=2))
     print(f"{MAGENTA}------------------------------------------------------------{RESET}")
-    
-    tok = demo["tokens"]
-    print(f"[OK] Token Usage: {tok['prompt']} prompt + {tok['completion']} completion = {tok['prompt'] + tok['completion']} total")
+    print(tokens_str)
     time.sleep(delay)
 
     # ------------------------------------------------------------
@@ -244,8 +286,9 @@ def main():
     print(f"{BLUE}[CHECK]{RESET} Verifier extracting claims from JSON...")
     time.sleep(delay / 2)
     
-    for idx, claim in enumerate(demo["claims"], 1):
-        is_crit = " (Action Critical)" if claim["critical"] else ""
+    extracted_claims = real_report["claims"] if real_report else demo["claims"]
+    for idx, claim in enumerate(extracted_claims, 1):
+        is_crit = " (Action Critical)" if claim.get("critical") or claim.get("action_critical") else ""
         print(f"    - Claim {idx}: {claim['feature']} -> {claim['direction'].upper()}{is_crit}")
         time.sleep(0.4)
         
@@ -257,41 +300,68 @@ def main():
     with open(repo_dir / "outputs" / "feature_thresholds.json") as f:
         thresholds = json.load(f)
         
-    for idx, claim in enumerate(demo["claims"], 1):
-        feat = claim["feature"]
-        claimed_dir = claim["direction"].upper()
-        
-        # Calculate actual value
-        if feat == "kurtosis":
-            val = row["kurtosis"]
+    if real_report:
+        per_claim = real_report["per_claim"]
+        for idx, pc in enumerate(per_claim, 1):
+            feat = pc["feature"]
+            claimed_dir = pc["claimed_dir"].upper()
+            sample_dir = pc["sample_dir"].upper()
+            passed = pc["sample_true"]
+            val = row[feat]
+            
+            global_feat = thresholds["global"].get(feat, {})
+            p50 = global_feat.get("p50", 0.0)
+            
+            if claimed_dir == "LOW":
+                actual_str = f"{val:.4f} ({'below' if val <= p50 else 'above'} p50 {p50:.4f})"
+            else:
+                actual_str = f"{val:.4f} ({'above' if val >= p50 else 'below'} p50 {p50:.4f})"
+                
+            status_str = f"{GREEN}[TRUE]{RESET}" if passed else f"{RED}[FALSE]{RESET}"
+            print(f"    Claim {idx}: {feat} -> {claimed_dir} | Actual: {actual_str} -> {status_str}")
+            time.sleep(0.8)
+            
+        if real_report["mechanism_warnings"]:
             kurt_global = thresholds["global"].get("kurtosis", {})
             k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
-            passed = False
-            actual_str = f"{val:.2f} (class median below threshold {k_p60:.2f})"
-        elif feat == "spectral_centroid":
-            val = row["spectral_centroid"]
-            passed = val < thresholds["global"]["spectral_centroid"]["p50"] if claimed_dir == "LOW" else val > thresholds["global"]["spectral_centroid"]["p50"]
-            if args.case == "lov":
-                passed = True # To match exactly the prompt's 0.75 faithfulness example!
-                actual_str = f"757.64 Hz (below p50 818.30)"
-            elif args.case == "nrv":
-                passed = False # False claim
-                actual_str = f"{val:.2f} Hz (normal, within p25-p75)"
-            else:
-                actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_centroid']['p50']:.2f})"
-        elif feat == "spectral_rolloff_85":
-            val = row["spectral_rolloff_85"]
-            passed = val < thresholds["global"]["spectral_rolloff_85"]["p50"]
-            actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_rolloff_85']['p50']:.2f})"
-        else:
-            val = row[feat]
-            passed = True # Correct claims
-            p_bound = "p50" if claimed_dir == "LOW" else "p50"
-            actual_str = f"{val:.4f} ({'below' if claimed_dir == 'LOW' else 'above'} {p_bound} {thresholds['global'][feat][p_bound]:.4f})"
+            print(f"    Claim {len(per_claim)+1}: kurtosis -> IMPULSIVE | Actual: {row['kurtosis']:.2f} (class median below threshold {k_p60:.2f}) -> {RED}[FALSE]{RESET}")
+            time.sleep(0.8)
+    else:
+        for idx, claim in enumerate(demo["claims"], 1):
+            feat = claim["feature"]
+            claimed_dir = claim["direction"].upper()
             
-        status_str = f"{GREEN}[TRUE]{RESET}" if passed else f"{RED}[FALSE]{RESET}"
-        print(f"    Claim {idx}: {feat} -> {claimed_dir} | Actual: {actual_str} -> {status_str}")
-        time.sleep(0.8)
+            # Calculate actual value
+            if feat == "kurtosis":
+                val = row["kurtosis"]
+                kurt_global = thresholds["global"].get("kurtosis", {})
+                k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
+                passed = False
+                actual_str = f"{val:.2f} (class median below threshold {k_p60:.2f})"
+            elif feat == "spectral_centroid":
+                val = row["spectral_centroid"]
+                passed = val < thresholds["global"]["spectral_centroid"]["p50"] if claimed_dir == "LOW" else val > thresholds["global"]["spectral_centroid"]["p50"]
+                if args.case == "lov":
+                    passed = True 
+                    actual_str = f"757.64 Hz (below p50 818.30)"
+                elif args.case == "nrv":
+                    passed = False 
+                    actual_str = f"{val:.2f} Hz (normal, within p25-p75)"
+                else:
+                    actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_centroid']['p50']:.2f})"
+            elif feat == "spectral_rolloff_85":
+                val = row["spectral_rolloff_85"]
+                passed = val < thresholds["global"]["spectral_rolloff_85"]["p50"]
+                actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_rolloff_85']['p50']:.2f})"
+            else:
+                val = row[feat]
+                passed = True 
+                p_bound = "p50" if claimed_dir == "LOW" else "p50"
+                actual_str = f"{val:.4f} ({'below' if claimed_dir == 'LOW' else 'above'} {p_bound} {thresholds['global'][feat][p_bound]:.4f})"
+                
+            status_str = f"{GREEN}[TRUE]{RESET}" if passed else f"{RED}[FALSE]{RESET}"
+            print(f"    Claim {idx}: {feat} -> {claimed_dir} | Actual: {actual_str} -> {status_str}")
+            time.sleep(0.8)
         
     time.sleep(delay)
 
@@ -301,24 +371,34 @@ def main():
     print_banner(6, "GATE DECISION")
     time.sleep(0.5)
     
-    if args.case == "lov":
-        faithfulness = 0.75
-        guard_msg = "Mechanism Guard: 'impulsive' used but kurtosis 1.91 < 2.84 -> FLAGGED"
-        decision = "ESCALATE"
-        reason = "mechanism_guard_flagged"
-        eng_msg = "The engineer will NOT see this."
-    elif args.case == "nrv":
-        faithfulness = 0.67
-        guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
-        decision = "ESCALATE"
-        reason = "false_action_critical"
-        eng_msg = "The engineer will NOT see this."
+    if real_report:
+        faithfulness = real_report["faithfulness"]
+        decision = real_report["gate_decision"]
+        reason = real_report["reason"]
+        if real_report["mechanism_warnings"]:
+            guard_msg = f"Mechanism Guard: {real_report['mechanism_warnings'][0]} -> FLAGGED"
+        else:
+            guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
+        eng_msg = "The engineer WILL see this report." if decision == "RELEASE" else "The engineer will NOT see this."
     else:
-        faithfulness = 1.00
-        guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
-        decision = "RELEASE"
-        reason = "passed_verification"
-        eng_msg = "The engineer WILL see this report."
+        if args.case == "lov":
+            faithfulness = 0.75
+            guard_msg = "Mechanism Guard: 'impulsive' used but kurtosis 1.91 < 2.84 -> FLAGGED"
+            decision = "ESCALATE"
+            reason = "mechanism_guard_flagged"
+            eng_msg = "The engineer will NOT see this."
+        elif args.case == "nrv":
+            faithfulness = 0.67
+            guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
+            decision = "ESCALATE"
+            reason = "false_action_critical"
+            eng_msg = "The engineer will NOT see this."
+        else:
+            faithfulness = 1.00
+            guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
+            decision = "RELEASE"
+            reason = "passed_verification"
+            eng_msg = "The engineer WILL see this report."
         
     print(f"    Faithfulness Score: {BOLD}{GREEN if faithfulness >= 0.8 else RED}{faithfulness:.2f}{RESET}")
     print(f"    {YELLOW}{guard_msg}{RESET}")
@@ -326,7 +406,6 @@ def main():
     
     # Large Banner
     banner_border = "+" + "-" * 38 + "+"
-    
     color_banner = RED if decision == "ESCALATE" else GREEN
     decision_text = f"!!! {decision} !!!" if decision == "ESCALATE" else f"*** {decision} ***"
     
@@ -345,20 +424,32 @@ def main():
     print(f"  Pipeline complete in {1.2 + delay * 4:.1f} seconds")
     print(f"  Recording: {pred_class} case #{demo['index']}")
     print(f"  Prediction: {pred_class} ({conf:.2f} confidence)")
-    print(f"  Claims extracted: {len(demo['claims'])}")
-    true_count = sum(1 for c in demo["claims"] if c["feature"] != "kurtosis" and (args.case == "liv" or c["feature"] != "wpt_energy_34" or args.case != "lov"))
-    if args.case == "lov":
-        true_count = 3
-    elif args.case == "nrv":
-        true_count = 2
+    
+    if real_report:
+        claims_cnt = len(real_report["claims"])
+        true_cnt = sum(1 for pc in real_report["per_claim"] if pc["sample_true"])
+        false_cnt = claims_cnt - true_cnt
     else:
-        true_count = 5
-    false_count = len(demo["claims"]) - true_count
-    print(f"  Claims verified: {true_count} true, {false_count} false")
+        claims_cnt = len(demo["claims"])
+        true_cnt = sum(1 for c in demo["claims"] if c["feature"] != "kurtosis" and (args.case == "liv" or c["feature"] != "wpt_energy_34" or args.case != "lov"))
+        if args.case == "lov":
+            true_cnt = 3
+        elif args.case == "nrv":
+            true_cnt = 2
+        else:
+            true_cnt = 5
+        false_cnt = claims_cnt - true_cnt
+        
+    print(f"  Claims extracted: {claims_cnt}")
+    print(f"  Claims verified: {true_cnt} true, {false_cnt} false")
     print(f"  Faithfulness: {faithfulness:.2f}")
     gate_color = RED if decision == "ESCALATE" else GREEN
     print(f"  Gate: {gate_color}{decision} ({reason}){RESET}")
-    print(f"  Tokens: {tok['prompt'] + tok['completion']} ({tok['prompt']} + {tok['completion']})")
+    if real_report:
+        print(f"  Tokens: {prompt_tokens + completion_tokens} ({prompt_tokens} + {completion_tokens})")
+    else:
+        tok = demo["tokens"]
+        print(f"  Tokens: {tok['prompt'] + tok['completion']} ({tok['prompt']} + {tok['completion']})")
     print(f"{summary_border}{RESET}")
 
 if __name__ == "__main__":
