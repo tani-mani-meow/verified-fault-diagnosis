@@ -128,10 +128,11 @@ def main():
             q.task_done()
             
     with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = []
-        for _ in range(3):
-            futures.append(executor.submit(worker))
+        futures = [executor.submit(worker) for _ in range(3)]
         q.join()
+        for f in futures:
+            if f.exception() is not None:
+                print(f"Worker thread failed: {f.exception()}")
         
     print("\nPilot completed successfully!")
 

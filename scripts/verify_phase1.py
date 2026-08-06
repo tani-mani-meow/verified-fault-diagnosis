@@ -18,7 +18,6 @@ def main():
     scaler_file = outputs_dir / "scaler.joblib"
     feature_names_file = outputs_dir / "feature_names.json"
     confusion_matrix_img = outputs_dir / "confusion_matrix.png"
-    shap_summary_img = outputs_dir / "shap_summary.png"
     baseline_report_file = outputs_dir / "baseline_report.txt"
     
     all_passed = True
@@ -95,18 +94,23 @@ def main():
         print("overall test accuracy check skipped due to missing files: FAIL")
         all_passed = False
         
-    # 4. outputs/confusion_matrix.png and outputs/shap_summary.png exist
-    plots_check = {
-        "outputs/confusion_matrix.png": confusion_matrix_img,
-        "outputs/shap_summary.png": shap_summary_img
-    }
-    
-    for label, path in plots_check.items():
-        if path.exists() and path.stat().st_size > 0:
-            print(f"{label} exists and is valid: PASS")
-        else:
-            print(f"{label} is missing or empty: FAIL")
-            all_passed = False
+    # 4. outputs/confusion_matrix.png exists
+    if confusion_matrix_img.exists() and confusion_matrix_img.stat().st_size > 0:
+        print(f"outputs/confusion_matrix.png exists and is valid: PASS")
+    else:
+        print(f"outputs/confusion_matrix.png is missing or empty: FAIL")
+        all_passed = False
+        
+    # 5. Per-class SHAP plots (shap_LIV.png, shap_Bearing.png, etc.) exist
+    fault_classes = ['LIV', 'LOV', 'NRV', 'Bearing', 'Flywheel', 'Piston', 'Riderbelt']
+    shap_files = [outputs_dir / f"shap_{c}.png" for c in fault_classes]
+    all_shap_exist = all(f.exists() and f.stat().st_size > 0 for f in shap_files)
+    if all_shap_exist:
+        print(f"outputs/shap_*.png all {len(shap_files)} per-class SHAP plots exist: PASS")
+    else:
+        missing = [f.name for f in shap_files if not f.exists() or f.stat().st_size == 0]
+        print(f"outputs/shap_*.png missing or empty: {missing} : FAIL")
+        all_passed = False
             
     if all_passed:
         print("\nAll Phase 1 verification checks passed.")

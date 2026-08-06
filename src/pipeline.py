@@ -5,10 +5,11 @@ import json
 import re
 from pathlib import Path
 import numpy as np
+import pandas as pd
 import joblib
 
-sys.path.append(str(Path(__file__).resolve().parent))
-from knowledge_base import KNOWLEDGE_BASE
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from knowledge_base import KNOWLEDGE_BASE, ALL_CLASSES
 from verifier import load_thresholds, load_calibration, verify_explanation, verify_claim, check_sample_faithfulness
 import llm_client
 
@@ -86,7 +87,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
         feature_names = json.load(f)
         
     # Order sample row features
-    import pandas as pd
     feature_values = [sample_row[feat] for feat in feature_names]
     X_raw = pd.DataFrame([feature_values], columns=feature_names)
     X_scaled = scaler.transform(X_raw)
@@ -95,7 +95,7 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     pred_idx = np.argmax(probs)
     confidence = float(probs[pred_idx])
     
-    class_names = ['Bearing', 'Flywheel', 'Healthy', 'LIV', 'LOV', 'NRV', 'Piston', 'Riderbelt']
+    class_names = ALL_CLASSES  # single source of truth from knowledge_base.py
     predicted_class = class_names[pred_idx]
     
     # 3. Retrieve KB & Build Grounding Context (Cert 2)
@@ -109,6 +109,9 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
             "claims": [],
             "per_claim": [],
             "faithfulness": 0.0,
+            "class_consistency": 0.0,
+            "mechanism_warnings": [],
+            "atypical_features": [],
             "gate_decision": "ESCALATE",
             "reason": f"Class '{predicted_class}' has no grounding entry in KNOWLEDGE_BASE",
             "explanation": "No diagnostic explanation generated for Healthy/unsupported class."
@@ -200,10 +203,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                 "5. Output the structured claims list containing the features you used.\n"
                 "6. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
                 "{\n"
-                "  'claims': [\n"
-                "    {'feature': 'canonical_name', 'direction': 'high|low', 'action_critical': true/false}\n"
-                "  ],\n"
-                "  'explanation': 'Technician explanation...'\n"
+                '  "claims": [\n'
+                '    {"feature": "canonical_name", "direction": "high|low", "action_critical": true/false}\n'
+                '  ],\n'
+                '  "explanation": "Technician explanation..."\n'
                 "}"
             )
             prompt = (
@@ -231,10 +234,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                 "5. Output the structured claims list containing ONLY the high/low features you used.\n"
                 "6. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
                 "{\n"
-                "  'claims': [\n"
-                "    {'feature': 'canonical_name', 'direction': 'high|low', 'action_critical': true/false}\n"
-                "  ],\n"
-                "  'explanation': 'Technician explanation...'\n"
+                '  "claims": [\n'
+                '    {"feature": "canonical_name", "direction": "high|low", "action_critical": true/false}\n'
+                '  ],\n'
+                '  "explanation": "Technician explanation..."\n'
                 "}"
             )
             prompt = (
@@ -261,10 +264,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                 "4. Output the structured claims list containing ONLY the high/low features you used.\n"
                 "5. Output MUST be a single, strict JSON object. No Markdown wrappers except optionally standard json block:\n"
                 "{\n"
-                "  'claims': [\n"
-                "    {'feature': 'canonical_name', 'direction': 'high|low', 'action_critical': true/false}\n"
-                "  ],\n"
-                "  'explanation': 'Technician explanation...'\n"
+                '  "claims": [\n'
+                '    {"feature": "canonical_name", "direction": "high|low", "action_critical": true/false}\n'
+                '  ],\n'
+                '  "explanation": "Technician explanation..."\n'
                 "}"
             )
             prompt = (
@@ -286,11 +289,16 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
         try:
             parsed_json = json.loads(clean_text)
         except Exception:
-            unparseable = True
-            parsed_json = {
-                "claims": [],
-                "explanation": f"Failed to parse LLM output as JSON. Raw output: {response_text}"
-            }
+            try:
+                # Fallback: use ast.literal_eval for single-quoted JSON strings
+                import ast
+                parsed_json = ast.literal_eval(clean_text)
+            except Exception:
+                unparseable = True
+                parsed_json = {
+                    "claims": [],
+                    "explanation": f"Failed to parse LLM output as JSON. Raw output: {response_text}"
+                }
             
     # 5. Run Verifier (Cert 3)
     if unparseable:
@@ -350,18 +358,18 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     reason = "passed_verification"
     atypical_features = []
     
-    # 0. If no verifiable claims -> ESCALATE, reason="no_verifiable_claims"
-    if len(per_claim) == 0:
-        gate_decision = "ESCALATE"
-        reason = "no_verifiable_claims"
     # 1. If any ACTION-CRITICAL claim is NOT sample_true -> ESCALATE, reason="false_action_critical"
     false_action_critical = False
     for pc in per_claim:
         if pc["action_critical"] and not pc["sample_true"]:
             false_action_critical = True
             break
-            
-    if false_action_critical:
+    
+    # 0. If no verifiable claims -> ESCALATE, reason="no_verifiable_claims"
+    if len(per_claim) == 0:
+        gate_decision = "ESCALATE"
+        reason = "no_verifiable_claims"
+    elif false_action_critical:
         gate_decision = "ESCALATE"
         reason = "false_action_critical"
     # 2. Else if faithfulness < 0.80 -> ESCALATE, reason="low_faithfulness"

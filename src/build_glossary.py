@@ -114,25 +114,32 @@ def main():
     wpt_bands.sort(key=lambda x: x[0])
     
     # 1. Total count
-    assert len(wpt_bands) == 64, f"Expected 64 WPT bands, got {len(wpt_bands)}"
+    if len(wpt_bands) != 64:
+        raise ValueError(f"Expected 64 WPT bands, got {len(wpt_bands)}")
     
     # 2. Gaps and overlap check
     for idx in range(len(wpt_bands)):
         i, f_min, f_max = wpt_bands[idx]
         # Check node width is exactly 125 Hz
-        assert f_max - f_min == 125, f"WPT node {i} width is {f_max - f_min} instead of 125 Hz"
+        if f_max - f_min != 125:
+            raise ValueError(f"WPT node {i} width is {f_max - f_min} instead of 125 Hz")
         # Check start and end frequency match index
-        assert f_min == (i - 1) * 125, f"WPT node {i} starts at {f_min} instead of {(i-1)*125}"
-        assert f_max == i * 125, f"WPT node {i} ends at {f_max} instead of {i*125}"
+        if f_min != (i - 1) * 125:
+            raise ValueError(f"WPT node {i} starts at {f_min} instead of {(i-1)*125}")
+        if f_max != i * 125:
+            raise ValueError(f"WPT node {i} ends at {f_max} instead of {i*125}")
         
         # Check contiguous tiling
         if idx > 0:
             prev_i, prev_f_min, prev_f_max = wpt_bands[idx - 1]
-            assert f_min == prev_f_max, f"Gap or overlap detected between node {prev_i} and {i}: {prev_f_max} vs {f_min}"
+            if f_min != prev_f_max:
+                raise ValueError(f"Gap or overlap detected between node {prev_i} and {i}: {prev_f_max} vs {f_min}")
             
     # Check bounds
-    assert wpt_bands[0][1] == 0, "WPT tiling does not start at 0 Hz"
-    assert wpt_bands[-1][2] == 8000, "WPT tiling does not end at 8000 Hz"
+    if wpt_bands[0][1] != 0:
+        raise ValueError("WPT tiling does not start at 0 Hz")
+    if wpt_bands[-1][2] != 8000:
+        raise ValueError("WPT tiling does not end at 8000 Hz")
     
     print("\n--- WPT Tiling Sanity Check ---")
     print("All 64 WPT bands tile 0-8000 Hz continuously with no gaps/overlaps.")
@@ -159,7 +166,8 @@ def main():
         
     for idx_n, node in enumerate(nodes):
         freq_idx = path_to_freq_idx(node.path)
-        assert idx_n == freq_idx, f"Gray code index mismatch for path {node.path}: expected {idx_n}, got {freq_idx}"
+        if idx_n != freq_idx:
+            raise ValueError(f"Gray code index mismatch for path {node.path}: expected {idx_n}, got {freq_idx}")
         
     print("WPT ordering source = freq (matches features.py: YES)")
     

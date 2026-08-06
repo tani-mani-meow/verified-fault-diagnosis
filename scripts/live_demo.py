@@ -322,10 +322,9 @@ def main():
             time.sleep(0.8)
             
         if real_report["mechanism_warnings"]:
-            kurt_global = thresholds["global"].get("kurtosis", {})
-            k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
-            print(f"    Claim {len(per_claim)+1}: kurtosis -> IMPULSIVE | Actual: {row['kurtosis']:.2f} (class median below threshold {k_p60:.2f}) -> {RED}[FALSE]{RESET}")
-            time.sleep(0.8)
+            for warning in real_report["mechanism_warnings"]:
+                print(f"    Mechanism Warning: {warning}")
+                time.sleep(0.8)
     else:
         for idx, claim in enumerate(demo["claims"], 1):
             feat = claim["feature"]
@@ -340,24 +339,33 @@ def main():
                 actual_str = f"{val:.2f} (class median below threshold {k_p60:.2f})"
             elif feat == "spectral_centroid":
                 val = row["spectral_centroid"]
-                passed = val < thresholds["global"]["spectral_centroid"]["p50"] if claimed_dir == "LOW" else val > thresholds["global"]["spectral_centroid"]["p50"]
+                global_p25 = thresholds["global"]["spectral_centroid"]["p25"]
+                global_p75 = thresholds["global"]["spectral_centroid"]["p75"]
+                if claimed_dir == "LOW":
+                    passed = val <= global_p25
+                else:
+                    passed = val >= global_p75
                 if args.case == "lov":
-                    passed = True 
                     actual_str = f"757.64 Hz (below p50 818.30)"
                 elif args.case == "nrv":
-                    passed = False 
                     actual_str = f"{val:.2f} Hz (normal, within p25-p75)"
                 else:
                     actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_centroid']['p50']:.2f})"
             elif feat == "spectral_rolloff_85":
                 val = row["spectral_rolloff_85"]
-                passed = val < thresholds["global"]["spectral_rolloff_85"]["p50"]
-                actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_rolloff_85']['p50']:.2f})"
+                global_p25 = thresholds["global"]["spectral_rolloff_85"]["p25"]
+                passed = val <= global_p25
+                actual_str = f"{val:.2f} Hz (below p25 {global_p25:.2f})"
             else:
                 val = row[feat]
-                passed = True 
-                p_bound = "p50" if claimed_dir == "LOW" else "p50"
-                actual_str = f"{val:.4f} ({'below' if claimed_dir == 'LOW' else 'above'} {p_bound} {thresholds['global'][feat][p_bound]:.4f})"
+                global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
+                global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
+                if claimed_dir == "LOW":
+                    passed = val <= global_p25
+                    actual_str = f"{val:.4f} ({'below' if val <= global_p25 else 'above'} p25 {global_p25:.4f})"
+                else:
+                    passed = val >= global_p75
+                    actual_str = f"{val:.4f} ({'above' if val >= global_p75 else 'below'} p75 {global_p75:.4f})"
                 
             status_str = f"{GREEN}[TRUE]{RESET}" if passed else f"{RED}[FALSE]{RESET}"
             print(f"    Claim {idx}: {feat} -> {claimed_dir} | Actual: {actual_str} -> {status_str}")

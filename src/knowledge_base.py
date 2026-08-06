@@ -288,6 +288,21 @@ KNOWLEDGE_BASE = {
     },
 }
 
+# Shared class name constants (single source of truth for all modules)
+FAULT_CLASSES = sorted([k for k in KNOWLEDGE_BASE.keys()])
+ALL_CLASSES = sorted(list(KNOWLEDGE_BASE.keys()) + ["Healthy"])
+
+# Shared direction normalizer for calibrate_kb.py and verifier.py
+def normalize_direction(direction):
+    """Normalize a direction string to 'high', 'low', or 'unspecified'."""
+    d = direction.lower()
+    if any(w in d for w in ["elevated", "high", "higher", "shifted", "widened", "moderately"]):
+        return "high"
+    elif any(w in d for w in ["low", "lower"]):
+        return "low"
+    else:
+        return "unspecified"
+
 # Verification assertion
 assert len(KNOWLEDGE_BASE) == 7, f"Expected 7 classes, got {len(KNOWLEDGE_BASE)}"
 print("KNOWLEDGE_BASE loaded successfully. Keys:", list(KNOWLEDGE_BASE.keys()))

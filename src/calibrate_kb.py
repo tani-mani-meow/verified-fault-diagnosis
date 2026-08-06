@@ -5,23 +5,14 @@ import json
 from pathlib import Path
 
 # Add src to sys.path to load KNOWLEDGE_BASE
-sys.path.append(str(Path(__file__).resolve().parent))
-from knowledge_base import KNOWLEDGE_BASE
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from knowledge_base import KNOWLEDGE_BASE, normalize_direction
 
 def interpolate_p40(p25, p50):
     return p25 + 0.6 * (p50 - p25)
 
 def interpolate_p60(p50, p75):
     return p50 + 0.4 * (p75 - p50)
-
-def normalize_kb_dir(kb_dir):
-    d = kb_dir.lower()
-    if "elevated" in d or "high" in d or "higher" in d:
-        return "high"
-    elif "low" in d or "lower" in d:
-        return "low"
-    else:
-        return "unspecified"
 
 def main():
     script_dir = Path(__file__).resolve().parent
@@ -72,7 +63,7 @@ def main():
                 data_dir = "neutral"
                 
             # Normalize KB direction
-            kb_dir = normalize_kb_dir(kb_dir_raw)
+            kb_dir = normalize_direction(kb_dir_raw)
             
             # Check match
             match = (kb_dir == "unspecified") or (kb_dir == data_dir)

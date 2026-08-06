@@ -22,7 +22,7 @@ def main():
             print("Download completed.")
         except Exception as e:
             print(f"Error downloading from URL {zip_url}: {e}")
-            raise e
+            raise
     else:
         print(f"Zip file already exists at {zip_path}, skipping download.")
         
@@ -42,17 +42,28 @@ def main():
                 # If there's already a single folder named 'AirCompressorDataset' or similar, 
                 # extracting to data_dir will create data_dir/AirCompressorDataset/...
                 # Let's check if the top level matches 'AirCompressorDataset'
+                # Zip Slip protection: validate all paths before extraction
+                for name in namelist:
+                    resolved = (data_dir / name).resolve()
+                    if not str(resolved).startswith(str(data_dir.resolve())):
+                        raise ValueError(f"Zip slip detected: {name}")
+                        
                 if len(top_level_dirs) == 1 and list(top_level_dirs)[0] == 'AirCompressorDataset':
                     print("Extracting directly to data/ directory as it has a single top-level AirCompressorDataset directory...")
                     zip_ref.extractall(data_dir)
                 else:
                     print("Extracting to data/AirCompressorDataset/ directory...")
+                    # Validate paths against extract_dir
+                    for name in zip_ref.namelist():
+                        resolved = (extract_dir / name).resolve()
+                        if not str(resolved).startswith(str(extract_dir.resolve())):
+                            raise ValueError(f"Zip slip detected: {name}")
                     zip_ref.extractall(extract_dir)
                     
             print("Extraction completed.")
         except Exception as e:
             print(f"Error extracting zip: {e}")
-            raise e
+            raise
     else:
         print(f"Extraction directory already exists and is not empty at {extract_dir}, skipping unzip.")
         

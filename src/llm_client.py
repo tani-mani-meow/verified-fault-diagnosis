@@ -74,11 +74,21 @@ def generate_with_usage(prompt: str, system: str | None = None, max_retries: int
                 LAST_USAGE.prompt_tokens = p_tokens
                 LAST_USAGE.completion_tokens = c_tokens
                 return content, p_tokens, c_tokens
-            elif r.status_code in [429, 503, 504]:
+            else:
+                r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            if e.response is not None and e.response.status_code in [429, 503, 504]:
+                if attempt == max_retries - 1:
+                    raise
                 time.sleep(delay + random.uniform(0, 1))
                 delay *= 2
             else:
-                r.raise_for_status()
+                raise  # Non-retryable HTTP error (4xx, etc.)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(delay + random.uniform(0, 1))
+            delay *= 2
         except Exception:
             if attempt == max_retries - 1:
                 raise

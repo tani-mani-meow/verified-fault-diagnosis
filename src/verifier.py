@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 # Add src to python path if needed to import KNOWLEDGE_BASE
-sys.path.append(str(Path(__file__).resolve().parent))
-from knowledge_base import KNOWLEDGE_BASE
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from knowledge_base import KNOWLEDGE_BASE, normalize_direction
 
 def load_thresholds():
     script_dir = Path(__file__).resolve().parent
@@ -29,15 +29,6 @@ def load_calibration():
         
     with open(calibration_path, "r", encoding="utf-8") as f:
         return json.load(f)
-
-def normalize_claim_dir(claim_dir):
-    d = claim_dir.lower()
-    if any(w in d for w in ["elevated", "high", "higher", "shifted", "widened", "moderately"]):
-        return "high"
-    elif any(w in d for w in ["low", "lower"]):
-        return "low"
-    else:
-        return "unspecified"
 
 def verify_claim(recording_features, predicted_class, claim, thresholds, calibration):
     """
@@ -93,14 +84,15 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
     data_direction = cal_data["data_direction"] # "high", "low", or "neutral"
     
     global_th = thresholds["global"].get(feature, {})
-    global_p50 = global_th.get("p50", 0.0)
+    global_p25 = global_th.get("p25", 0.0)
+    global_p75 = global_th.get("p75", 0.0)
     
     # Normalize claim direction
-    claim_dir_norm = normalize_claim_dir(direction)
+    claim_dir_norm = normalize_direction(direction)
     
     passed = False
     reason = ""
-    reference = f"data_direction: {data_direction}, global_p50: {global_p50:.4f}, val: {val:.4f}"
+    reference = f"data_direction: {data_direction}, global_p25: {global_p25:.4f}, global_p75: {global_p75:.4f}, val: {val:.4f}"
     
     if data_direction == "neutral":
         if claim_dir_norm in ["high", "low"]:
@@ -114,24 +106,24 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
     elif data_direction in ["high", "low"]:
         if claim_dir_norm == data_direction:
             if data_direction == "high":
-                passed = (val > global_p50)
+                passed = (val >= global_p75)
                 if not passed:
-                    reason = f"recording value {val:.4f} is not above global p50 {global_p50:.4f}"
+                    reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f}"
             else: # "low"
-                passed = (val < global_p50)
+                passed = (val <= global_p25)
                 if not passed:
-                    reason = f"recording value {val:.4f} is not below global p50 {global_p50:.4f}"
+                    reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f}"
         elif claim_dir_norm == "unspecified":
             # If claim is "distinctive" or "context_dependent"
             if "distinctive" in direction:
                 if data_direction == "high":
-                    passed = (val > global_p50)
+                    passed = (val >= global_p75)
                     if not passed:
-                        reason = f"recording value {val:.4f} is not above global p50 {global_p50:.4f} for distinctive feature"
+                        reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f} for distinctive feature"
                 else: # "low"
-                    passed = (val < global_p50)
+                    passed = (val <= global_p25)
                     if not passed:
-                        reason = f"recording value {val:.4f} is not below global p50 {global_p50:.4f} for distinctive feature"
+                        reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f} for distinctive feature"
             else: # context_dependent etc.
                 passed = True
         else:
@@ -245,7 +237,7 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         else:
             sample_dir = "neutral"
             
-        claim_dir_norm = normalize_claim_dir(direction)
+        claim_dir_norm = normalize_direction(direction)
         
         # sample_true check
         if claim_dir_norm == "high":
@@ -263,7 +255,8 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         elif claim_dir_norm == "low":
             class_consistent = (class_dir == "low")
         else:
-            class_consistent = (class_dir == "neutral")
+            # Unspecified claim direction is always class-consistent
+            class_consistent = True
             
         atypical = sample_true and not class_consistent
         

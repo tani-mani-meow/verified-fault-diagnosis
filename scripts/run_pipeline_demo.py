@@ -16,7 +16,7 @@ from pipeline import run_pipeline
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Explain-Verify-Gate Pipeline Demo")
-    parser.add_argument("--real", action="store_true", help="Run in real mode using Gemini API")
+    parser.add_argument("--real", action="store_true", help="Run in real mode using NVIDIA NIM API")
     return parser.parse_args()
 
 def get_test_samples():
@@ -148,7 +148,7 @@ def run_real_demo(samples):
     output_path = repo_dir / "outputs" / "pipeline_demo_report.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=4)
-    print(f"\nSaved real Gemini pipeline reports to {output_path}")
+    print(f"\nSaved real NVIDIA NIM pipeline reports to {output_path}")
 
 def main():
     args = parse_args()

@@ -2,13 +2,13 @@ import numpy as np
 import scipy.stats
 import librosa
 import pywt
+import threading
 from collections import OrderedDict
 
-# Global flag to ensure feature count is printed only once
-_feature_count_printed = False
+# Thread-safe flag to ensure feature count is printed only once
+_feature_count_printed = threading.Event()
 
 def extract_features(signal, sr):
-    global _feature_count_printed
     
     features = OrderedDict()
     
@@ -106,8 +106,8 @@ def extract_features(signal, sr):
         log_energy = np.log(energy + 1e-12)
         features[f'wpt_energy_{i+1}'] = float(log_energy)
         
-    if not _feature_count_printed:
+    if not _feature_count_printed.is_set():
         print(f"Exact feature count: {len(features)}")
-        _feature_count_printed = True
+        _feature_count_printed.set()
         
     return features

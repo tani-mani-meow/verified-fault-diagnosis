@@ -51,6 +51,7 @@ def main():
     scaled_df['reading_index'] = df['reading_index']
     
     classes = sorted(df['class'].unique())
+    num_classes = len(classes)
     sim_report_lines = []
     sim_report_lines.append("Class,Mean Adjacent Sim,Mean Random Sim,Ratio")
     
@@ -101,19 +102,6 @@ def main():
     # Split: first 80% (180 samples) per class -> train, last 20% (45 samples) -> test
     train_indices = []
     test_indices = []
-    
-    for c in classes:
-        class_indices = df_sorted[df_sorted['class'] == c].index.tolist()
-        split_idx = int(len(class_indices) * 0.8)
-        train_indices.extend(class_indices[split_idx:])
-        test_indices.extend(class_indices[:split_idx])
-        
-    # Actually, the user says: "first 80% -> train, last 20% -> test"
-    # Wait: class_indices[:split_idx] is first 80% (train), class_indices[split_idx:] is last 20% (test).
-    # In my previous lines:
-    # train_indices.extend(class_indices[split_idx:]) -> this was putting the last 20% in train. Let's fix it:
-    train_indices = []
-    test_indices = []
     for c in classes:
         class_idx = df_sorted[df_sorted['class'] == c].index.tolist()
         split_point = int(len(class_idx) * 0.8)
@@ -140,7 +128,7 @@ def main():
     # Train the SAME XGBoost config
     clf = XGBClassifier(
         objective='multi:softprob',
-        num_class=8,
+        num_class=num_classes,
         random_state=42,
         eval_metric='mlogloss'
     )
@@ -165,7 +153,7 @@ def main():
         ('scaler', StandardScaler()),
         ('clf', XGBClassifier(
             objective='multi:softprob',
-            num_class=8,
+            num_class=num_classes,
             random_state=42,
             eval_metric='mlogloss'
         ))
@@ -179,8 +167,20 @@ def main():
     
     print(f"GroupKFold CV Accuracy: {gkf_mean:.6f} +/- {gkf_std:.6f}")
     
-    # Verdict logic
-    baseline_acc = 0.955556
+    # Verdict logic - parse baseline accuracy from saved report
+    baseline_report_path = repo_dir / "outputs" / "baseline_report.txt"
+    baseline_acc = 0.955556  # fallback default
+    if baseline_report_path.exists():
+        try:
+            with open(baseline_report_path) as f:
+                for line in f:
+                    if "Accuracy:" in line:
+                        baseline_acc = float(line.split(":")[1].strip())
+                        break
+        except Exception:
+            print(f"Warning: could not parse baseline accuracy from {baseline_report_path}, using fallback")
+    else:
+        print(f"Warning: baseline report not found at {baseline_report_path}, using fallback baseline_acc = {baseline_acc}")
     # LOW LEAKAGE if contiguous/grouped accuracy is within ~2 points (0.02) of baseline
     # LEAKAGE DETECTED if it drops materially (>~5 points)
     if contiguous_acc >= (baseline_acc - 0.02):

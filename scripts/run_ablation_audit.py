@@ -216,10 +216,11 @@ def run_part_b_c():
             
     if q.qsize() > 0:
         with ThreadPoolExecutor(max_workers=3) as executor:
-            futures = []
-            for _ in range(3):
-                futures.append(executor.submit(worker))
+            futures = [executor.submit(worker) for _ in range(3)]
             q.join()
+            for f in futures:
+                if f.exception() is not None:
+                    print(f"Worker thread failed: {f.exception()}")
             
     print(f"\nAll 100 class-only cases completed in {time.time() - start_audit_time:.2f}s!")
     
