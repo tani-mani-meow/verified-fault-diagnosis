@@ -1,10 +1,8 @@
-# src/verifier.py
 import os
 import sys
 import json
 from pathlib import Path
 
-# Add src to python path if needed to import KNOWLEDGE_BASE
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from knowledge_base import KNOWLEDGE_BASE, normalize_direction
 
@@ -31,14 +29,9 @@ def load_calibration():
         return json.load(f)
 
 def verify_claim(recording_features, predicted_class, claim, thresholds, calibration):
-    """
-    Verifies a single claim against the data-derived calibration direction.
-    claim format: {"feature": str, "direction": str, "critical": bool}
-    """
     feature = claim.get("feature")
     direction = claim.get("direction", "").lower()
     
-    # 1. Grounding check
     if predicted_class not in KNOWLEDGE_BASE:
         return {
             "claim": claim,
@@ -69,7 +62,6 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
         
     val = recording_features[feature]
     
-    # 2. Get calibration data
     cal_class = calibration.get(predicted_class, {})
     if feature not in cal_class:
         return {
@@ -81,15 +73,13 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
         }
         
     cal_data = cal_class[feature]
-    data_direction = cal_data["data_direction"] # "high", "low", or "neutral"
+    data_direction = cal_data["data_direction"]
     
     global_th = thresholds["global"].get(feature, {})
     global_p25 = global_th.get("p25", 0.0)
     global_p75 = global_th.get("p75", 0.0)
     
-    # Normalize claim direction
     claim_dir_norm = normalize_direction(direction)
-    
     passed = False
     reason = ""
     reference = f"data_direction: {data_direction}, global_p25: {global_p25:.4f}, global_p75: {global_p75:.4f}, val: {val:.4f}"
@@ -99,7 +89,6 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
             passed = False
             reason = "feature not directionally characteristic for this class"
         else:
-            # unspecified or soft claims (like context_dependent) pass if grounded
             passed = True
             reason = ""
             
@@ -109,25 +98,23 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
                 passed = (val >= global_p75)
                 if not passed:
                     reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f}"
-            else: # "low"
+            else:
                 passed = (val <= global_p25)
                 if not passed:
                     reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f}"
         elif claim_dir_norm == "unspecified":
-            # If claim is "distinctive" or "context_dependent"
             if "distinctive" in direction:
                 if data_direction == "high":
                     passed = (val >= global_p75)
                     if not passed:
                         reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f} for distinctive feature"
-                else: # "low"
+                else:
                     passed = (val <= global_p25)
                     if not passed:
                         reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f} for distinctive feature"
-            else: # context_dependent etc.
+            else:
                 passed = True
         else:
-            # Mismatch: claim asserts high but data is low, or vice versa
             passed = False
             reason = f"direction mismatch: claim asserts '{claim_dir_norm}' but data shows '{data_direction}'"
             
@@ -140,9 +127,6 @@ def verify_claim(recording_features, predicted_class, claim, thresholds, calibra
     }
 
 def verify_explanation(recording_features, predicted_class, claims, action_critical_idx=None, thresholds=None, calibration=None):
-    """
-    Verifies all claims in an explanation.
-    """
     if thresholds is None:
         thresholds = load_thresholds()
     if calibration is None:
@@ -160,12 +144,10 @@ def verify_explanation(recording_features, predicted_class, claims, action_criti
         
         if res["passed"]:
             passed_count += 1
-        else:
-            if is_critical:
-                escalate = True
+        elif is_critical:
+            escalate = True
                 
     faithfulness_score = passed_count / len(claims) if claims else 0.0
-    
     if faithfulness_score < 0.8 or len(claims) == 0:
         escalate = True
         
@@ -176,9 +158,6 @@ def verify_explanation(recording_features, predicted_class, claims, action_criti
     }
 
 def check_sample_faithfulness(recording_features, predicted_class, claims, thresholds=None, calibration=None):
-    """
-    Computes both sample_true (against actual p75/p25 direction) and class_consistent (against class calibration).
-    """
     if thresholds is None:
         thresholds = load_thresholds()
     if calibration is None:
@@ -195,7 +174,6 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         direction = c.get("direction", "")
         action_critical = c.get("critical", False) or c.get("action_critical", False)
         
-        # Grounding check
         if feature not in class_grounding:
             per_claim.append({
                 "feature": feature,
@@ -229,7 +207,6 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         global_p25 = global_feat.get("p25", 0.0)
         global_p75 = global_feat.get("p75", 0.0)
         
-        # Determine sample actual direction
         if value >= global_p75:
             sample_dir = "high"
         elif value <= global_p25:
@@ -239,7 +216,6 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
             
         claim_dir_norm = normalize_direction(direction)
         
-        # sample_true check
         if claim_dir_norm == "high":
             sample_true = (sample_dir == "high")
         elif claim_dir_norm == "low":
@@ -247,7 +223,6 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         else:
             sample_true = (sample_dir == "neutral")
             
-        # class_consistent check
         cal_class = calibration.get(predicted_class, {})
         class_dir = cal_class.get(feature, {}).get("data_direction", "neutral")
         if claim_dir_norm == "high":
@@ -255,7 +230,6 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         elif claim_dir_norm == "low":
             class_consistent = (class_dir == "low")
         else:
-            # Unspecified claim direction is always class-consistent
             class_consistent = True
             
         atypical = sample_true and not class_consistent
@@ -285,4 +259,3 @@ def check_sample_faithfulness(recording_features, predicted_class, claims, thres
         "faithfulness": faithfulness,
         "class_consistency": class_consistency_score
     }
-

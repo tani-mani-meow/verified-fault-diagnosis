@@ -1,4 +1,3 @@
-# src/pipeline.py
 import os
 import sys
 import json
@@ -10,7 +9,7 @@ import joblib
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from knowledge_base import KNOWLEDGE_BASE, ALL_CLASSES
-from verifier import load_thresholds, load_calibration, verify_explanation, verify_claim, check_sample_faithfulness
+from verifier import load_thresholds, load_calibration, check_sample_faithfulness
 import llm_client
 
 MOCK_FIXTURES = {
@@ -63,17 +62,11 @@ MOCK_FIXTURES = {
 }
 
 def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample"):
-    """
-    Runs explain -> verify -> gate pipeline.
-    mock parameter can be True (defaults to 'correct'), or a string key in MOCK_FIXTURES.
-    """
     repo_dir = Path(__file__).resolve().parent.parent
     
-    # 1. Load thresholds and calibration
     thresholds = load_thresholds()
     calibration = load_calibration()
     
-    # 2. Predict Class and Confidence (Cert 1)
     model_path = repo_dir / "outputs" / "xgb_model.joblib"
     scaler_path = repo_dir / "outputs" / "scaler.joblib"
     feature_names_path = repo_dir / "outputs" / "feature_names.json"
@@ -86,7 +79,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     with open(feature_names_path, "r", encoding="utf-8") as f:
         feature_names = json.load(f)
         
-    # Order sample row features
     feature_values = [sample_row[feat] for feat in feature_names]
     X_raw = pd.DataFrame([feature_values], columns=feature_names)
     X_scaled = scaler.transform(X_raw)
@@ -95,13 +87,11 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     pred_idx = np.argmax(probs)
     confidence = float(probs[pred_idx])
     
-    class_names = ALL_CLASSES  # single source of truth from knowledge_base.py
+    class_names = ALL_CLASSES
     predicted_class = class_names[pred_idx]
     
-    # 3. Retrieve KB & Build Grounding Context (Cert 2)
     kb_entry = KNOWLEDGE_BASE.get(predicted_class)
     if not kb_entry:
-        # Healthy or ungrounded class: escalate
         return {
             "predicted": predicted_class,
             "confidence": confidence,
@@ -117,49 +107,35 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
             "explanation": "No diagnostic explanation generated for Healthy/unsupported class."
         }
         
-    # Load glossary
     glossary_path = repo_dir / "outputs" / "feature_glossary.json"
     with open(glossary_path, "r", encoding="utf-8") as f:
         glossary = json.load(f)
         
     grounding_feats = kb_entry.get("grounding_features", {})
     if grounding_mode == "class_only":
-        context_lines = []
-        context_lines.append("feature | human label + freq band")
-        context_lines.append("---|---")
+        context_lines = ["feature | human label + freq band", "---|---"]
         for feat in sorted(grounding_feats.keys()):
-            gloss = glossary.get(feat, {})
-            label = gloss.get("label", feat)
+            label = glossary.get(feat, {}).get("label", feat)
             context_lines.append(f"{feat} | {label}")
         context_str = "\n".join(context_lines)
     elif grounding_mode == "values_only":
-        context_lines = []
-        context_lines.append("feature | human label + freq band | this sample's value | global p25 | global p75")
-        context_lines.append("---|---|---|---|---")
+        context_lines = ["feature | human label + freq band | this sample's value | global p25 | global p75", "---|---|---|---|---"]
         for feat in sorted(grounding_feats.keys()):
             actual_val = sample_row[feat]
-            gloss = glossary.get(feat, {})
-            label = gloss.get("label", feat)
+            label = glossary.get(feat, {}).get("label", feat)
             global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
             global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
             context_lines.append(f"{feat} | {label} | {actual_val:.4f} | {global_p25:.4f} | {global_p75:.4f}")
         context_str = "\n".join(context_lines)
     else:
-        context_lines = []
-        context_lines.append("feature | human label + freq band | this sample's value | global p25 | p50 | p75 | sample_dir")
-        context_lines.append("---|---|---|---|---|---|---")
-        
+        context_lines = ["feature | human label + freq band | this sample's value | global p25 | p50 | p75 | sample_dir", "---|---|---|---|---|---|---"]
         for feat in sorted(grounding_feats.keys()):
             actual_val = sample_row[feat]
-            gloss = glossary.get(feat, {})
-            label = gloss.get("label", feat)
-            
-            # global percentiles
+            label = glossary.get(feat, {}).get("label", feat)
             global_p50 = thresholds["global"].get(feat, {}).get("p50", 0.0)
             global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
             global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
             
-            # Determine sample actual direction
             if actual_val >= global_p75:
                 sample_dir = "high"
             elif actual_val <= global_p25:
@@ -168,10 +144,8 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                 sample_dir = "normal"
                 
             context_lines.append(f"{feat} | {label} | {actual_val:.4f} | {global_p25:.4f} | {global_p50:.4f} | {global_p75:.4f} | {sample_dir}")
-            
         context_str = "\n".join(context_lines)
         
-    # 4. LLM Generation or Mock Fixture
     parsed_json = None
     unparseable = False
     
@@ -179,12 +153,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
         fixture_key = mock if isinstance(mock, str) else "correct"
         parsed_json = MOCK_FIXTURES.get(fixture_key, MOCK_FIXTURES["correct"])
     else:
-        # Check if real API key is available
         api_key = os.environ.get("NVIDIA_API_KEY")
         if not api_key or api_key in ["dummy_key", "your_nvidia_key_here"]:
             raise ValueError("NVIDIA_API_KEY is not set. Run in mock mode or update .env file.")
             
-        # Build prompt
         if grounding_mode == "class_only":
             system_prompt = (
                 "You are an expert diagnostic assistant for air compressor maintenance.\n"
@@ -279,7 +251,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
         
         response_text = llm_client.generate(prompt, system=system_prompt)
         
-        # Parse JSON defensively
         clean_text = response_text.strip()
         if clean_text.startswith("```"):
             m = re.search(r"```(?:json)?\s*([\s\S]*?)```", clean_text)
@@ -290,7 +261,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
             parsed_json = json.loads(clean_text)
         except Exception:
             try:
-                # Fallback: use ast.literal_eval for single-quoted JSON strings
                 import ast
                 parsed_json = ast.literal_eval(clean_text)
             except Exception:
@@ -300,7 +270,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                     "explanation": f"Failed to parse LLM output as JSON. Raw output: {response_text}"
                 }
             
-    # 5. Run Verifier (Cert 3)
     if unparseable:
         return {
             "predicted": predicted_class,
@@ -325,12 +294,10 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
         
     res = check_sample_faithfulness(sample_row, predicted_class, verifier_claims, thresholds=thresholds, calibration=calibration)
     
-    # Post-generation banned-contradiction check (Step D)
     explanation_text = parsed_json.get("explanation", "")
     explanation_lower = explanation_text.lower()
     mechanism_warnings = []
     
-    # Calculate impulsiveness support using global p60 threshold
     kurt_global = thresholds["global"].get("kurtosis", {})
     cf_global = thresholds["global"].get("crest_factor", {})
     k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
@@ -349,7 +316,6 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
                     f"Contradiction: explanation contains '{term}' but class is not impulsiveness_supported."
                 )
                 
-    # 6. Trust Gate redesign (Step C)
     faithfulness = res["faithfulness"]
     class_consistency = res["class_consistency"]
     per_claim = res["per_claim"]
@@ -358,27 +324,18 @@ def run_pipeline(sample_row, true_label=None, mock=False, grounding_mode="sample
     reason = "passed_verification"
     atypical_features = []
     
-    # 1. If any ACTION-CRITICAL claim is NOT sample_true -> ESCALATE, reason="false_action_critical"
-    false_action_critical = False
-    for pc in per_claim:
-        if pc["action_critical"] and not pc["sample_true"]:
-            false_action_critical = True
-            break
+    false_action_critical = any(pc["action_critical"] and not pc["sample_true"] for pc in per_claim)
     
-    # 0. If no verifiable claims -> ESCALATE, reason="no_verifiable_claims"
     if len(per_claim) == 0:
         gate_decision = "ESCALATE"
         reason = "no_verifiable_claims"
     elif false_action_critical:
         gate_decision = "ESCALATE"
         reason = "false_action_critical"
-    # 2. Else if faithfulness < 0.80 -> ESCALATE, reason="low_faithfulness"
     elif faithfulness < 0.80:
         gate_decision = "ESCALATE"
         reason = "low_faithfulness"
     else:
-        # 3. Else if any claim is sample_true but NOT class_consistent:
-        # mark it 'atypical'; if any ATYPICAL claim is action-critical -> ESCALATE, reason="atypical_action_critical"
         atypical_action_critical = False
         for pc in per_claim:
             if pc["atypical"]:
