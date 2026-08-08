@@ -253,7 +253,7 @@ print(log)
 # 8. TEST SUITE: run it
 # ============================================================
 print("\n--- 8. Test suite ---")
-test_result = run("python -m pytest tests/ -v 2>&1")
+test_result = run(f'"{sys.executable}" -m pytest tests/ -v 2>&1')
 print(test_result)
 
 passed = test_result.count("PASSED")

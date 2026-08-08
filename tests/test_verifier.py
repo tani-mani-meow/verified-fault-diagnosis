@@ -72,7 +72,7 @@ MOCK_CALIBRATION = {
 # Mock LIV recording features matching the low directions
 MOCK_LIV_RECORDING = {
     "spectral_rolloff_85": 1000.0,
-    "skewness": 0.1,
+    "skewness": -0.1,
     "spectral_centroid": 600.0,
     "wpt_energy_15": 1.0,
     "wpt_energy_18": 1.5,
