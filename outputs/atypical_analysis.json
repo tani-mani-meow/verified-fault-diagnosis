@@ -3,7 +3,7 @@
     "n": 96,
     "mean_atypical": 0.10416666666666667,
     "mean_claims": 3.90625,
-    "mean_faithfulness": 1.0,
+    "mean_faithfulness": 0.96875,
     "distribution": {
       "0": 90,
       "1": 4,
@@ -15,7 +15,7 @@
     "n": 4,
     "mean_atypical": 1.0,
     "mean_claims": 3.0,
-    "mean_faithfulness": 1.0,
+    "mean_faithfulness": 0.75,
     "distribution": {
       "0": 3,
       "4": 1

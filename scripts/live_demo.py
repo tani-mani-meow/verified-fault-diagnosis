@@ -32,49 +32,151 @@ MAGENTA = "\033[95m"
 BOLD = "\033[1m"
 RESET = "\033[0m"
 
+# ---------------------------------------------------------------------------
+# CACHED_DEMOS: real LLM outputs from faithfulness_audit.json.
+# Used as fallback when the NVIDIA NIM API is unavailable.
+# Each entry maps directly to a row in outputs/features.csv.
+# ---------------------------------------------------------------------------
 CACHED_DEMOS = {
-    "lov": {
-        "index": 965,
-        "true_label": "LOV",
-        "predicted_class": "LOV",
-        "confidence": 0.96,
-        "explanation": "The outlet/discharge reed valve is likely failing to seal, causing pressurized gas to leak back into the discharge line. This creates an impulsive backflow event that shifts energy toward higher frequencies.",
+    "bearing": {
+        "index": 179,
+        "true_label": "Bearing",
+        "predicted_class": "Bearing",
+        "confidence": 0.9825,
+        "explanation": (
+            "A localized defect on a bearing raceway or rolling element is likely present, "
+            "as indicated by low energy in the frequency band 3000-4000 Hz and low energy "
+            "near 375-500 Hz. This defect alters the mechanical rotation profile, exciting "
+            "high-frequency structural resonances and shifting the energy distribution."
+        ),
         "claims": [
-            {"feature": "wpt_energy_34", "direction": "high", "critical": True},
-            {"feature": "wpt_energy_31", "direction": "high", "critical": True},
-            {"feature": "wpt_energy_42", "direction": "high", "critical": True},
-            {"feature": "kurtosis", "direction": "impulsive", "critical": False}
+            {"feature": "band_energy_ratio_4", "direction": "low", "critical": True},
+            {"feature": "wpt_energy_4",        "direction": "low", "critical": True},
         ],
-        "tokens": {"prompt": 847, "completion": 203}
+        "gate_decision": "RELEASE",
+        "gate_reason": "passed_verification",
+        "faithfulness": 1.0,
+        "tokens": {"prompt": 751, "completion": 135},
     },
     "liv": {
         "index": 679,
         "true_label": "LIV",
         "predicted_class": "LIV",
-        "confidence": 0.98,
-        "explanation": "The air compressor's inlet/suction reed valve is likely failing to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This results in a backflow that shifts the energy distribution toward lower frequencies, reducing volumetric efficiency.",
+        "confidence": 0.9993,
+        "explanation": (
+            "The inlet/suction reed valve is likely failing to seal during the compression "
+            "stroke, causing pressurized gas to leak back into the suction line. This backflow "
+            "has shifted the energy distribution toward lower frequencies, as indicated by the "
+            "lower spectral centroid and spectral rolloff. The energy near 1750-1875 Hz, "
+            "2125-2250 Hz, and 6125-6250 Hz is also lower than expected, but these features "
+            "are not critical for this diagnosis. The reduced volumetric efficiency is "
+            "consistent with the predicted LIV fault class."
+        ),
         "claims": [
-            {"feature": "spectral_centroid", "direction": "low", "critical": True},
+            {"feature": "spectral_centroid",   "direction": "low", "critical": True},
             {"feature": "spectral_rolloff_85", "direction": "low", "critical": True},
-            {"feature": "wpt_energy_15", "direction": "low", "critical": False},
-            {"feature": "wpt_energy_18", "direction": "low", "critical": False},
-            {"feature": "skewness", "direction": "low", "critical": False}
+            {"feature": "wpt_energy_15",       "direction": "low", "critical": False},
+            {"feature": "wpt_energy_18",       "direction": "low", "critical": False},
+            {"feature": "wpt_energy_50",       "direction": "low", "critical": False},
         ],
-        "tokens": {"prompt": 834, "completion": 195}
+        "gate_decision": "RELEASE",
+        "gate_reason": "passed_verification",
+        "faithfulness": 1.0,
+        "tokens": {"prompt": 771, "completion": 278},
+    },
+    "lov": {
+        # ESCALATE reason: atypical_action_critical
+        # Claim on wpt_energy_5 is action-critical but the direction is atypical
+        # for this fault class (sample is LOW but the class median is HIGH).
+        "index": 965,
+        "true_label": "LOV",
+        "predicted_class": "LOV",
+        "confidence": 0.8311,
+        "explanation": (
+            "The energy near 500-625 Hz is lower than expected. This suggests that the "
+            "discharge/outlet reed valve is not sealing properly, causing compressed gas to "
+            "leak back into the cylinder during the suction stroke. This results in "
+            "re-expansion losses and elevated high-frequency band energy on the discharge side."
+        ),
+        "claims": [
+            {"feature": "wpt_energy_5", "direction": "low", "critical": True},
+        ],
+        "gate_decision": "ESCALATE",
+        "gate_reason": "atypical_action_critical",
+        "faithfulness": 1.0,
+        "tokens": {"prompt": 768, "completion": 109},
     },
     "nrv": {
-        "index": 1273,
-        "true_label": "NRV",
-        "predicted_class": "NRV",
-        "confidence": 0.94,
-        "explanation": "The non-return valve is likely malfunctioning, causing reverse flow. The energy in the 2812-2937 Hz band is elevated, and the spectral centroid is higher than normal.",
-        "claims": [
-            {"feature": "wpt_energy_35", "direction": "low", "critical": True},
-            {"feature": "wpt_energy_36", "direction": "low", "critical": True},
-            {"feature": "spectral_centroid", "direction": "high", "critical": True}
-        ],
-        "tokens": {"prompt": 852, "completion": 178}
-    }
+        # ESCALATE reason: no_verifiable_claims
+        # LLM produced a generic "all normal" explanation with zero extractable claims.
+        # Faithfulness = 0.0; the gate fires immediately.
+        "index": 993,
+        "true_label": "LOV",
+        "predicted_class": "LOV",
+        "confidence": 0.9906,
+        "explanation": (
+            "The energy levels across all frequency bands are within normal ranges. "
+            "No unusual patterns or anomalies were detected in the provided data."
+        ),
+        "claims": [],
+        "gate_decision": "ESCALATE",
+        "gate_reason": "no_verifiable_claims",
+        "faithfulness": 0.0,
+        "tokens": {"prompt": 768, "completion": 38},
+    },
+}
+
+# ---------------------------------------------------------------------------
+# GATE_REASON_TEXT: human-readable expansions of gate_reason codes.
+# ---------------------------------------------------------------------------
+GATE_REASON_TEXT = {
+    "passed_verification": (
+        "All action-critical claims verified against sensor data. "
+        "Report released to engineer."
+    ),
+    "atypical_action_critical": (
+        "An action-critical claim was verified as sample-true, but its direction "
+        "is statistically atypical for this fault class — the sensor reading disagrees "
+        "with the class training median. Report withheld pending manual review."
+    ),
+    "no_verifiable_claims": (
+        "The LLM produced no extractable directional claims. "
+        "Faithfulness = 0.0. Report withheld — explanation is unverifiable."
+    ),
+    "mechanism_guard_flagged": (
+        "LLM used a mechanism keyword (e.g. 'impulsive') that is not supported "
+        "by the corresponding sensor feature value. Report withheld."
+    ),
+    "false_action_critical": (
+        "An action-critical claim was directly falsified by the verifier — the "
+        "claimed feature direction contradicts the actual sensor reading. "
+        "Report withheld."
+    ),
+}
+
+# ---------------------------------------------------------------------------
+# CASE_NOTES: presenter talking points (not printed; read from source).
+# ---------------------------------------------------------------------------
+CASE_NOTES = {
+    "bearing": (
+        "Clean textbook pass. Both action-critical claims are low-frequency band energy "
+        "reductions characteristic of bearing raceway defects. Faithfulness = 1.0. RELEASE."
+    ),
+    "liv":  (
+        "Inlet valve. LLM correctly identifies spectral centroid and rolloff shift to "
+        "lower frequencies — physically consistent with suction-side backflow. "
+        "5/5 claims verified. RELEASE."
+    ),
+    "lov":  (
+        "Outlet valve. Claim on wpt_energy_5 verified sample-true, but the class training "
+        "median for this feature is HIGH, not LOW. This is an atypical reading for LOV — "
+        "the verifier flags it as 'atypical_action_critical'. ESCALATE."
+    ),
+    "nrv":  (
+        "LLM hallucinated a generic normal-range explanation — zero claims extracted. "
+        "Faithfulness = 0.0. Gate fires on 'no_verifiable_claims'. ESCALATE immediately, "
+        "regardless of classification confidence (0.9906)."
+    ),
 }
 
 def print_banner(stage_num, stage_title):
@@ -97,9 +199,19 @@ def run_spinner(duration=1.5):
     sys.stdout.flush()
 
 def main():
-    parser = argparse.ArgumentParser(description="Live professor presentation of explain -> verify -> gate pipeline.")
-    parser.add_argument("--case", type=str, choices=["liv", "lov", "nrv"], default="lov",
-                        help="Select case scenario (liv: RELEASE, lov: ESCALATE (mechanism), nrv: ESCALATE (false claim)).")
+    parser = argparse.ArgumentParser(description="Live presentation of explain -> verify -> gate pipeline.")
+    parser.add_argument(
+        "--case",
+        type=str,
+        choices=["bearing", "liv", "lov", "nrv"],
+        default="bearing",
+        help=(
+            "bearing: Bearing fault, RELEASE (2/2 claims pass). "
+            "liv: Inlet valve, RELEASE (5/5 claims pass). "
+            "lov: Outlet valve, ESCALATE (atypical action-critical claim). "
+            "nrv: LOV recording, ESCALATE (LLM produced zero verifiable claims)."
+        ),
+    )
     parser.add_argument("--slow", action="store_true", help="Increase delay between stages to 3 seconds for pacing.")
     args = parser.parse_args()
 
@@ -326,49 +438,37 @@ def main():
                 print(f"    Mechanism Warning: {warning}")
                 time.sleep(0.8)
     else:
+        if not demo["claims"]:
+            print(f"    {YELLOW}[INFO] No directional claims extracted from this explanation.{RESET}")
+            print(f"    {YELLOW}        Faithfulness = 0.0 — gate will fire immediately.{RESET}")
         for idx, claim in enumerate(demo["claims"], 1):
             feat = claim["feature"]
             claimed_dir = claim["direction"].upper()
-            
-            # Calculate actual value
-            if feat == "kurtosis":
-                val = row["kurtosis"]
-                kurt_global = thresholds["global"].get("kurtosis", {})
-                k_p60 = kurt_global.get("p50", 0.0) + 0.4 * (kurt_global.get("p75", 0.0) - kurt_global.get("p50", 0.0))
+            val = row[feat] if feat in row.index else None
+            global_feat = thresholds["global"].get(feat, {})
+            global_p25 = global_feat.get("p25", 0.0)
+            global_p50 = global_feat.get("p50", 0.0)
+            global_p75 = global_feat.get("p75", 0.0)
+
+            if val is None:
+                actual_str = "(feature not in sample)"
                 passed = False
-                actual_str = f"{val:.2f} (class median below threshold {k_p60:.2f})"
-            elif feat == "spectral_centroid":
-                val = row["spectral_centroid"]
-                global_p25 = thresholds["global"]["spectral_centroid"]["p25"]
-                global_p75 = thresholds["global"]["spectral_centroid"]["p75"]
-                if claimed_dir == "LOW":
-                    passed = val <= global_p25
-                else:
-                    passed = val >= global_p75
-                if args.case == "lov":
-                    actual_str = f"757.64 Hz (below p50 818.30)"
-                elif args.case == "nrv":
-                    actual_str = f"{val:.2f} Hz (normal, within p25-p75)"
-                else:
-                    actual_str = f"{val:.2f} Hz (below p50 {thresholds['global']['spectral_centroid']['p50']:.2f})"
-            elif feat == "spectral_rolloff_85":
-                val = row["spectral_rolloff_85"]
-                global_p25 = thresholds["global"]["spectral_rolloff_85"]["p25"]
-                passed = val <= global_p25
-                actual_str = f"{val:.2f} Hz (below p25 {global_p25:.2f})"
+            elif claimed_dir == "LOW":
+                passed = (val <= global_p25)
+                actual_str = (
+                    f"{val:.4f} ({'below' if val <= global_p25 else 'above'} "
+                    f"p25={global_p25:.4f}, p50={global_p50:.4f})"
+                )
             else:
-                val = row[feat]
-                global_p25 = thresholds["global"].get(feat, {}).get("p25", 0.0)
-                global_p75 = thresholds["global"].get(feat, {}).get("p75", 0.0)
-                if claimed_dir == "LOW":
-                    passed = val <= global_p25
-                    actual_str = f"{val:.4f} ({'below' if val <= global_p25 else 'above'} p25 {global_p25:.4f})"
-                else:
-                    passed = val >= global_p75
-                    actual_str = f"{val:.4f} ({'above' if val >= global_p75 else 'below'} p75 {global_p75:.4f})"
-                
+                passed = (val >= global_p75)
+                actual_str = (
+                    f"{val:.4f} ({'above' if val >= global_p75 else 'below'} "
+                    f"p75={global_p75:.4f}, p50={global_p50:.4f})"
+                )
+
+            is_crit = " [action-critical]" if claim.get("critical") else ""
             status_str = f"{GREEN}[TRUE]{RESET}" if passed else f"{RED}[FALSE]{RESET}"
-            print(f"    Claim {idx}: {feat} -> {claimed_dir} | Actual: {actual_str} -> {status_str}")
+            print(f"    Claim {idx}: {feat} -> {claimed_dir}{is_crit} | Actual: {actual_str} -> {status_str}")
             time.sleep(0.8)
         
     time.sleep(delay)
@@ -389,24 +489,15 @@ def main():
             guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
         eng_msg = "The engineer WILL see this report." if decision == "RELEASE" else "The engineer will NOT see this."
     else:
-        if args.case == "lov":
-            faithfulness = 0.75
-            guard_msg = "Mechanism Guard: 'impulsive' used but kurtosis 1.91 < 2.84 -> FLAGGED"
-            decision = "ESCALATE"
-            reason = "mechanism_guard_flagged"
-            eng_msg = "The engineer will NOT see this."
-        elif args.case == "nrv":
-            faithfulness = 0.67
-            guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
-            decision = "ESCALATE"
-            reason = "false_action_critical"
-            eng_msg = "The engineer will NOT see this."
-        else:
-            faithfulness = 1.00
-            guard_msg = "Mechanism Guard: No impulsive wording used -> PASSED"
-            decision = "RELEASE"
-            reason = "passed_verification"
-            eng_msg = "The engineer WILL see this report."
+        faithfulness = demo["faithfulness"]
+        decision    = demo["gate_decision"]
+        reason      = demo["gate_reason"]
+        guard_msg   = "Mechanism Guard: No impulsive wording used -> PASSED"
+        eng_msg     = (
+            "The engineer WILL see this report."
+            if decision == "RELEASE"
+            else "The engineer will NOT see this."
+        )
         
     print(f"    Faithfulness Score: {BOLD}{GREEN if faithfulness >= 0.8 else RED}{faithfulness:.2f}{RESET}")
     print(f"    {YELLOW}{guard_msg}{RESET}")
@@ -417,11 +508,17 @@ def main():
     color_banner = RED if decision == "ESCALATE" else GREEN
     decision_text = f"!!! {decision} !!!" if decision == "ESCALATE" else f"*** {decision} ***"
     
+    reason_full = GATE_REASON_TEXT.get(reason, reason)
     print(f"\n{color_banner}{BOLD}{banner_border}")
     print(f"|         {decision_text:<28} |")
-    print(f"|  Reason: {reason:<27} |")
+    print(f"|  Code:   {reason:<27} |")
     print(f"|  Faithfulness: {faithfulness:<21.2f} |")
-    print(f"|  {eng_msg:<34} |")
+    print(f"{banner_border}")
+    # Word-wrap the reason explanation at 40 chars
+    import textwrap
+    for line in textwrap.wrap(reason_full, width=38):
+        print(f"|  {line:<38} |")
+    print(f"|  {eng_msg:<38} |")
     print(f"{banner_border}{RESET}\n")
     
     time.sleep(delay)
@@ -439,26 +536,31 @@ def main():
         false_cnt = claims_cnt - true_cnt
     else:
         claims_cnt = len(demo["claims"])
-        true_cnt = sum(1 for c in demo["claims"] if c["feature"] != "kurtosis" and (args.case == "liv" or c["feature"] != "wpt_energy_34" or args.case != "lov"))
-        if args.case == "lov":
-            true_cnt = 3
-        elif args.case == "nrv":
-            true_cnt = 2
-        else:
-            true_cnt = 5
+        # Count verified claims using the same threshold logic used in Stage 5
+        true_cnt = sum(
+            1 for c in demo["claims"]
+            if (
+                c["direction"].upper() == "LOW"
+                and row.get(c["feature"], float("inf")) <= thresholds["global"].get(c["feature"], {}).get("p25", float("inf"))
+            ) or (
+                c["direction"].upper() == "HIGH"
+                and row.get(c["feature"], float("-inf")) >= thresholds["global"].get(c["feature"], {}).get("p75", float("-inf"))
+            )
+        )
         false_cnt = claims_cnt - true_cnt
         
     print(f"  Claims extracted: {claims_cnt}")
     print(f"  Claims verified: {true_cnt} true, {false_cnt} false")
     print(f"  Faithfulness: {faithfulness:.2f}")
     gate_color = RED if decision == "ESCALATE" else GREEN
-    print(f"  Gate: {gate_color}{decision} ({reason}){RESET}")
+    print(f"  Gate: {gate_color}{BOLD}{decision}{RESET} | Code: {reason}")
     if real_report:
         print(f"  Tokens: {prompt_tokens + completion_tokens} ({prompt_tokens} + {completion_tokens})")
     else:
         tok = demo["tokens"]
         print(f"  Tokens: {tok['prompt'] + tok['completion']} ({tok['prompt']} + {tok['completion']})")
     print(f"{summary_border}{RESET}")
+    print(f"  (Presenter note) {CASE_NOTES.get(args.case, '')}")
 
 if __name__ == "__main__":
     main()

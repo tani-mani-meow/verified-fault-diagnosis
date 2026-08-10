@@ -1,31 +1,32 @@
 {
   "faithfulness": {
-    "mean": 1.0,
+    "mean": 0.96,
     "median": 1.0,
-    "std": 0.0,
-    "min": 1.0,
+    "std": 0.19694638556693236,
+    "min": 0.0,
     "histogram_bins_0_to_1": [
+      4,
       0,
       0,
       0,
-      0,
-      100
+      96
     ]
   },
   "gate_outcomes": {
-    "release_pct": 94.0,
-    "escalate_pct": 6.0,
+    "release_pct": 90.0,
+    "escalate_pct": 10.0,
     "escalate_reason_pcts": {
-      "atypical_action_critical": 6.0
+      "atypical_action_critical": 6.0,
+      "no_verifiable_claims": 4.0
     }
   },
   "safety_cross_tab": {
-    "correct_released": 90,
-    "correct_escalated": 6,
-    "misclassified_released": 4,
-    "misclassified_escalated": 0,
-    "safety_catch_rate_pct": 0.0,
-    "release_precision_pct": 95.74468085106383
+    "correct_released": 87,
+    "correct_escalated": 9,
+    "misclassified_released": 3,
+    "misclassified_escalated": 1,
+    "safety_catch_rate_pct": 25.0,
+    "release_precision_pct": 96.66666666666667
   },
   "per_class": {
     "Bearing": {
@@ -47,22 +48,22 @@
       "mean_class_consistency": 0.9738095238095239
     },
     "LOV": {
-      "mean_faithfulness": 1.0,
+      "mean_faithfulness": 0.9285714285714286,
+      "release_rate": 0.8571428571428571,
+      "escalate_rate": 0.14285714285714285,
+      "mean_class_consistency": 0.8571428571428571
+    },
+    "NRV": {
+      "mean_faithfulness": 0.9285714285714286,
       "release_rate": 0.9285714285714286,
       "escalate_rate": 0.07142857142857142,
       "mean_class_consistency": 0.9285714285714286
     },
-    "NRV": {
-      "mean_faithfulness": 1.0,
-      "release_rate": 1.0,
-      "escalate_rate": 0.0,
-      "mean_class_consistency": 1.0
-    },
     "Piston": {
-      "mean_faithfulness": 1.0,
-      "release_rate": 0.8571428571428571,
-      "escalate_rate": 0.14285714285714285,
-      "mean_class_consistency": 0.8571428571428571
+      "mean_faithfulness": 0.8571428571428571,
+      "release_rate": 0.7142857142857143,
+      "escalate_rate": 0.2857142857142857,
+      "mean_class_consistency": 0.7142857142857143
     },
     "Riderbelt": {
       "mean_faithfulness": 1.0,

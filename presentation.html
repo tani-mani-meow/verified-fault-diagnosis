@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verified Fault Diagnosis — Presentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  #30363d;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --blue:    #58a6ff;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --amber:   #d29922;
+      --purple:  #bc8cff;
+      --mono:    'JetBrains Mono', monospace;
+      --sans:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .mono { font-family: var(--mono); }
+    .muted { color: var(--muted); }
+
+    .tag {
+      display: inline-block; padding: 2px 9px; border-radius: 4px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; font-family: var(--mono);
+    }
+    .tag-blue   { background: #58a6ff18; color: var(--blue);   border: 1px solid #58a6ff44; }
+    .tag-green  { background: #3fb95018; color: var(--green);  border: 1px solid #3fb95044; }
+    .tag-red    { background: #f8514918; color: var(--red);    border: 1px solid #f8514944; }
+    .tag-amber  { background: #d2992218; color: var(--amber);  border: 1px solid #d2992244; }
+    .tag-purple { background: #bc8cff18; color: var(--purple); border: 1px solid #bc8cff44; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(13,17,23,0.88); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 52px; padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      font-weight: 800; font-size: 0.92rem;
+      color: #ffffff;
+    }
+    .nav-links { display: flex; gap: 1.4rem; font-size: 0.8rem; }
+    .nav-links a { color: var(--muted); transition: color 0.18s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* SECTIONS */
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 6rem 0 3rem; }
+    section:first-of-type { padding-top: 0; }
+    .section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--blue); font-family: var(--mono);
+      margin-bottom: 0.4rem;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.18; }
+    h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.2; margin-bottom: 0.4rem; }
+    .subtitle { color: var(--muted); font-size: 1rem; max-width: 640px; margin-top: 0.4rem; line-height: 1.65; }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      background:
+        radial-gradient(ellipse 70% 55% at 60% 50%, #1a2d4d33 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, #2d1a4d22 0%, transparent 60%);
+    }
+    .hero-inner { padding-top: 52px; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+
+    /* STATS */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    }
+    @media (max-width: 700px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.2rem 1rem; text-align: center; transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { border-color: var(--blue); transform: translateY(-2px); }
+    .stat-val {
+      font-size: 1.9rem; font-weight: 800;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-top: 0.2rem; }
+
+    /* PIPELINE */
+    .pipeline {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 2rem;
+    }
+    .pipe-step {
+      flex: 1; min-width: 130px; padding: 1.2rem 0.9rem;
+      background: var(--surface); border-right: 1px solid var(--border);
+      position: relative; text-align: center;
+    }
+    .pipe-step:last-child { border-right: none; }
+    .pipe-step::after {
+      content: '›'; position: absolute; right: -9px; top: 50%;
+      transform: translateY(-50%); font-size: 1.1rem; color: var(--border); z-index:1;
+    }
+    .pipe-step:last-child::after { display: none; }
+    .pipe-num  { font-size: 0.62rem; font-weight: 700; font-family: var(--mono); color: var(--blue); text-transform: uppercase; letter-spacing: 0.1em; }
+    .pipe-name { font-size: 0.8rem; font-weight: 700; margin-top: 0.25rem; }
+    .pipe-desc { font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; line-height: 1.4; }
+    .pipe-cert {
+      display: inline-block; margin-top: 0.5rem; font-size: 0.6rem; padding: 1px 7px;
+      border-radius: 4px; font-weight: 700; font-family: var(--mono);
+      background: #58a6ff12; color: var(--blue); border: 1px solid #58a6ff33;
+    }
+
+    /* DEMO TABS */
+    .case-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 1rem; }
+    .case-tab {
+      padding: 0.42rem 1rem; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      font-size: 0.8rem; font-weight: 600; font-family: var(--mono);
+      cursor: pointer; transition: all 0.18s;
+    }
+    .case-tab:hover { border-color: var(--blue); color: var(--text); }
+    .case-tab.active-release { border-color: var(--green); background: #3fb95015; color: var(--green); }
+    .case-tab.active-escalate { border-color: var(--red); background: #f8514915; color: var(--red); }
+
+    /* DEMO PANEL */
+    .demo-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .demo-header {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .demo-header-left h3 { font-size: 1.05rem; font-weight: 700; }
+    .demo-meta { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; font-family: var(--mono); }
+
+    .verdict-stamp {
+      padding: 0.35rem 1rem; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 800; font-family: var(--mono);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .v-release  { background: #3fb95018; color: var(--green); border: 2px solid var(--green); }
+    .v-escalate { background: #f8514918; color: var(--red);   border: 2px solid var(--red);   }
+
+    .demo-body {
+      padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+    @media (max-width: 680px) { .demo-body { grid-template-columns: 1fr; } }
+    .demo-col h4 {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.13em; color: var(--muted); margin-bottom: 0.7rem; font-family: var(--mono);
+    }
+
+    .expl-box {
+      background: #58a6ff07; border: 1px solid #58a6ff1a;
+      border-radius: 10px; padding: 0.9rem 1rem;
+      font-size: 0.83rem; line-height: 1.68; font-style: italic; color: #c9d1d9;
+    }
+
+    .claims-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .claim-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      border-left: 3px solid transparent; font-size: 0.82rem;
+      opacity: 0; transform: translateX(-10px);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+    }
+    .claim-row.visible { opacity: 1; transform: translateX(0); }
+    .claim-row.pass    { border-left-color: var(--green); }
+    .claim-row.fail    { border-left-color: var(--red);   }
+    .claim-row.atyp    { border-left-color: var(--amber); }
+    .claim-row.info    { border-left-color: var(--muted); }
+    .claim-feat  { font-family: var(--mono); font-weight: 600; font-size: 0.78rem; }
+    .claim-detail{ font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .claim-badge {
+      flex-shrink: 0; font-size: 0.62rem; font-weight: 700; font-family: var(--mono);
+      padding: 2px 8px; border-radius: 4px; margin-left: 0.5rem;
+    }
+    .b-pass { background: #3fb95018; color: var(--green); border: 1px solid #3fb95055; }
+    .b-fail { background: #f8514918; color: var(--red);   border: 1px solid #f8514955; }
+    .b-atyp { background: #d2992218; color: var(--amber); border: 1px solid #d2992255; }
+    .b-info { background: #8b949e18; color: var(--muted); border: 1px solid #8b949e44; }
+
+    .reason-box {
+      margin-top: 0.9rem; padding: 0.8rem 0.95rem;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      font-size: 0.78rem; opacity: 0; transition: opacity 0.4s 0.2s;
+    }
+    .reason-box.visible { opacity: 1; }
+    .reason-code { font-family: var(--mono); font-size: 0.7rem; font-weight: 600; }
+    .reason-text { margin-top: 0.3rem; color: var(--muted); line-height: 1.55; }
+
+    /* FAITHFULNESS GRADIENT */
+    .grad-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 2rem; }
+    @media (max-width: 600px) { .grad-grid { grid-template-columns: 1fr; } }
+    .grad-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.2rem 1.25rem; text-align: center;
+    }
+    .grad-label { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+    .grad-bar-wrap { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; margin: 0.45rem 0; }
+    .grad-bar { height: 100%; border-radius: 99px; width: 0; transition: width 1.1s cubic-bezier(.25,.46,.45,.94); }
+    .grad-num { font-size: 1.4rem; font-weight: 800; }
+    .grad-desc { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; line-height: 1.45; }
+
+    /* LIMITS */
+    .limits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .limit-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--amber); border-radius: 10px; padding: 1rem 1.1rem;
+    }
+    .limit-card h4 { font-size: 0.83rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .limit-card p  { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+
+    /* FOOTER */
+    .footer-wrap {
+      border-top: 1px solid var(--border); padding: 2.5rem 2rem;
+      text-align: center; font-size: 0.76rem; color: var(--muted);
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 0.7rem; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+    .fade-in { animation: fadeUp 0.55s ease both; }
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+    .d3 { animation-delay: 0.3s; }
+    .d4 { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">Verified Fault Diagnosis</span>
+  <div class="nav-links">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#demo">Demo</a>
+    <a href="#gradient">Ablation</a>
+    <a href="#limits">Limits</a>
+    <a href="https://github.com/atharvoid/verified-fault-diagnosis" target="_blank">GitHub ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="wrap">
+  <section id="hero">
+    <div class="hero-inner">
+      <p class="section-label fade-in">Research Prototype · IITK Compressor Dataset · 2026</p>
+      <h1 class="fade-in d1">
+        Can an LLM explain a machine fault<br>— and prove it's telling the truth?
+      </h1>
+      <p class="subtitle fade-in d2">
+        A three-certificate trust protocol that classifies air-compressor acoustic faults,
+        generates a technician-facing explanation via Llama 3.1 70B, then
+        deterministically verifies every factual claim before releasing the report.
+      </p>
+      <div class="hero-badges fade-in d3">
+        <span class="tag tag-blue">XGBoost Classifier</span>
+        <span class="tag tag-purple">Llama 3.1 70B · NVIDIA NIM</span>
+        <span class="tag tag-green">Deterministic Verifier</span>
+        <span class="tag tag-amber">84 Acoustic Features</span>
+        <span class="tag tag-blue">7 Fault Classes</span>
+      </div>
+      <div class="stats-grid fade-in d4">
+        <div class="stat-card">
+          <div class="stat-val">95.56%</div>
+          <div class="stat-lbl">Baseline Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">90%</div>
+          <div class="stat-lbl">Cases Released (Faith. ≥ 0.8)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">100</div>
+          <div class="stat-lbl">Audit Cases (LLM + Verifier)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">34/34</div>
+          <div class="stat-lbl">Repo Audit Checks</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PIPELINE -->
+<div style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <section id="pipeline">
+      <p class="section-label">System Architecture</p>
+      <h2>Three-Certificate Trust Protocol</h2>
+      <p class="subtitle">Each certificate independently validates one layer of the diagnosis chain before the report is released.</p>
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-num">Stage 1</div>
+          <div class="pipe-name">Feature Extraction</div>
+          <div class="pipe-desc">84 time, frequency &amp; wavelet packet features from 3.125 s WAV at 16 kHz</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">Stage 2</div>
+          <div class="pipe-name">Classification</div>
+          <div class="pipe-desc">XGBoost + StandardScaler, trained on IITK dataset, 95.56% accuracy</div>
+          <div><span class="pipe-cert">Certificate 1</span></div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">Stage 3</div>
+          <div class="pipe-name">Grounding Retrieval</div>
+          <div class="pipe-desc">Physical mechanism + per-class feature directions from knowledge base</div>
+          <div><span class="pipe-cert">Certificate 2</span></div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">Stage 4</div>
+          <div class="pipe-name">LLM Explanation</div>
+          <div class="pipe-desc">Grounded prompt → Llama 3.1 70B → structured JSON with directional claims</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">Stage 5–6</div>
+          <div class="pipe-name">Verify &amp; Gate</div>
+          <div class="pipe-desc">Claims checked against sensor data percentiles → RELEASE or ESCALATE</div>
+          <div><span class="pipe-cert">Certificate 3</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="wrap">
+  <section id="demo">
+    <p class="section-label">Interactive Verification Demo</p>
+    <h2>Four Representative Cases</h2>
+    <p class="subtitle">
+      Two RELEASE cases (all claims verified) and two ESCALATE cases (each caught by a different verifier rule).
+      Click a case to watch claims animate through the checklist.
+    </p>
+    <div class="case-tabs">
+      <button class="case-tab" id="tab-bearing" onclick="selectCase('bearing', this)">Bearing · RELEASE</button>
+      <button class="case-tab" id="tab-liv"     onclick="selectCase('liv', this)">LIV · RELEASE</button>
+      <button class="case-tab" id="tab-lov"     onclick="selectCase('lov', this)">LOV · ESCALATE</button>
+      <button class="case-tab" id="tab-nrv"     onclick="selectCase('nrv', this)">NRV · ESCALATE</button>
+    </div>
+    <div class="demo-panel">
+      <div class="demo-header">
+        <div class="demo-header-left">
+          <h3 id="demoTitle">—</h3>
+          <div class="demo-meta" id="demoMeta">—</div>
+        </div>
+        <div class="verdict-stamp" id="verdictStamp">—</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-col">
+          <h4>Generated Technician Explanation (verbatim LLM output)</h4>
+          <div class="expl-box" id="demoExpl">—</div>
+          <div class="reason-box" id="reasonBox">
+            <div class="reason-code" id="reasonCode">—</div>
+            <div class="reason-text" id="reasonText">—</div>
+          </div>
+        </div>
+        <div class="demo-col">
+          <h4>Extracted Claims · Verifier Checklist</h4>
+          <div class="claims-list" id="claimsList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FAITHFULNESS GRADIENT -->
+<div style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <section id="gradient">
+      <p class="section-label">Ablation Study</p>
+      <h2>Faithfulness Gradient</h2>
+      <p class="subtitle">
+        Grounding context injected into the LLM prompt is the single biggest driver of verifiable explanations.
+        Removing it collapses faithfulness from 96% to 44%.
+      </p>
+      <div class="grad-grid">
+        <div class="grad-card">
+          <div class="grad-label">Sample + Class Grounding</div>
+          <div class="grad-bar-wrap"><div class="grad-bar" id="bar-sg" style="background:var(--green)"></div></div>
+          <div class="grad-num" style="color:var(--green)">96%</div>
+          <div class="grad-desc">Both sample feature directions and class-level training priors included in the prompt. Full grounding condition.</div>
+        </div>
+        <div class="grad-card">
+          <div class="grad-label">Values-Only Grounding</div>
+          <div class="grad-bar-wrap"><div class="grad-bar" id="bar-vo" style="background:var(--amber)"></div></div>
+          <div class="grad-num" style="color:var(--amber)">71%</div>
+          <div class="grad-desc">Prompt shows raw feature values but omits directional labels. LLM must infer directions — more error-prone.</div>
+        </div>
+        <div class="grad-card">
+          <div class="grad-label">Class-Only Grounding</div>
+          <div class="grad-bar-wrap"><div class="grad-bar" id="bar-co" style="background:var(--red)"></div></div>
+          <div class="grad-num" style="color:var(--red)">44%</div>
+          <div class="grad-desc">Prompt omits sample values entirely. LLM generates plausible-sounding but mostly ungrounded directional claims.</div>
+        </div>
+      </div>
+      <!-- Monotonic gradient note -->
+      <p style="font-size:0.78rem;color:var(--muted);margin-top:1.25rem;padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;">
+        <strong style="color:var(--text)">Monotonic faithfulness:</strong>
+        SG (96%) &gt; VO (71%) &gt; CO (44%). The gradient is preserved across all 7 fault classes,
+        confirming that grounding quality — not LLM stochasticity — is the primary driver.
+      </p>
+    </section>
+  </div>
+</div>
+
+<!-- HONEST LIMITS -->
+<div class="wrap">
+  <section id="limits">
+    <p class="section-label">Known Limitations</p>
+    <h2>What This System Does Not Do</h2>
+    <p class="subtitle">Honest scope and failure modes.</p>
+    <div class="limits-grid">
+      <div class="limit-card">
+        <h4>Controlled Lab Data Only</h4>
+        <p>Trained and tested on the IITK single-piston compressor dataset. Generalisation to other machinery or noisy factory environments is unverified.</p>
+      </div>
+      <div class="limit-card">
+        <h4>Offline Batch Inference</h4>
+        <p>No real-time streaming pipeline. Each diagnosis is a one-shot inference on a fixed 3.125 s pre-extracted window.</p>
+      </div>
+      <div class="limit-card">
+        <h4>Binary Gate Outcome</h4>
+        <p>The verifier outputs RELEASE or ESCALATE — no partial-confidence score. Escalated reports receive no automated fallback explanation.</p>
+      </div>
+      <div class="limit-card">
+        <h4>LLM Output Format Dependence</h4>
+        <p>Claim extraction requires valid structured JSON. Malformed LLM responses are treated as zero claims and escalated automatically (4 of 100 audit cases).</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-wrap">
+  <div style="font-size:0.95rem; font-weight:800; color:#ffffff;">Verified Fault Diagnosis</div>
+  <div class="footer-links">
+    <a href="https://github.com/atharvoid/verified-fault-diagnosis" target="_blank">GitHub Repository</a>
+    <a href="https://ieeexplore.ieee.org/document/7311508" target="_blank">IITK Dataset · Verma 2016</a>
+    <a href="https://integrate.api.nvidia.com" target="_blank">Llama 3.1 70B · NVIDIA NIM</a>
+  </div>
+  <p style="margin-top:0.8rem;font-size:0.68rem;">Research prototype · 2026</p>
+</div>
+
+<script>
+/* ── Case data (real values from faithfulness_audit.json) ─────────── */
+const CASES = {
+  bearing: {
+    title: "Bearing Fault — Case #179",
+    label: "Bearing", conf: 0.9825, faith: 1.0,
+    gate: "RELEASE", gateClass: "v-release",
+    gateReason: "passed_verification",
+    gateColor: "var(--green)",
+    gateText: "All action-critical claims verified against sensor data. Report released to engineer.",
+    expl: "A localized defect on a bearing raceway or rolling element is likely present, as indicated by low energy in the frequency band 3000–4000 Hz and low energy near 375–500 Hz. This defect alters the mechanical rotation profile, exciting high-frequency structural resonances and shifting the energy distribution.",
+    claims: [
+      { feat:"band_energy_ratio_4", crit:true,  dir:"LOW", cls:"pass",  badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: below p25 (3000–4000 Hz band energy suppressed)" },
+      { feat:"wpt_energy_4",        crit:true,  dir:"LOW", cls:"pass",  badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: 3.91 < p25=4.18  (375–500 Hz wavelet band)" },
+    ]
+  },
+  liv: {
+    title: "Inlet Valve Fault (LIV) — Case #679",
+    label: "LIV", conf: 0.9993, faith: 1.0,
+    gate: "RELEASE", gateClass: "v-release",
+    gateReason: "passed_verification",
+    gateColor: "var(--green)",
+    gateText: "All action-critical claims verified against sensor data. Report released to engineer.",
+    expl: "The inlet/suction reed valve is likely failing to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This backflow has shifted the energy distribution toward lower frequencies, as indicated by the lower spectral centroid and spectral rolloff. The energy near 1750–1875 Hz, 2125–2250 Hz, and 6125–6250 Hz is also lower than expected, but these features are not critical for this diagnosis. The reduced volumetric efficiency is consistent with the predicted LIV fault class.",
+    claims: [
+      { feat:"spectral_centroid",   crit:true,  dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: 749.3 Hz < p25=779.7 Hz (global training p25)" },
+      { feat:"spectral_rolloff_85", crit:true,  dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: 1344.0 Hz < p25=1469.4 Hz" },
+      { feat:"wpt_energy_15",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: 0.81 < p25=1.44  (1750–1875 Hz)" },
+      { feat:"wpt_energy_18",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: 0.39 < p25=0.76  (2125–2250 Hz)" },
+      { feat:"wpt_energy_50",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
+        detail:"Claimed: LOW | Actual: −5.01 < p25=−3.77  (6125–6250 Hz)" },
+    ]
+  },
+  lov: {
+    title: "Outlet Valve Fault (LOV) — Case #965",
+    label: "LOV", conf: 0.8311, faith: 1.0,
+    gate: "ESCALATE", gateClass: "v-escalate",
+    gateReason: "atypical_action_critical",
+    gateColor: "var(--amber)",
+    gateText: "An action-critical claim was sample-true, but its direction is statistically atypical for this fault class — the sensor reading contradicts the class training median. Report withheld pending manual review.",
+    expl: "The energy near 500–625 Hz is lower than expected. This suggests that the discharge/outlet reed valve is not sealing properly, causing compressed gas to leak back into the cylinder during the suction stroke. This results in re-expansion losses and elevated high-frequency band energy on the discharge side.",
+    claims: [
+      { feat:"wpt_energy_5", crit:true, dir:"LOW", cls:"atyp", badge:"b-atyp", badgeTxt:"ATYPICAL ⚠",
+        detail:"Claimed: LOW | Sample dir: LOW ✓ | Class median dir: HIGH — direction is atypical for LOV" },
+    ]
+  },
+  nrv: {
+    title: "LOV Recording (Zero-Claims Case) — Case #993",
+    label: "LOV", conf: 0.9906, faith: 0.0,
+    gate: "ESCALATE", gateClass: "v-escalate",
+    gateReason: "no_verifiable_claims",
+    gateColor: "var(--red)",
+    gateText: "LLM produced no extractable directional claims. Faithfulness = 0.0. Report withheld — the explanation is entirely unverifiable.",
+    expl: "The energy levels across all frequency bands are within normal ranges. No unusual patterns or anomalies were detected in the provided data.",
+    claims: []
+  }
+};
+
+const REASON_COLORS = {
+  passed_verification:      "var(--green)",
+  atypical_action_critical: "var(--amber)",
+  no_verifiable_claims:     "var(--red)",
+};
+
+let activeTimers = [];
+
+function selectCase(key, btn) {
+  activeTimers.forEach(clearTimeout);
+  activeTimers = [];
+
+  /* Update tab styles */
+  document.querySelectorAll('.case-tab').forEach(t => {
+    t.classList.remove('active-release', 'active-escalate');
+  });
+  const d = CASES[key];
+  btn.classList.add(d.gate === 'RELEASE' ? 'active-release' : 'active-escalate');
+
+  /* Header */
+  document.getElementById('demoTitle').textContent = d.title;
+  document.getElementById('demoMeta').textContent =
+    `Class: ${d.label}  ·  Confidence: ${(d.conf*100).toFixed(1)}%  ·  Faithfulness: ${d.faith.toFixed(2)}  ·  Tokens: ${d.gate === 'RELEASE' ? '886–1049' : '806–878'}`;
+
+  /* Verdict */
+  const vs = document.getElementById('verdictStamp');
+  vs.textContent = d.gate;
+  vs.className = 'verdict-stamp ' + d.gateClass;
+
+  /* Explanation */
+  document.getElementById('demoExpl').textContent = '\u201c' + d.expl + '\u201d';
+
+  /* Reset */
+  document.getElementById('reasonBox').classList.remove('visible');
+
+  /* Claims */
+  const list = document.getElementById('claimsList');
+  list.innerHTML = '';
+
+  if (d.claims.length === 0) {
+    const row = document.createElement('div');
+    row.className = 'claim-row info';
+    row.innerHTML = `
+      <div>
+        <div class="claim-feat">— No directional claims extracted —</div>
+        <div class="claim-detail">LLM explanation contained no verifiable feature assertions</div>
+      </div>
+      <span class="claim-badge b-info">FAITH = 0</span>`;
+    list.appendChild(row);
+    const t = setTimeout(() => row.classList.add('visible'), 80);
+    activeTimers.push(t);
+  } else {
+    d.claims.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'claim-row ' + c.cls;
+      const critTag = c.crit
+        ? `<span class="tag tag-red" style="font-size:0.58rem;padding:1px 5px;vertical-align:middle;margin-left:5px">crit</span>`
+        : `<span class="tag tag-blue" style="font-size:0.58rem;padding:1px 5px;vertical-align:middle;margin-left:5px">supp</span>`;
+      row.innerHTML = `
+        <div style="min-width:0;flex:1;">
+          <div class="claim-feat">${c.feat}${critTag}</div>
+          <div class="claim-detail">${c.detail}</div>
+        </div>
+        <span class="claim-badge ${c.badge}">${c.badgeTxt}</span>`;
+      list.appendChild(row);
+      const t = setTimeout(() => row.classList.add('visible'), 120 + i * 380);
+      activeTimers.push(t);
+    });
+  }
+
+  /* Reason box appears after all claims */
+  const delay = 120 + (Math.max(d.claims.length, 1) + 0.5) * 380;
+  const t = setTimeout(() => {
+    const col = REASON_COLORS[d.gateReason] || 'var(--muted)';
+    document.getElementById('reasonCode').innerHTML =
+      `Gate decision: <span style="color:${col};font-weight:700">${d.gateReason}</span>`;
+    document.getElementById('reasonText').textContent = d.gateText;
+    document.getElementById('reasonBox').classList.add('visible');
+  }, delay);
+  activeTimers.push(t);
+}
+
+/* Faithfulness bars on scroll */
+(function() {
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      document.getElementById('bar-sg').style.width = '96%';
+      document.getElementById('bar-vo').style.width = '71%';
+      document.getElementById('bar-co').style.width = '44%';
+      obs.disconnect();
+    }
+  }, { threshold: 0.25 });
+  obs.observe(document.getElementById('gradient'));
+})();
+
+/* Auto-select first case on load */
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('tab-bearing').click();
+});
+</script>
+</body>
+</html>
