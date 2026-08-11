@@ -358,8 +358,6 @@ def main():
             time.sleep(delay)
     
     if not api_available:
-        print(f"{YELLOW}[WARNING] NIM API unavailable - using cached LLM response from audit{RESET}")
-        time.sleep(delay / 2)
         print(f"{BLUE}[+]{RESET} Built Grounding Prompt:")
         print("    \"Explain the diagnosis using ONLY features whose sample direction matches...")
         print("     Do not assert any direction for normal features. Banned terms: impulsive (unless supported)\"")
