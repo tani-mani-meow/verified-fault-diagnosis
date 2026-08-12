@@ -301,7 +301,7 @@ def main():
     print_banner(3, "GROUNDING CONTEXT RETRIEVAL (CERTIFICATE 2)")
     time.sleep(0.5)
     
-    print(f"{BLUE}[+]{RESET} Fetching RAG Knowledge Base calibration details for {BOLD}{pred_class}{RESET}...")
+    print(f"{BLUE}[+]{RESET} Fetching Python Knowledge Base calibration details for {BOLD}{pred_class}{RESET}...")
     time.sleep(delay / 2)
     
     kb_entry = KNOWLEDGE_BASE[pred_class]
