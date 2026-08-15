@@ -107,10 +107,10 @@ export default function VerificationDemo() {
       {/* Title Overlay */}
       <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center z-10 pointer-events-none w-full max-w-xl px-4">
         <h2 className="text-3xl font-bold bg-gradient-to-r from-accentBlue to-accentPurple bg-clip-text text-transparent mb-2">
-          Live Verification Demo
+          Recorded Verification Examples
         </h2>
         <p className="text-gray-400 text-sm">
-          Click a floating 3D status card below to run the deterministic verifier and watch claims evaluate in real-time
+          Click a card to inspect saved claims and strict replay decisions. Animations display recorded results.
         </p>
       </div>
 
@@ -137,12 +137,12 @@ export default function VerificationDemo() {
                 <h3 className="text-xl font-bold flex items-center gap-2" style={{ color: selectedCard.color }}>
                   {selectedCard.title}
                 </h3>
-                <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Live Pipeline Trace</p>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Saved audit example</p>
               </div>
 
               {/* Generated LLM Text Box */}
               <div className="bg-surface/50 border border-border/50 rounded-xl p-4 mb-6">
-                <h4 className="text-xs font-semibold text-gray-400 uppercase mb-2">Generated Technician Explanation</h4>
+                <h4 className="text-xs font-semibold text-gray-400 uppercase mb-2">Candidate prose / unverified</h4>
                 <p className="text-gray-200 text-sm leading-relaxed italic">
                   "{selectedCard.llm}"
                 </p>
@@ -150,7 +150,7 @@ export default function VerificationDemo() {
 
               {/* Claims Table */}
               <div className="mb-6">
-                <h4 className="text-xs font-semibold text-gray-400 uppercase mb-3">Extracted Factual Claims Checklist</h4>
+                <h4 className="text-xs font-semibold text-gray-400 uppercase mb-3">Structured Feature Claims</h4>
                 <div className="space-y-2.5">
                   {selectedCard.claims.map((claim, idx) => {
                     const isVisible = idx < visibleClaims
@@ -203,7 +203,7 @@ export default function VerificationDemo() {
                         boxShadow: `0 0 20px ${selectedCard.color}44`
                       }}
                     >
-                      {selectedCard.title.includes("RELEASED") ? (
+                      {selectedCard.verdict.startsWith("RELEASE") ? (
                         <Shield size={24} className="text-accentGreen" />
                       ) : (
                         <AlertTriangle size={24} className="text-accentRed" />

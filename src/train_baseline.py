@@ -47,7 +47,7 @@ def main():
                 
                 row = {
                     'class': class_name,
-                    'file_path': str(f.resolve())
+                    'file_path': f.relative_to(data_dir).as_posix()
                 }
                 # Update with features (maintaining order)
                 row.update(feats)

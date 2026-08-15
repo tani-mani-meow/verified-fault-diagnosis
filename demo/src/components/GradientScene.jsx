@@ -138,7 +138,7 @@ export default function GradientScene() {
           3-Condition Faithfulness Gradient
         </h2>
         <p className="text-gray-400 text-sm">
-          Hover over each bar to see how denying grounding data impacts explanation reliability
+          Compare saved responses under three grounding conditions and strict replay release counts.
         </p>
       </div>
 
@@ -158,7 +158,7 @@ export default function GradientScene() {
                   {GRADIENT_BARS[hoveredBar].label}
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded bg-surface border border-border text-gray-400">
-                  F1-Faithfulness: {GRADIENT_BARS[hoveredBar].height}
+                  Mean claim faithfulness: {GRADIENT_BARS[hoveredBar].height}
                 </span>
               </h3>
               
@@ -180,7 +180,7 @@ export default function GradientScene() {
               className="text-center py-4 pointer-events-none"
             >
               <span className="text-gray-400 text-xs uppercase tracking-widest bg-surface/50 border border-border/50 px-4 py-2 rounded-full">
-                Monotonic gradient — the verifier gates proportionally to grounding quality
+                100 saved responses per condition / strict-v1 offline replay
               </span>
             </motion.div>
           )}

@@ -60,9 +60,14 @@
     "evidence": "flipped claimed_dir=high, sample_dir=low, sample_true would be=False"
   },
   {
-    "status": "PASS",
+    "status": "FAIL",
     "name": "6 escalations exist",
-    "evidence": "found 6 escalations"
+    "evidence": "found 10 escalations"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 993 (LOV) reason=no_verifiable_claims",
+    "evidence": "n_atypical=0, n_critical_atypical=0, faithfulness=0.0000"
   },
   {
     "status": "FAIL",
@@ -81,8 +86,23 @@
   },
   {
     "status": "FAIL",
+    "name": "Escalation 1273 (NRV) reason=no_verifiable_claims",
+    "evidence": "n_atypical=0, n_critical_atypical=0, faithfulness=0.0000"
+  },
+  {
+    "status": "FAIL",
     "name": "Escalation 263 (Flywheel) reason=atypical_action_critical",
     "evidence": "n_atypical=4, n_critical_atypical=0, faithfulness=1.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 1520 (Piston) reason=no_verifiable_claims",
+    "evidence": "n_atypical=0, n_critical_atypical=0, faithfulness=0.0000"
+  },
+  {
+    "status": "FAIL",
+    "name": "Escalation 1565 (Piston) reason=no_verifiable_claims",
+    "evidence": "n_atypical=0, n_critical_atypical=0, faithfulness=0.0000"
   },
   {
     "status": "FAIL",
@@ -192,7 +212,7 @@
   {
     "status": "PASS",
     "name": "Gradient: class-only < values-only < sample-grounded",
-    "evidence": "class-only=0.3377 < values-only=0.6300 < sample-grounded=1.0000"
+    "evidence": "class-only=0.3377 < values-only=0.6300 < sample-grounded=0.9600"
   },
   {
     "status": "PASS",
@@ -290,13 +310,13 @@
     "evidence": "sg_len=307, co_len=430, identical=False"
   },
   {
-    "status": "PASS",
+    "status": "FAIL",
     "name": "ALL sample-grounded cases have faithfulness exactly 1.0",
-    "evidence": "min=1.0000, max=1.0000, std=0.000000"
+    "evidence": "min=0.0000, max=1.0000, std=0.195959"
   },
   {
-    "status": "PASS",
+    "status": "FAIL",
     "name": "Sample-grounded faithfulness std is exactly 0",
-    "evidence": "std=0.00000000"
+    "evidence": "std=0.19595918"
   }
 ]

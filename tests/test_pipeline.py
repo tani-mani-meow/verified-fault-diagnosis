@@ -32,60 +32,60 @@ def base_liv_sample():
     liv_subset = df_test[df_test['class'] == 'LIV']
     return liv_subset.iloc[0].to_dict()
 
-def test_pipeline_correct(base_liv_sample):
+def test_pipeline_correct(base_liv_sample, model_artifacts):
     # For a correct explanation with only sample-true features:
     # spectral_rolloff_85 and spectral_centroid are both actually low (<= p25) in this sample
-    report = run_pipeline(base_liv_sample, true_label="LIV", mock="correct")
+    report = run_pipeline(base_liv_sample, true_label="LIV", mock="correct", artifact_dir=model_artifacts)
     assert report["gate_decision"] == "RELEASE"
     assert report["faithfulness"] == 1.0
     assert report["reason"] == "passed_verification"
 
-def test_pipeline_flipped(base_liv_sample):
+def test_pipeline_flipped(base_liv_sample, model_artifacts):
     # Flipped normal claim: skewness is claimed low but is actually neutral in the sample
-    report = run_pipeline(base_liv_sample, true_label="LIV", mock="flipped")
+    report = run_pipeline(base_liv_sample, true_label="LIV", mock="flipped", artifact_dir=model_artifacts)
     assert report["gate_decision"] == "ESCALATE"
     assert report["faithfulness"] < 0.8
     assert report["reason"] == "low_faithfulness"
 
-def test_pipeline_false_critical(base_liv_sample):
+def test_pipeline_false_critical(base_liv_sample, model_artifacts):
     # False action-critical claim: skewness is claimed low (which is sample-false) and critical
-    report = run_pipeline(base_liv_sample, true_label="LIV", mock="critical")
+    report = run_pipeline(base_liv_sample, true_label="LIV", mock="critical", artifact_dir=model_artifacts)
     assert report["gate_decision"] == "ESCALATE"
     assert report["reason"] == "false_action_critical"
 
-def test_pipeline_atypical_non_critical(base_liv_sample):
+def test_pipeline_atypical_non_critical(base_liv_sample, model_artifacts):
     # Atypical non-critical claim: skewness value is modified to be 1.0 (which is sample-true high)
     # but class calibrated direction for skewness is low. So it is atypical but non-critical.
     sample = dict(base_liv_sample)
     sample["skewness"] = 1.0  # Force it to be high (global_p75 is around -0.0005)
     
-    report = run_pipeline(sample, true_label="LIV", mock="atypical_non_critical")
+    report = run_pipeline(sample, true_label="LIV", mock="atypical_non_critical", artifact_dir=model_artifacts)
     assert report["gate_decision"] == "RELEASE"
     assert report["reason"] == "passed_verification"
     assert "skewness" in report["atypical_features"]
 
-def test_pipeline_atypical_critical(base_liv_sample):
+def test_pipeline_atypical_critical(base_liv_sample, model_artifacts):
     # Atypical action-critical claim: skewness is modified to be 1.0 (sample-true high)
     # but class calibration is low, and the claim is marked critical.
     sample = dict(base_liv_sample)
     sample["skewness"] = 1.0  # Force it to be high
     
-    report = run_pipeline(sample, true_label="LIV", mock="atypical_critical")
+    report = run_pipeline(sample, true_label="LIV", mock="atypical_critical", artifact_dir=model_artifacts)
     assert report["gate_decision"] == "ESCALATE"
     assert report["reason"] == "atypical_action_critical"
 
-def test_pipeline_impulsive_unsupported():
+def test_pipeline_impulsive_unsupported(model_artifacts):
     features_csv = repo_dir / "outputs" / "features.csv"
     df = pd.read_csv(features_csv)
     lov_sample = df[df['class'] == 'LOV'].iloc[0].to_dict()
-    report = run_pipeline(lov_sample, true_label="LOV", mock="impulsive_unsupported")
+    report = run_pipeline(lov_sample, true_label="LOV", mock="impulsive_unsupported", artifact_dir=model_artifacts)
     assert len(report["mechanism_warnings"]) > 0
     assert any("impulsive" in w for w in report["mechanism_warnings"])
 
-def test_pipeline_impulsive_supported():
+def test_pipeline_impulsive_supported(model_artifacts):
     features_csv = repo_dir / "outputs" / "features.csv"
     df = pd.read_csv(features_csv)
     rb_sample = df[df['class'] == 'Riderbelt'].iloc[0].to_dict()
-    report = run_pipeline(rb_sample, true_label="Riderbelt", mock="impulsive_supported")
+    report = run_pipeline(rb_sample, true_label="Riderbelt", mock="impulsive_supported", artifact_dir=model_artifacts)
     assert len(report["mechanism_warnings"]) == 0
 

@@ -161,7 +161,7 @@ export default function AblationHeatmap() {
           Feature-Family × Classifier Ablation
         </h2>
         <p className="text-gray-400 text-sm">
-          F1-Macro scores for all combinations. The gold star highlights the optimal WPT × Logistic Regression setup.
+          Historical five-fold macro-F1 scores. Recording-session independence remains unverified.
         </p>
       </div>
 
@@ -184,7 +184,7 @@ export default function AblationHeatmap() {
               </p>
               {hoveredCell.row === 2 && hoveredCell.col === 3 && (
                 <div className="flex items-center justify-center gap-1.5 text-xs text-accentYellow mt-1 font-semibold">
-                  <Star size={14} fill="#d29922" /> Top Performer (WPT engineering carries the weight!)
+                  <Star size={14} fill="#d29922" /> WPT / Logistic Regression
                 </div>
               )}
             </motion.div>
@@ -196,7 +196,7 @@ export default function AblationHeatmap() {
               className="glass-panel p-4 rounded-xl text-center shadow-lg border border-border/60"
             >
               <p className="text-gray-300 text-xs leading-relaxed font-medium">
-                👉 <strong>Insight</strong>: Logistic Regression on WPT-only (0.998) beats XGBoost on full features (0.973). Handcrafted feature representation does the heavy lifting.
+                Saved feature-ablation results compare feature families and classifiers within this dataset.
               </p>
             </motion.div>
           )}

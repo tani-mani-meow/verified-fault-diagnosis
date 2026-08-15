@@ -259,12 +259,12 @@
     <div class="hero-inner">
       <p class="section-label fade-in">Research Prototype · IITK Compressor Dataset · 2026</p>
       <h1 class="fade-in d1">
-        Can an LLM explain a machine fault<br>— and prove it's telling the truth?
+        Check an LLM's structured feature claims<br>against sensor measurements.
       </h1>
       <p class="subtitle fade-in d2">
-        A three-certificate trust protocol that classifies air-compressor acoustic faults,
+        A research pipeline that classifies air-compressor acoustic faults,
         generates a technician-facing explanation via Llama 3.1 70B, then
-        deterministically verifies every factual claim before releasing the report.
+        checks structured feature-direction claims before releasing the explanation. Causal prose and diagnosis remain outside the guarantee.
       </p>
       <div class="hero-badges fade-in d3">
         <span class="tag tag-blue">XGBoost Classifier</span>
@@ -276,19 +276,19 @@
       <div class="stats-grid fade-in d4">
         <div class="stat-card">
           <div class="stat-val">95.56%</div>
-          <div class="stat-lbl">Baseline Accuracy</div>
+          <div class="stat-lbl">Reported Held-Out Accuracy</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val">90%</div>
-          <div class="stat-lbl">Cases Released (Faith. ≥ 0.8)</div>
+          <div class="stat-val">85%</div>
+          <div class="stat-lbl">Strict Replay Releases (85/100)</div>
         </div>
         <div class="stat-card">
           <div class="stat-val">100</div>
           <div class="stat-lbl">Audit Cases (LLM + Verifier)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val">34/34</div>
-          <div class="stat-lbl">Repo Audit Checks</div>
+          <div class="stat-val">84</div>
+          <div class="stat-lbl">Acoustic Features</div>
         </div>
       </div>
     </div>
@@ -300,8 +300,8 @@
   <div class="wrap">
     <section id="pipeline">
       <p class="section-label">System Architecture</p>
-      <h2>Three-Certificate Trust Protocol</h2>
-      <p class="subtitle">Each certificate independently validates one layer of the diagnosis chain before the report is released.</p>
+      <h2>Classify, Ground, Verify</h2>
+      <p class="subtitle">The strict gate requires nonempty claims, every claim passing, no atypical action-critical claim, and no mechanism warning.</p>
       <div class="pipeline">
         <div class="pipe-step">
           <div class="pipe-num">Stage 1</div>
@@ -342,14 +342,14 @@
     <p class="section-label">Interactive Verification Demo</p>
     <h2>Four Representative Cases</h2>
     <p class="subtitle">
-      Two RELEASE cases (all claims verified) and two ESCALATE cases (each caught by a different verifier rule).
+      Recorded examples with strict replay decisions. Candidate prose remains unverified.
       Click a case to watch claims animate through the checklist.
     </p>
     <div class="case-tabs">
       <button class="case-tab" id="tab-bearing" onclick="selectCase('bearing', this)">Bearing · RELEASE</button>
       <button class="case-tab" id="tab-liv"     onclick="selectCase('liv', this)">LIV · RELEASE</button>
       <button class="case-tab" id="tab-lov"     onclick="selectCase('lov', this)">LOV · ESCALATE</button>
-      <button class="case-tab" id="tab-nrv"     onclick="selectCase('nrv', this)">NRV · ESCALATE</button>
+      <button class="case-tab" id="tab-nrv"     onclick="selectCase('nrv', this)">LOV · Zero Claims</button>
     </div>
     <div class="demo-panel">
       <div class="demo-header">
@@ -361,7 +361,7 @@
       </div>
       <div class="demo-body">
         <div class="demo-col">
-          <h4>Generated Technician Explanation (verbatim LLM output)</h4>
+          <h4>Saved Candidate Prose (unverified)</h4>
           <div class="expl-box" id="demoExpl">—</div>
           <div class="reason-box" id="reasonBox">
             <div class="reason-code" id="reasonCode">—</div>
@@ -384,8 +384,8 @@
       <p class="section-label">Ablation Study</p>
       <h2>Faithfulness Gradient</h2>
       <p class="subtitle">
-        Grounding context injected into the LLM prompt is the single biggest driver of verifiable explanations.
-        Removing it collapses faithfulness from 96% to 44%.
+        Mean structured-claim faithfulness across 100 saved responses per condition.
+        Strict replay releases 85% sample-grounded, 48% values-only, and 17% class-only.
       </p>
       <div class="grad-grid">
         <div class="grad-card">
@@ -397,21 +397,20 @@
         <div class="grad-card">
           <div class="grad-label">Values-Only Grounding</div>
           <div class="grad-bar-wrap"><div class="grad-bar" id="bar-vo" style="background:var(--amber)"></div></div>
-          <div class="grad-num" style="color:var(--amber)">71%</div>
+          <div class="grad-num" style="color:var(--amber)">63%</div>
           <div class="grad-desc">Prompt shows raw feature values but omits directional labels. LLM must infer directions — more error-prone.</div>
         </div>
         <div class="grad-card">
           <div class="grad-label">Class-Only Grounding</div>
           <div class="grad-bar-wrap"><div class="grad-bar" id="bar-co" style="background:var(--red)"></div></div>
-          <div class="grad-num" style="color:var(--red)">44%</div>
+          <div class="grad-num" style="color:var(--red)">33.77%</div>
           <div class="grad-desc">Prompt omits sample values entirely. LLM generates plausible-sounding but mostly ungrounded directional claims.</div>
         </div>
       </div>
       <!-- Monotonic gradient note -->
       <p style="font-size:0.78rem;color:var(--muted);margin-top:1.25rem;padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;">
         <strong style="color:var(--text)">Monotonic faithfulness:</strong>
-        SG (96%) &gt; VO (71%) &gt; CO (44%). The gradient is preserved across all 7 fault classes,
-        confirming that grounding quality — not LLM stochasticity — is the primary driver.
+        SG (96%) &gt; VO (63%) &gt; CO (33.77%) in the saved experiment. Historical releases were 90%, 48%, and 17%. Strict replay is a re-evaluation of saved claims.
       </p>
     </section>
   </div>
@@ -421,12 +420,12 @@
 <div class="wrap">
   <section id="limits">
     <p class="section-label">Known Limitations</p>
-    <h2>What This System Does Not Do</h2>
+    <h2>Research Scope</h2>
     <p class="subtitle">Honest scope and failure modes.</p>
     <div class="limits-grid">
       <div class="limit-card">
         <h4>Controlled Lab Data Only</h4>
-        <p>Trained and tested on the IITK single-piston compressor dataset. Generalisation to other machinery or noisy factory environments is unverified.</p>
+        <p>Trained and tested on the IITK single-piston compressor dataset. Recording-session independence and generalisation to other machinery remain unverified.</p>
       </div>
       <div class="limit-card">
         <h4>Offline Batch Inference</h4>
@@ -438,7 +437,7 @@
       </div>
       <div class="limit-card">
         <h4>LLM Output Format Dependence</h4>
-        <p>Claim extraction requires valid structured JSON. Malformed LLM responses are treated as zero claims and escalated automatically (4 of 100 audit cases).</p>
+        <p>Strict response validation rejects malformed structured claims. Original raw response envelopes were not retained, limiting retrospective schema checks.</p>
       </div>
     </div>
   </section>
@@ -458,64 +457,132 @@
 <script>
 /* ── Case data (real values from faithfulness_audit.json) ─────────── */
 const CASES = {
-  bearing: {
-    title: "Bearing Fault — Case #179",
-    label: "Bearing", conf: 0.9825, faith: 1.0,
-    gate: "RELEASE", gateClass: "v-release",
-    gateReason: "passed_verification",
-    gateColor: "var(--green)",
-    gateText: "All action-critical claims verified against sensor data. Report released to engineer.",
-    expl: "A localized defect on a bearing raceway or rolling element is likely present, as indicated by low energy in the frequency band 3000–4000 Hz and low energy near 375–500 Hz. This defect alters the mechanical rotation profile, exciting high-frequency structural resonances and shifting the energy distribution.",
-    claims: [
-      { feat:"band_energy_ratio_4", crit:true,  dir:"LOW", cls:"pass",  badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: below p25 (3000–4000 Hz band energy suppressed)" },
-      { feat:"wpt_energy_4",        crit:true,  dir:"LOW", cls:"pass",  badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: 3.91 < p25=4.18  (375–500 Hz wavelet band)" },
+  "bearing": {
+    "title": "Bearing / saved case #179",
+    "label": "Bearing",
+    "conf": 0.9825090169906616,
+    "faith": 1.0,
+    "gate": "RELEASE",
+    "gateClass": "v-release",
+    "gateReason": "passed_verification",
+    "gateColor": "#3fb950",
+    "gateText": "Recorded strict-v1 decision. Structured claims are checked. Candidate prose remains unverified.",
+    "expl": "A localized defect on a bearing raceway or rolling element is likely present, as indicated by low energy in the frequency band 3000-4000 Hz and low energy near 375-500 Hz. This defect alters the mechanical rotation profile, exciting high-frequency structural resonances and shifting the energy distribution.",
+    "claims": [
+      {
+        "feat": "band_energy_ratio_4",
+        "crit": true,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      },
+      {
+        "feat": "wpt_energy_4",
+        "crit": true,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      }
     ]
   },
-  liv: {
-    title: "Inlet Valve Fault (LIV) — Case #679",
-    label: "LIV", conf: 0.9993, faith: 1.0,
-    gate: "RELEASE", gateClass: "v-release",
-    gateReason: "passed_verification",
-    gateColor: "var(--green)",
-    gateText: "All action-critical claims verified against sensor data. Report released to engineer.",
-    expl: "The inlet/suction reed valve is likely failing to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This backflow has shifted the energy distribution toward lower frequencies, as indicated by the lower spectral centroid and spectral rolloff. The energy near 1750–1875 Hz, 2125–2250 Hz, and 6125–6250 Hz is also lower than expected, but these features are not critical for this diagnosis. The reduced volumetric efficiency is consistent with the predicted LIV fault class.",
-    claims: [
-      { feat:"spectral_centroid",   crit:true,  dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: 749.3 Hz < p25=779.7 Hz (global training p25)" },
-      { feat:"spectral_rolloff_85", crit:true,  dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: 1344.0 Hz < p25=1469.4 Hz" },
-      { feat:"wpt_energy_15",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: 0.81 < p25=1.44  (1750–1875 Hz)" },
-      { feat:"wpt_energy_18",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: 0.39 < p25=0.76  (2125–2250 Hz)" },
-      { feat:"wpt_energy_50",       crit:false, dir:"LOW", cls:"pass", badge:"b-pass", badgeTxt:"VERIFIED ✓",
-        detail:"Claimed: LOW | Actual: −5.01 < p25=−3.77  (6125–6250 Hz)" },
+  "liv": {
+    "title": "LIV / saved case #679",
+    "label": "LIV",
+    "conf": 0.9992977380752563,
+    "faith": 1.0,
+    "gate": "RELEASE",
+    "gateClass": "v-release",
+    "gateReason": "passed_verification",
+    "gateColor": "#3fb950",
+    "gateText": "Recorded strict-v1 decision. Structured claims are checked. Candidate prose remains unverified.",
+    "expl": "The inlet/suction reed valve is likely failing to seal during the compression stroke, causing pressurized gas to leak back into the suction line. This backflow has shifted the energy distribution toward lower frequencies, as indicated by the lower spectral centroid and spectral rolloff. The energy near 1750-1875 Hz, 2125-2250 Hz, and 6125-6250 Hz is also lower than expected, but these features are not critical for this diagnosis. The reduced volumetric efficiency is consistent with the predicted LIV fault class.",
+    "claims": [
+      {
+        "feat": "spectral_centroid",
+        "crit": true,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      },
+      {
+        "feat": "spectral_rolloff_85",
+        "crit": true,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      },
+      {
+        "feat": "wpt_energy_15",
+        "crit": false,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      },
+      {
+        "feat": "wpt_energy_18",
+        "crit": false,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      },
+      {
+        "feat": "wpt_energy_50",
+        "crit": false,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction low. Atypical False."
+      }
     ]
   },
-  lov: {
-    title: "Outlet Valve Fault (LOV) — Case #965",
-    label: "LOV", conf: 0.8311, faith: 1.0,
-    gate: "ESCALATE", gateClass: "v-escalate",
-    gateReason: "atypical_action_critical",
-    gateColor: "var(--amber)",
-    gateText: "An action-critical claim was sample-true, but its direction is statistically atypical for this fault class — the sensor reading contradicts the class training median. Report withheld pending manual review.",
-    expl: "The energy near 500–625 Hz is lower than expected. This suggests that the discharge/outlet reed valve is not sealing properly, causing compressed gas to leak back into the cylinder during the suction stroke. This results in re-expansion losses and elevated high-frequency band energy on the discharge side.",
-    claims: [
-      { feat:"wpt_energy_5", crit:true, dir:"LOW", cls:"atyp", badge:"b-atyp", badgeTxt:"ATYPICAL ⚠",
-        detail:"Claimed: LOW | Sample dir: LOW ✓ | Class median dir: HIGH — direction is atypical for LOV" },
+  "lov": {
+    "title": "LOV / saved case #965",
+    "label": "LOV",
+    "conf": 0.8311278223991394,
+    "faith": 1.0,
+    "gate": "ESCALATE",
+    "gateClass": "v-escalate",
+    "gateReason": "atypical_action_critical",
+    "gateColor": "#f85149",
+    "gateText": "Recorded strict-v1 decision. Structured claims are checked. Candidate prose remains unverified.",
+    "expl": "The energy near 500-625 Hz is lower than expected. This suggests that the discharge/outlet reed valve is not sealing properly, causing compressed gas to leak back into the cylinder during the suction stroke. This results in re-expansion losses and elevated high-frequency band energy on the discharge side.",
+    "claims": [
+      {
+        "feat": "wpt_energy_5",
+        "crit": true,
+        "dir": "LOW",
+        "cls": "pass",
+        "badge": "b-pass",
+        "badgeTxt": "SAMPLE TRUE",
+        "detail": "Sample direction low. Class direction high. Atypical True."
+      }
     ]
   },
-  nrv: {
-    title: "LOV Recording (Zero-Claims Case) — Case #993",
-    label: "LOV", conf: 0.9906, faith: 0.0,
-    gate: "ESCALATE", gateClass: "v-escalate",
-    gateReason: "no_verifiable_claims",
-    gateColor: "var(--red)",
-    gateText: "LLM produced no extractable directional claims. Faithfulness = 0.0. Report withheld — the explanation is entirely unverifiable.",
-    expl: "The energy levels across all frequency bands are within normal ranges. No unusual patterns or anomalies were detected in the provided data.",
-    claims: []
+  "nrv": {
+    "title": "LOV / saved case #993",
+    "label": "LOV",
+    "conf": 0.9906356930732727,
+    "faith": 0.0,
+    "gate": "ESCALATE",
+    "gateClass": "v-escalate",
+    "gateReason": "no_verifiable_claims",
+    "gateColor": "#f85149",
+    "gateText": "Recorded strict-v1 decision. Structured claims are checked. Candidate prose remains unverified.",
+    "expl": "The energy levels across all frequency bands are within normal ranges. No unusual patterns or anomalies were detected in the provided data.",
+    "claims": []
   }
 };
 
@@ -606,8 +673,8 @@ function selectCase(key, btn) {
   const obs = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) {
       document.getElementById('bar-sg').style.width = '96%';
-      document.getElementById('bar-vo').style.width = '71%';
-      document.getElementById('bar-co').style.width = '44%';
+      document.getElementById('bar-vo').style.width = '63%';
+      document.getElementById('bar-co').style.width = '33.77%';
       obs.disconnect();
     }
   }, { threshold: 0.25 });

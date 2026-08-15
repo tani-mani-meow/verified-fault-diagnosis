@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Text, Float } from '@react-three/drei'
-import { MECHANISM_CHIPS } from '../data/content'
+import { MECHANISM_CHIPS, MECHANISM_THRESHOLDS } from '../data/content'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle, AlertTriangle } from 'lucide-react'
 
@@ -115,12 +115,12 @@ export default function MechanismGuard() {
       {/* Header Overlay */}
       <div className="absolute top-10 left-1/2 transform -translate-x-1/2 text-center z-10 pointer-events-none w-full max-w-xl px-4">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-accentPurple to-accentBlue bg-clip-text text-transparent mb-1">
-          Causal Mechanism Guard
+          Mechanism Wording Heuristic
         </h2>
         <p className="text-gray-400 text-xs">
           Click any class chip to check statistical support for impulsive wording.
           <br />
-          Global Thresholds: Kurtosis &ge; 2.84 | Crest Factor &ge; 7.08
+          Thresholds use global p50 + 0.4 × (p75 − p50). Class medians determine support.
         </p>
       </div>
 
@@ -155,8 +155,8 @@ export default function MechanismGuard() {
               <div className="flex justify-between items-center bg-bg/50 p-2.5 rounded border border-border/50">
                 <span>Kurtosis: <strong>{activeChip.kurt}</strong></span>
                 <span className="text-gray-500">vs</span>
-                <span>Threshold: &ge; 2.84</span>
-                {activeChip.kurt >= 2.84 ? (
+                <span>Threshold: &ge; {MECHANISM_THRESHOLDS.kurtosis.toFixed(2)}</span>
+                {activeChip.kurt >= MECHANISM_THRESHOLDS.kurtosis ? (
                   <CheckCircle size={14} className="text-accentGreen" />
                 ) : (
                   <AlertTriangle size={14} className="text-accentRed" />
@@ -166,8 +166,8 @@ export default function MechanismGuard() {
               <div className="flex justify-between items-center bg-bg/50 p-2.5 rounded border border-border/50">
                 <span>Crest Factor: <strong>{activeChip.crest}</strong></span>
                 <span className="text-gray-500">vs</span>
-                <span>Threshold: &ge; 7.08</span>
-                {activeChip.crest >= 7.08 ? (
+                <span>Threshold: &ge; {MECHANISM_THRESHOLDS.crest_factor.toFixed(2)}</span>
+                {activeChip.crest >= MECHANISM_THRESHOLDS.crest_factor ? (
                   <CheckCircle size={14} className="text-accentGreen" />
                 ) : (
                   <AlertTriangle size={14} className="text-accentRed" />

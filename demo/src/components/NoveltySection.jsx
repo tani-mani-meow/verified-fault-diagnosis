@@ -26,7 +26,7 @@ function NoveltyCard({ item, index }) {
 
         <div className="space-y-4">
           <div className="text-xs">
-            <span className="text-gray-500 uppercase font-semibold tracking-wider block mb-1">Traditional Approach</span>
+            <span className="text-gray-500 uppercase font-semibold tracking-wider block mb-1">Context</span>
             <p className="text-[#f85149] font-medium">{item.past}</p>
           </div>
 
@@ -50,10 +50,10 @@ export default function NoveltySection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-accentPurple to-accentBlue bg-clip-text text-transparent mb-2">
-            Novelty & Comparison
+            Verification Design
           </h2>
           <p className="text-gray-400 text-sm max-w-xl mx-auto">
-            How our verified diagnostic framework compares against existing state-of-the-art LLM methods for predictive maintenance
+            How structured claims, release decisions, and saved evidence fit together
           </p>
         </div>
 

@@ -125,20 +125,20 @@ def test_neutral_claim():
 
 def test_mixed_explanation():
     """
-    4. MIXED explanation: 4 true + 1 false claim -> faithfulness_score=0.8, escalate=False
-       if the false claim is non-critical.
+    4. MIXED explanation: 4 true + 1 false claim -> faithfulness_score=0.8, escalate=True
+       even if the false claim is non-critical.
     """
     claims_non_critical = [
         {"feature": "spectral_rolloff_85", "direction": "low", "critical": False},
         {"feature": "skewness", "direction": "low", "critical": False},
         {"feature": "spectral_centroid", "direction": "low", "critical": False},
-        {"feature": "wpt_energy_18", "direction": "context_dependent", "critical": False},
+        {"feature": "wpt_energy_18", "direction": "neutral", "critical": False},
         {"feature": "rms", "direction": "low", "critical": False},  # Ungrounded -> Fails
     ]
     
     res = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_non_critical, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)
     assert res["faithfulness_score"] == 0.8
-    assert res["escalate"] is False
+    assert res["escalate"] is True
     
     # 3 true + 2 false -> score = 0.6 < 0.8 -> escalate = True
     claims_more_false = [
@@ -157,7 +157,7 @@ def test_mixed_explanation():
         {"feature": "spectral_rolloff_85", "direction": "low", "critical": False},
         {"feature": "skewness", "direction": "low", "critical": False},
         {"feature": "spectral_centroid", "direction": "low", "critical": False},
-        {"feature": "wpt_energy_18", "direction": "context_dependent", "critical": False},
+        {"feature": "wpt_energy_18", "direction": "neutral", "critical": False},
         {"feature": "rms", "direction": "low", "critical": True},  # Ungrounded and critical -> Fails
     ]
     res_crit = verify_explanation(MOCK_LIV_RECORDING, "LIV", claims_critical, thresholds=MOCK_THRESHOLDS, calibration=MOCK_CALIBRATION)

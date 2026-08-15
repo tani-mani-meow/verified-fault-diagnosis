@@ -47,7 +47,7 @@ function FloatingTitle() {
         anchorX="center"
         anchorY="middle"
       >
-        Can an LLM explain a machine fault — and prove it's telling the truth?
+        Check an LLM's structured feature claims against sensor measurements.
       </Text>
     </group>
   )
@@ -55,9 +55,9 @@ function FloatingTitle() {
 
 function FloatingBadges() {
   const badges = [
-    { text: "95.56% Accuracy", pos: [-2.5, 1.2, 0.5], color: "#58a6ff" },
+    { text: "95.56% Reported Accuracy", pos: [-2.5, 1.2, 0.5], color: "#58a6ff" },
     { text: "96% Faithfulness", pos: [2.5, 1.2, 0.5], color: "#3fb950" },
-    { text: "17 Tests", pos: [-2.5, -0.8, 0.5], color: "#bc8cff" },
+    { text: "85/100 Strict Releases", pos: [-2.5, -0.8, 0.5], color: "#bc8cff" },
     { text: "Llama 3.1 70B", pos: [2.5, -0.8, 0.5], color: "#d29922" }
   ]
 

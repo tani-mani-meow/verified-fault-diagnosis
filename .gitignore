@@ -1,4 +1,4 @@
-data/
+/data/
 __pycache__/
 *.pyc
 *.pyo
@@ -11,3 +11,19 @@ venv/
 *.joblib
 scratch/
 .env
+
+# Local research material and generated runs
+/.planning/
+/.pytest_cache/
+/tmp/
+/paper/
+/paper_draft.md
+/verified_fault_diagnosis_paper.pdf
+/outputs/reproducibility/
+/outputs/replay-*/
+/node_modules/
+/demo/node_modules/
+/demo/dist/
+*.egg-info/
+.env.*
+!.env.example

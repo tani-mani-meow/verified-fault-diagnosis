@@ -58,8 +58,8 @@ def main():
             "description": "spread of the spectrum (Hz)"
         },
         "spectral_rolloff_85": {
-            "label": "frequency below which 85% of energy lies (Hz)",
-            "description": "frequency below which 85% of energy lies (Hz)"
+            "label": "frequency below which 85% of FFT magnitude lies (Hz)",
+            "description": "frequency below which 85% of FFT magnitude lies (Hz)"
         },
         "dominant_frequency": {
             "label": "strongest single frequency (Hz)",

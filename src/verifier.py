@@ -1,261 +1,108 @@
-import os
-import sys
+"""Deterministic checks of structured claims against measured feature values."""
 import json
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from knowledge_base import KNOWLEDGE_BASE, normalize_direction
+from knowledge_base import KNOWLEDGE_BASE
+from verification_contract import claim_direction, sample_direction, validate_claim, decide_gate, finite_number
 
-def load_thresholds():
-    script_dir = Path(__file__).resolve().parent
-    repo_dir = script_dir.parent
-    thresholds_path = repo_dir / "outputs" / "feature_thresholds.json"
-    
-    if not thresholds_path.exists():
-        raise FileNotFoundError(f"Thresholds file not found at {thresholds_path}. Run compute_thresholds.py first.")
-        
-    with open(thresholds_path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
-def load_calibration():
-    script_dir = Path(__file__).resolve().parent
-    repo_dir = script_dir.parent
-    calibration_path = repo_dir / "outputs" / "kb_calibration.json"
-    
-    if not calibration_path.exists():
-        raise FileNotFoundError(f"Calibration file not found at {calibration_path}. Run calibrate_kb.py first.")
-        
-    with open(calibration_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def check_mechanism_words(explanation, predicted_class, thresholds):
+    """Conservative lexical heuristic, NOT verification of causal prose."""
+    supported = []
+    for feature in ('kurtosis', 'crest_factor'):
+        global_stats = thresholds.get('global', {}).get(feature, {})
+        p50, p75 = global_stats.get('p50'), global_stats.get('p75')
+        class_p50 = thresholds.get('classes', {}).get(predicted_class, {}).get(feature, {}).get('p50')
+        if not all(finite_number(v) for v in (p50, p75, class_p50)) or p50 > p75:
+            return ['missing or invalid mechanism evidence']
+        supported.append(class_p50 >= p50 + 0.4 * (p75 - p50))
+    if any(supported):
+        return []
+    return [f"Unsupported mechanism word: {term}" for term in
+            ('impulsive', 'impact', 'spike', 'knock', 'slam', 'hammer', 'transient', 'burst')
+            if term in explanation.lower()]
 
-def verify_claim(recording_features, predicted_class, claim, thresholds, calibration):
-    feature = claim.get("feature")
-    direction = claim.get("direction", "").lower()
-    
-    if predicted_class not in KNOWLEDGE_BASE:
-        return {
-            "claim": claim,
-            "passed": False,
-            "actual_value": None,
-            "reference": None,
-            "reason": f"Class '{predicted_class}' not in knowledge base"
-        }
-        
-    class_grounding = KNOWLEDGE_BASE[predicted_class].get("grounding_features", {})
-    if feature not in class_grounding:
-        return {
-            "claim": claim,
-            "passed": False,
-            "actual_value": recording_features.get(feature),
-            "reference": None,
-            "reason": "feature not grounded for this class"
-        }
-        
-    if feature not in recording_features:
-        return {
-            "claim": claim,
-            "passed": False,
-            "actual_value": None,
-            "reference": None,
-            "reason": f"feature '{feature}' not found in recording features"
-        }
-        
-    val = recording_features[feature]
-    
-    cal_class = calibration.get(predicted_class, {})
-    if feature not in cal_class:
-        return {
-            "claim": claim,
-            "passed": False,
-            "actual_value": val,
-            "reference": None,
-            "reason": f"calibration data for feature '{feature}' in class '{predicted_class}' is missing"
-        }
-        
-    cal_data = cal_class[feature]
-    data_direction = cal_data["data_direction"]
-    
-    global_th = thresholds["global"].get(feature, {})
-    global_p25 = global_th.get("p25", 0.0)
-    global_p75 = global_th.get("p75", 0.0)
-    
-    claim_dir_norm = normalize_direction(direction)
-    passed = False
-    reason = ""
-    reference = f"data_direction: {data_direction}, global_p25: {global_p25:.4f}, global_p75: {global_p75:.4f}, val: {val:.4f}"
-    
-    if data_direction == "neutral":
-        if claim_dir_norm in ["high", "low"]:
-            passed = False
-            reason = "feature not directionally characteristic for this class"
-        else:
-            passed = True
-            reason = ""
-            
-    elif data_direction in ["high", "low"]:
-        if claim_dir_norm == data_direction:
-            if data_direction == "high":
-                passed = (val >= global_p75)
-                if not passed:
-                    reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f}"
-            else:
-                passed = (val <= global_p25)
-                if not passed:
-                    reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f}"
-        elif claim_dir_norm == "unspecified":
-            if "distinctive" in direction:
-                if data_direction == "high":
-                    passed = (val >= global_p75)
-                    if not passed:
-                        reason = f"recording value {val:.4f} is not above global p75 {global_p75:.4f} for distinctive feature"
-                else:
-                    passed = (val <= global_p25)
-                    if not passed:
-                        reason = f"recording value {val:.4f} is not below global p25 {global_p25:.4f} for distinctive feature"
-            else:
-                passed = True
-        else:
-            passed = False
-            reason = f"direction mismatch: claim asserts '{claim_dir_norm}' but data shows '{data_direction}'"
-            
-    return {
-        "claim": claim,
-        "passed": passed,
-        "actual_value": val,
-        "reference": reference,
-        "reason": reason
-    }
 
-def verify_explanation(recording_features, predicted_class, claims, action_critical_idx=None, thresholds=None, calibration=None):
-    if thresholds is None:
-        thresholds = load_thresholds()
-    if calibration is None:
-        calibration = load_calibration()
-        
-    per_claim = []
-    passed_count = 0
-    escalate = False
-    
-    for idx, claim in enumerate(claims):
-        res = verify_claim(recording_features, predicted_class, claim, thresholds, calibration)
-        is_critical = claim.get("critical", False) or (action_critical_idx is not None and idx in action_critical_idx)
-        res["critical"] = is_critical
-        per_claim.append(res)
-        
-        if res["passed"]:
-            passed_count += 1
-        elif is_critical:
-            escalate = True
-                
-    faithfulness_score = passed_count / len(claims) if claims else 0.0
-    if faithfulness_score < 0.8 or len(claims) == 0:
-        escalate = True
-        
-    return {
-        "per_claim": per_claim,
-        "faithfulness_score": faithfulness_score,
-        "escalate": escalate
-    }
+def load_thresholds(artifact_dir=None):
+    root = Path(artifact_dir) if artifact_dir else Path(__file__).resolve().parents[1] / 'outputs'
+    return json.loads((root / 'feature_thresholds.json').read_text(encoding='utf-8'))
+
+
+def load_calibration(artifact_dir=None):
+    root = Path(artifact_dir) if artifact_dir else Path(__file__).resolve().parents[1] / 'outputs'
+    return json.loads((root / 'kb_calibration.json').read_text(encoding='utf-8'))
+
+
+def _evaluate(recording, predicted_class, claim, thresholds, calibration):
+    result = dict(feature=None, claimed_dir=None, sample_dir=None, class_dir=None,
+                  sample_true=False, class_consistent=False, atypical=False,
+                  action_critical=False)
+    try:
+        validate_claim(claim)
+        feature = claim['feature']
+        direction = claim_direction(claim['direction'])
+        result.update(feature=feature, claimed_dir=claim['direction'],
+                      action_critical=claim.get('critical', False) or claim.get('action_critical', False))
+        if feature not in KNOWLEDGE_BASE.get(predicted_class, {}).get('grounding_features', {}):
+            raise ValueError('feature not grounded for this class')
+        if feature not in recording:
+            raise ValueError(f"feature '{feature}' not found in recording features")
+        sample_dir = sample_direction(recording[feature], thresholds.get('global', {}).get(feature))
+        class_dir = calibration.get(predicted_class, {}).get(feature, {}).get('data_direction')
+        if class_dir not in ('high', 'low', 'neutral'):
+            raise ValueError('missing or invalid calibration direction')
+        result.update(sample_dir=sample_dir, class_dir=class_dir,
+                      sample_true=bool(direction == sample_dir),
+                      class_consistent=bool(direction == class_dir),
+                      atypical=bool(direction == sample_dir and direction != class_dir))
+    except (ValueError, TypeError, AttributeError) as exc:
+        result.update(reason=str(exc), validation_error=True)
+    return result
+
 
 def check_sample_faithfulness(recording_features, predicted_class, claims, thresholds=None, calibration=None):
     if thresholds is None:
         thresholds = load_thresholds()
     if calibration is None:
         calibration = load_calibration()
-        
+    if not isinstance(claims, list):
+        raise ValueError('claims must be a list')
+    per_claim = [_evaluate(recording_features, predicted_class, c, thresholds, calibration) for c in claims]
+    return {'per_claim': per_claim,
+            'faithfulness': sum(c['sample_true'] for c in per_claim) / len(per_claim) if per_claim else 0.0,
+            'class_consistency': sum(c['class_consistent'] for c in per_claim) / len(per_claim) if per_claim else 0.0}
+
+
+def verify_claim(recording_features, predicted_class, claim, thresholds, calibration):
+    """Compatibility API: requires both sample truth and class consistency."""
+    result = _evaluate(recording_features, predicted_class, claim, thresholds, calibration)
+    reason = result.get('reason', '')
+    if not reason and not result['class_consistent']:
+        reason = ('feature not directionally characteristic for this class' if result['class_dir'] == 'neutral'
+                  else 'direction mismatch between claim and class calibration')
+    if not reason and not result['sample_true']:
+        reason = 'recording value does not support the claimed direction'
+    feature = result['feature']
+    return dict(claim=claim, passed=bool(result['sample_true'] and result['class_consistent']),
+                actual_value=recording_features.get(feature) if feature else None,
+                reference={'sample_dir': result['sample_dir'], 'class_dir': result['class_dir']}, reason=reason)
+
+
+def verify_explanation(recording_features, predicted_class, claims, action_critical_idx=None, thresholds=None, calibration=None):
+    if thresholds is None:
+        thresholds = load_thresholds()
+    if calibration is None:
+        calibration = load_calibration()
+    if not isinstance(claims, list):
+        raise ValueError('claims must be a list')
     per_claim = []
-    sample_true_count = 0
-    class_consistent_count = 0
-    
-    class_grounding = KNOWLEDGE_BASE.get(predicted_class, {}).get("grounding_features", {})
-    
-    for c in claims:
-        feature = c.get("feature")
-        direction = c.get("direction", "")
-        action_critical = c.get("critical", False) or c.get("action_critical", False)
-        
-        if feature not in class_grounding:
-            per_claim.append({
-                "feature": feature,
-                "claimed_dir": direction,
-                "sample_dir": "neutral",
-                "class_dir": "neutral",
-                "sample_true": False,
-                "class_consistent": False,
-                "atypical": False,
-                "action_critical": action_critical,
-                "reason": "feature not grounded for this class"
-            })
-            continue
-            
-        if feature not in recording_features:
-            per_claim.append({
-                "feature": feature,
-                "claimed_dir": direction,
-                "sample_dir": "neutral",
-                "class_dir": "neutral",
-                "sample_true": False,
-                "class_consistent": False,
-                "atypical": False,
-                "action_critical": action_critical,
-                "reason": f"feature '{feature}' not found in recording features"
-            })
-            continue
-            
-        value = recording_features[feature]
-        global_feat = thresholds["global"].get(feature, {})
-        global_p25 = global_feat.get("p25", 0.0)
-        global_p75 = global_feat.get("p75", 0.0)
-        
-        if value >= global_p75:
-            sample_dir = "high"
-        elif value <= global_p25:
-            sample_dir = "low"
-        else:
-            sample_dir = "neutral"
-            
-        claim_dir_norm = normalize_direction(direction)
-        
-        if claim_dir_norm == "high":
-            sample_true = (sample_dir == "high")
-        elif claim_dir_norm == "low":
-            sample_true = (sample_dir == "low")
-        else:
-            sample_true = (sample_dir == "neutral")
-            
-        cal_class = calibration.get(predicted_class, {})
-        class_dir = cal_class.get(feature, {}).get("data_direction", "neutral")
-        if claim_dir_norm == "high":
-            class_consistent = (class_dir == "high")
-        elif claim_dir_norm == "low":
-            class_consistent = (class_dir == "low")
-        else:
-            class_consistent = True
-            
-        atypical = sample_true and not class_consistent
-        
-        if sample_true:
-            sample_true_count += 1
-        if class_consistent:
-            class_consistent_count += 1
-            
-        per_claim.append({
-            "feature": feature,
-            "claimed_dir": direction,
-            "sample_dir": sample_dir,
-            "class_dir": class_dir,
-            "sample_true": sample_true,
-            "class_consistent": class_consistent,
-            "atypical": atypical,
-            "action_critical": action_critical
-        })
-        
-    num_claims = len(claims)
-    faithfulness = sample_true_count / num_claims if num_claims > 0 else 0.0
-    class_consistency_score = class_consistent_count / num_claims if num_claims > 0 else 0.0
-    
-    return {
-        "per_claim": per_claim,
-        "faithfulness": faithfulness,
-        "class_consistency": class_consistency_score
-    }
+    for index, claim in enumerate(claims):
+        result = verify_claim(recording_features, predicted_class, claim, thresholds, calibration)
+        result['critical'] = bool(isinstance(claim, dict) and
+                                  (claim.get('critical') is True or claim.get('action_critical') is True)) or (
+                                      action_critical_idx is not None and index in action_critical_idx)
+        per_claim.append(result)
+    decision, _ = decide_gate([dict(sample_true=c['passed'], action_critical=c['critical']) for c in per_claim])
+    return dict(per_claim=per_claim,
+                faithfulness_score=sum(c['passed'] for c in per_claim) / len(per_claim) if per_claim else 0.0,
+                escalate=decision == 'ESCALATE')

@@ -18,7 +18,7 @@ export default function HonestLimits() {
             Honest Limits & Scope
           </h2>
           <p className="text-gray-400 text-sm">
-            Fostering scientific integrity by highlighting the bounds, constraints, and limitations of our current research implementation
+            Scope of the current evidence and verification contract
           </p>
         </div>
 
